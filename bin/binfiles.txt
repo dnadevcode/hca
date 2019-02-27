@@ -65,6 +65,7 @@
 +CBT/+Core/right_left_mtx
 +CBT/get_binding_constant_rules
 +Fancy/+AppMgr/AppDataPoolMgr
++Fancy/+AppMgr/AppDataPoolViewScreen
 +Fancy/+AppMgr/AppResourceMgr
 +Fancy/+AppMgr/AppSession
 +Fancy/+IO/ini2struct

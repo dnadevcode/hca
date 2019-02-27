@@ -1,4 +1,5 @@
 classdef FancyListMgr < handle
+
     % FANCYLISTMGR - Fancy List Manager
     properties (Constant)
         Version = [0, 0, 1];
@@ -22,6 +23,7 @@ classdef FancyListMgr < handle
     
     methods
         function [flm] = FancyListMgr(hParent, configSettings)
+            import Fancy.AppMgr.AppDataPoolViewScreen;
             import Fancy.UI.FancyList.FancyListMgrConfig;
             import Fancy.UI.FancyList.FancyListMgr;
             if nargin >= 1
