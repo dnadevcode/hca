@@ -51,7 +51,14 @@ function [ barcodeGenRandom ] = cutout_barcodes( barcodeGen,sets)
        barcodeGenRandom{counter}.rawBarcode = barcodeTemp(startPosTemp:startPosTemp+sets.random.cutoutSize-1); 
        % store the bitmask
        barcodeGenRandom{counter}.rawBitmask = bitmaskTemp;
-       barcodeGenRandom{counter}.name = strcat(['bar_' num2str(barcodeGenRandom{counter}.barcodeIdxTemp ) '_pos_' num2str(barcodeGenRandom{counter}.startPosTemp) ] );
+       
+       % if name already defined, add another index, which is just the idx
+       % of counter
+       name = strcat(['bar_' num2str(barcodeGenRandom{counter}.barcodeIdxTemp ) '_pos_' num2str(barcodeGenRandom{counter}.startPosTemp) ] );
+       if ismember(name,cellfun(@(x) x.name, barcodeGenRandom(1:counter-1),'UniformOutput',false))
+           name = strcat([name '_' num2str(counter)]);
+       end
+       barcodeGenRandom{counter}.name = name;
     end
    
 
