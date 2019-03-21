@@ -24,7 +24,7 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
 
    	import CBT.Hca.Core.filter_barcode; % in case we need to filter barcode
 	import SignalRegistration.unmasked_pcc_corr;
-	import SignalRegistration.masked_pcc_corr;
+	%import SignalRegistration.masked_pcc_corr;
     import CBT.Hca.UI.Helper.get_best_parameters;
     
     % for all the barcodes run
@@ -55,29 +55,42 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
             barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
 
             % compute the scores.
-            % here separate which barcode is the longer and which is the
-            % shorter (todo: check how this works when we compare fragment
-            % to fragment theory)
+            % we limit here to computing theory for short experiment vs. 
+            % long theory. In case the interpolated experiment is longer
+            % than the theory, we display a warning, and output 0's for
+            % this comparison
+            % 
             if length(barC) > length(theorBar) % in case exp larger than theory
-                xcorrs = masked_pcc_corr(theorBar, barC, theorBit,barB);
-            else % faster function, only when barC has bitmask only on left and right
-                xcorrs = unmasked_pcc_corr(barC, theorBar, barB);
-            end 
-            
-            % now find the maximum score for this stretching parameter
-            xcorrMax(j) = max(xcorrs(:));
-            [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or] = get_best_parameters(xcorrs,length(barC) );
+                disp(strcat(['Warning, the experiment '  barcodeGen{idx}.name ' with stretching ' num2str(stretchFactors(j)) ' is longer than theory']))
+                xcorrMax(j) = nan;
+                %xcorrs = masked_pcc_corr(theorBar, barC, theorBit,barB);
+            else
+                if sum(barB) <= 20 % move this to settings
+                    disp(strcat(['Warning, after bitmasking, the experiment '  barcodeGen{idx}.name ' with stretching ' num2str(stretchFactors(j)) ' is shorter than 20 pixels']))
+                    xcorrMax(j) = nan;    
+                else
+                    % faster function, only when barC has bitmask only on left and right
+                    xcorrs = unmasked_pcc_corr(barC, theorBar, barB);
+                    [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or] = get_best_parameters(xcorrs, 3 );
+                    % now find the maximum score for this stretching parameter
+                    xcorrMax(j) = rezMax{j}.maxcoef(1);
+                end
+            end             
         end       
         
         % find which stretching parameter had the best score
-        [~,b] = max(xcorrMax);
+        [value,b] = max(xcorrMax);
         
         % select the results for this best stretching parameter and output
-        % them.
-        comparisonStructure{idx} = rezMax{b};
-        comparisonStructure{idx}.bestBarStretch = stretchFactors(b);
-        comparisonStructure{idx}.length = round(lenBarTested*stretchFactors(b));
-
+        % them. If there were no values computed for this barcode, we don't
+        % save anything.
+        if ~isnan(value)
+            comparisonStructure{idx} = rezMax{b};
+            comparisonStructure{idx}.bestBarStretch = stretchFactors(b);
+            comparisonStructure{idx}.length = round(lenBarTested*stretchFactors(b));
+        else
+             comparisonStructure{idx}.maxcoef(1:3) = nan;
+        end
     end 
 
 end
