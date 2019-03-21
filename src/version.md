@@ -5,6 +5,12 @@ v (future)
 - add additional tab to change/view settings
 - change the way stretching is done, so that the end points are not fixed
 
+v 3.2
+- Fix option to add stretching factors
+- Output infoscores
+- Don't compute comparison for small experiment lengths
+- Other minor changes
+
 v 3.1.1.3
 - fix the code so it would work with matlab as well
 

@@ -28,3 +28,6 @@ do
 	grep -nr "import " | grep -v '%' | grep -v '=' | cut -f 3 -d ':' | cut -f 1 -d ';' | sed 's/\<import\>//g' | tr -d [:blank:]' '  |sed 's/^/+/' | sed 's:\.:\/+:g' | grep -vw "+Hca"  | grep -v "'" | sort | uniq | sed 's/\(.*\)+/\1/'  > binfiles.txt
  	cat binfiles.txt | while read line; do line2="${line%/*}/";mkdir -p $line2; cp -nR '/home/albyback/git/Projects/hca/hca_tests/hca_3.2/lldev/src/MATLAB/'$line'.m' $line'.m' || true; done
 done
+
+
+Export information scores into a txt file. Ask Ville for examples

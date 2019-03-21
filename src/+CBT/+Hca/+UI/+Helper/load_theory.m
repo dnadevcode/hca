@@ -44,7 +44,7 @@ function [ theoryStruct ] = load_theory( sets )
             fclose(fileID);
             theoryStruct{jj}.filename = fname;
             theoryStruct{jj}.name = names{i};
-
+            theoryStruct{jj}.length =  length(bars{i});
             theoryStruct{jj}.meanBpExt_nm = setsB.meanBpExt_nm;
             theoryStruct{jj}.pixelWidth_nm = setsB.pixelWidth_nm;
             theoryStruct{jj}.psfSigmaWidth_nm = setsB.psfSigmaWidth_nm;

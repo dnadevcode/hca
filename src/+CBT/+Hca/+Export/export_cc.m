@@ -14,5 +14,5 @@ function [matFilepath] = export_cc(T, matDirpath)
     matFilepath = strcat([matDirpath, matFilename2]);
 
     writetable(T,matFilepath,'WriteRowNames',true)  
-    fprintf('Saved ccvals table to ''%s''\n', matFilepath);
+    fprintf('Saved table to ''%s''\n', matFilepath);
 end

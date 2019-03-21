@@ -18,12 +18,19 @@ function [] = additional_computations( barcodeGenC, consensusStruct, comparisonS
     else
         sampleName = '/sample1_';
     end
+    
     matDirpath = strcat([sets.output.matDirpath sampleName]);
 
     % export_cc_results
     import CBT.Hca.Export.export_cc_vals_table;
     [T] = export_cc_vals_table( theoryStruct, comparisonStructAll, barcodeGenC,matDirpath);
 
+
+    % export_infoscore_results. Temporary moved
+    import CBT.Hca.Export.export_infoscore_vals_table;
+    [T] = export_infoscore_vals_table( barcodeGenC,fullfile(sets.output.matDirpath,'infoscore'));
+
+    
     % todo: include additional plots in a later version
     
 %     import CBT.Hca.Export.plot_comparison_vs_theory;

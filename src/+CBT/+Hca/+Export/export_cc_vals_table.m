@@ -29,6 +29,7 @@ function [T] = export_cc_vals_table( theoryStruct,comparisonStructAll, barcodeGe
         T2 = table(maxcc',lengthPx', pos',stretch' ,'VariableNames',{N,strcat(['len_'  num2str(i)]),strcat(['pos_'  num2str(i)]),strcat(['stretch_'  num2str(i)])});
         T = [T T2];
     end
+    disp('Saving ccvals table');
     import CBT.Hca.Export.export_cc;
     export_cc(T, matDirpath);      
 

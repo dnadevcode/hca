@@ -36,7 +36,9 @@ function [ consensus,sets] = select_consensus( consensusStructs, sets )
     consensusIndex = find(consensusStructs.treeStruct.maxCorCoef>sets.consensus.threshold,1,'last');
     
     if isempty(consensusIndex)
-        disp('All comparisons are below barcode cluster limit');
+        sets.genConsensus = 0;
+        consensus = [];
+        disp('All comparisons are below barcode cluster limit, no consensus is being selected');
         return;
     end
     % number of barcodes averaged at each step

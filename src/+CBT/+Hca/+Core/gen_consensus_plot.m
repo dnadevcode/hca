@@ -1,7 +1,7 @@
 function [  ] = gen_consensus_plot( consensusStructs,consensusStruct,sets )
     %gen_consensus_plot
     
-	load('consensus_struct.mat');
+%	load('consensus_struct.mat');
 
           % loads figure window
     hFig = figure(...

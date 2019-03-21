@@ -105,7 +105,7 @@ function [ theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq] = compute_hca_t
     end
     
     % pixel resoution barcode
-    theoryCurveUnscaled_pxRes = convert_bpRes_to_pxRes(probSeq, meanBpExt_pixels);
+    theoryCurveUnscaled_pxRes = convert_bpRes_to_pxRes(probSeq, meanBpExt_pixels, sets.theoryGen.isLinearTF);
     
     % todo: make this more accurate by allowing a % (1%?) of unknown
     % letters

@@ -57,7 +57,7 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
 
         % select consensus
         import CBT.Hca.UI.Helper.select_consensus
-        consensusStruct = select_consensus(consensusStructs,sets);
+        [consensusStruct,sets] = select_consensus(consensusStructs,sets);
         
         % TODO : add consensus plot
 %         % recreate consensus result from cbc_gui? 
@@ -74,15 +74,13 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
             barcodeGenC = barcodeGen;
         end
 
+    
         sets.theoryFile=[];
         sets.theoryFileFold = [];
-%         sets.theoryFile{1} = 'allbarcodes_2018-09-05_11_31_46_session.mat';
-%         sets.theoryFileFold{1} ='/home/albyback/rawData/dnaData/humanData/human_genome/file/';
-%          
+
         % get user theory
         import CBT.Hca.Settings.get_user_theory;
-        theoryStruct = get_user_theory(sets);
-       % load('/home/albyback/rawData/dnaData/humanData/human_genome/file/theoryStruct_17-Dec-201814:05:43.mat');
+        [theoryStruct, sets] = get_user_theory(sets);
 
         % compare theory to experiment
         import CBT.Hca.Core.Comparison.compare_theory_to_exp;

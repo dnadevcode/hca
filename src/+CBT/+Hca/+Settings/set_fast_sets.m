@@ -1,4 +1,4 @@
-function [ sets ] = set_fast_sets()
+function [ sets ] = set_fast_sets(adddefaulttheorysets)
     % set_fast_sets 
     % Set quick pre-defined settings for HCA.
     % If we want, we can run the program
@@ -10,6 +10,9 @@ function [ sets ] = set_fast_sets()
     %     Example:
     %         This is an example: run sets = set_fast_sets()
     
+    if nargin < 1
+        adddefaulttheorysets = 0;
+    end
     %
     sets.kymosets.askforkymos = 1; % sould we ask for kymos
     
@@ -121,6 +124,24 @@ function [ sets ] = set_fast_sets()
 %     sets.askForPvalueSettings = 0;
 %     sets.pvaluethresh = 0.01;
 %     sets.contigSettings.numRandBarcodes = 1000;
+
+    if adddefaulttheorysets
+        sets.theoryGen.meanBpExt_nm = 0.3;
+        sets.theoryGen.pixelWidth_nm = 130;
+        sets.theoryGen.concN = 6;
+        sets.theoryGen.concY = 0.02;
+        sets.theoryGen.concDNA = 0.2;
+        sets.theoryGen.psfSigmaWidth_nm = 300;
+        sets.theoryGen.deltaCut = 3;
+        sets.theoryGen.isLinearTF = 0;
+        sets.theoryGen.widthSigmasFromMean = 4;
+        sets.theoryGen.computeFreeConcentrations = 1;
+        sets.theoryGen.model = 'literature';
+        sets.lambda.fold = 'tests/data/';
+        sets.lambda.name = 'sequence.fasta';
+        import CBT.Hca.Core.Theory.cb_model;
+        sets.model = cb_model();
+    end
 
 end
 

@@ -13,8 +13,8 @@ import CBT.Hca.Settings.get_user_theory_sets;
 sets = get_user_theory_sets(sets);
 
 if ~sets.skipBarcodeGenSettings
-    import CBT.Hca.UI.comparison_settings;
-    sets.theoryGen = comparison_settings(); %
+    import CBT.Hca.Settings.get_theory_sets;
+    sets.theoryGen = get_theory_sets(); %
 end
 
 % compute free concentrations
