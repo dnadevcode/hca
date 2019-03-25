@@ -48,6 +48,8 @@ function [ consensus,sets] = select_consensus( consensusStructs, sets )
     
     % extract barcode
     consensus.rawBarcode = nanmean(consensusStructs.treeStruct.barcodes{idx});
+    consensus.std = nanstd(consensusStructs.treeStruct.barcodes{idx});
+
 	% barcode indices
     consensus.indices = cell2mat(consensusStructs.treeStruct.clusteredBar{idx});
     % bitmasks

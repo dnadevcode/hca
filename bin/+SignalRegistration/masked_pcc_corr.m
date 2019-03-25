@@ -91,6 +91,11 @@ function [ xcorrs ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
 	ccB = xiyi./denominator - numForward.*xbar.*ybar./denominator;
 
     xcorrs = [ccF;ccB];
+%     linear=1;
+%     if linear
+%         xcorrs(1,(length(longVec)-sum(w1)+1):end)=0;
+%         xcorrs(2,(length(longVec)-sum(w1)+1):end)=0;
+%     end
 
 end
 

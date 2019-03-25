@@ -13,12 +13,12 @@ function [thyCurve_pxRes] = convert_bpRes_to_pxRes(thyCurve_bpRes, meanBpExt_pix
     end
     
     
-    thyCurve_pxRes(floor(length(thyCurve_bpRes)/s)) = 0;
+    thyCurve_pxRes(round(length(thyCurve_bpRes)/s)) = 0;
     xtraseq = cat(find(size(thyCurve_bpRes) - 1), ...
                   thyCurve_bpRes(end-round(s):end), ...
                   thyCurve_bpRes, ...
                   thyCurve_bpRes(1:round(2*s)));
-    for i = 1:floor(length(thyCurve_bpRes)/s)
+    for i = 1:round(length(thyCurve_bpRes)/s)
         thyCurve_pxRes(i) = mean(xtraseq(floor((i*s)-s+1):floor((i*s)+s)));
     end
 % 

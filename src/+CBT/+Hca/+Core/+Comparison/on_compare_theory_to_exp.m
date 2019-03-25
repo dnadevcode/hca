@@ -90,6 +90,10 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
             comparisonStructure{idx}.length = round(lenBarTested*stretchFactors(b));
         else
              comparisonStructure{idx}.maxcoef(1:3) = nan;
+             comparisonStructure{idx}.bestBarStretch = nan;
+             comparisonStructure{idx}.length = nan;
+             comparisonStructure{idx}.pos(1:3) = nan;
+             comparisonStructure{idx}.or(1:3) = nan;
         end
     end 
 
