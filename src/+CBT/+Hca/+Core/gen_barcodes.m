@@ -39,7 +39,12 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
     for i=1:numBar
         tempMean = mean(kymoStructs{i}.alignedKymo(:,barcodeGen{i}.lE:barcodeGen{i}.rE),2); % mean across x
         barcodeGen{i}.infoscore.mean = mean(tempMean); % total mean
-        barcodeGen{i}.infoscore.std =  std(tempMean); % total std
+        if size(tempMean,1) ==1
+            barcodeGen{i}.infoscore.std =  std(kymoStructs{i}.alignedKymo(:,barcodeGen{i}.lE:barcodeGen{i}.rE)); % total std
+        else
+            barcodeGen{i}.infoscore.std =  std(tempMean); % total std
+        end
+
         barcodeGen{i}.infoscore.score = barcodeGen{i}.infoscore.mean+3* barcodeGen{i}.infoscore.std;
     end
     

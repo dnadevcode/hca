@@ -5,6 +5,12 @@ v (future)
 - add additional tab to change/view settings
 - change the way stretching is done, so that the end points are not fixed
 
+v 3.2.2
+
+- fix tiny bug with names and when only one timeframe is present
+- add two new infoscores
+
+v 3.2.1
 v 3.2
 - Fix option to add stretching factors
 - Output infoscores
