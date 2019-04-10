@@ -20,7 +20,7 @@ function [T] = export_infoscore_vals_table( barcodeGenC,matDirpath )
 
     is3 = zeros(1,length(barcodeGenC));
     for i=1:length(barcodeGenC);
-        vals =barcodeGenC{i}.rawBarcode(barcodeGenC{i}.rawBitmask);
+        vals =barcodeGenC{i}.rawBarcode(logical(barcodeGenC{i}.rawBitmask));
         is3(i) = sum(abs(zscore(vals)) > 3)/length(vals);
     end
     % score3: proportion of values outside mean+3std
@@ -32,13 +32,13 @@ function [T] = export_infoscore_vals_table( barcodeGenC,matDirpath )
     %amplitude, we could calculate
     is4 = zeros(1,length(barcodeGenC));
     for i=1:length(barcodeGenC)
-        is4(i) =std(barcodeGenC{i}.rawBarcode(barcodeGenC{i}.rawBitmask))/barcodeGenC{i}.bgStdApprox;
+        is4(i) =std(barcodeGenC{i}.rawBarcode(logical(barcodeGenC{i}.rawBitmask)))/barcodeGenC{i}.bgStdApprox;
     end
 	TS4 =  table(is4' ,'VariableNames',{'FS'});
 
 	is5 = zeros(1,length(barcodeGenC));
     for i=1:length(barcodeGenC)
-        der =diff(barcodeGenC{i}.rawBarcode(barcodeGenC{i}.rawBitmask));
+        der =diff(barcodeGenC{i}.rawBarcode(logical(barcodeGenC{i}.rawBitmask)));
         stder = std(der);
         [PKS,~] = findpeaks(der, 'MinPeakHeight',3*stder);
         is5(i) = length(PKS);
