@@ -1,8 +1,8 @@
 function [  ] = export_exp_vs_theory(comparisonStructAll,theoryStruct,barcodeGenC,sets,barNr,theoryNr  )
     % input  comparisonStructAll,theoryStruct,barcodeGenC,sets
 
-    barNr = 3;
-    theoryNr = 2;
+%     barNr = 3;
+%     theoryNr = 2;
 
     for i=1:length(comparisonStructAll)
         for j=1:length(comparisonStructAll{1})

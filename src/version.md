@@ -5,6 +5,10 @@ v (future)
 - add additional tab to change/view settings
 - change the way stretching is done, so that the end points are not fixed
 
+v 3.2.4 
+
+- fixed up error when plotting barcode vs theory that overlapped to beginning
+
 v 3.2.2
 
 - fix tiny bug with names and when only one timeframe is present

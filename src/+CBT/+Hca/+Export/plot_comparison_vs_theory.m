@@ -77,11 +77,11 @@ function [  ] = plot_comparison_vs_theory(comparisonStruct,theoryStruct,barcodeG
         % plot
         figure;
         hold on;
-        plot(fitPositions, ((expBar-m2)/s2) *s1+m1)
+        plot(theorBar(1:end))
         if ~isempty(a)
-            plot([fitPositions(1:a-1) nan fitPositions(a:end)],[theorBar(1:a-1) nan theorBar(a:end) ])
+            plot([fitPositions(1:a-1) nan fitPositions(a:end)], [((expBar(1:a-1)-m2)/s2)*s1+m1 nan ((expBar(a:end)-m2)/s2)*s1+m1])
         else
-            plot(theorBar(1:end))
+            plot(fitPositions, ((expBar-m2)/s2) *s1+m1)
         end   
         xlim([min(fitPositions) max(fitPositions)])
 
@@ -89,9 +89,9 @@ function [  ] = plot_comparison_vs_theory(comparisonStruct,theoryStruct,barcodeG
         ylabel('Rescaled to theoretical intesity','Interpreter','latex')
         
         if switched == 0
-            legend({strcat(['$\hat C_' num2str(ii) '$=' num2str(maxcoef(ii,1),'%0.2f')]),strrep(niceName,'_','\_') },'Interpreter','latex');
+            legend({strrep(niceName,'_','\_'), strcat(['$\hat C_' num2str(ii) '$=' num2str(maxcoef(ii,1),'%0.2f')]) },'Interpreter','latex');
         else
-            legend({niceName,strcat(['$\hat C=$' num2str(maxcoef(ii,1),'%0.2f')])},'Interpreter','latex');
+            legend({strcat(['$\hat C=$' num2str(maxcoef(ii,1),'%0.2f')]),niceName},'Interpreter','latex');
         end
         
         if savetxt == 1

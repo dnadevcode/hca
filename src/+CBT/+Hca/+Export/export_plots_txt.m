@@ -13,8 +13,10 @@ function [matFilepath] = export_plots_txt(idx,fitPositions,firstBarcode,barFit, 
 
     fileID = fopen(matFilepath,'w');      
     
-    cutOut  = barFit(fitPositions(1):fitPositions(end));
-
+    % in case barcode is cut into two places, first index is gonna be
+    % larger than the last index
+    cutOut  = barFit(fitPositions);
+    
     m1 = nanmean(firstBarcode);
     s1= nanstd(firstBarcode);
 
