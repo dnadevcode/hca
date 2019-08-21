@@ -37,7 +37,6 @@ for idx = 1:length(sets.theoryNames)
     theoryGen.theoryBarcodes{idx} = theorySeq;
     theoryGen.theoryNames{idx} = name;
     theoryGen.theoryIdx{idx} = idx;
-    theoryGen.theorySeq{idx} = seq;
     theoryGen.bpNm{idx} = sets.theoryGen.meanBpExt_nm/sets.theoryGen.psfSigmaWidth_nm;
 end
 
