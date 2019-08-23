@@ -31,9 +31,15 @@ function [ theoryStruct ] = load_theory( sets )
                 names = barcodeData.hcaSessionStruct.theoryNames;
                 setsB = barcodeData.hcaSessionStruct.sets;
             catch
-                bars = barcodeData.theoryBarcodes;
-                names = barcodeData.theoryNames;
-                setsB = barcodeData.sets; 
+                try
+                    bars = barcodeData.theoryGen.theoryBarcodes;
+                    names = barcodeData.theoryGen.theoryNames;
+                    setsB = barcodeData.theoryGen.sets;        
+                catch
+                    bars = barcodeData.theoryBarcodes;
+                    names = barcodeData.theoryNames;
+                    setsB = barcodeData.sets; 
+                end
             end 
         end
             

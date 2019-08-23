@@ -28,7 +28,12 @@ function [ probBinding] = cb_theory(ntSeq, NETROPSINconc,YOYO1conc,yoyo1BindingC
 
     % convert leters to digits
     ntIntSeq = nt2int(ntSeq, 'ACGTOnly',1);
-    ntIntSeq(find(ntIntSeq == 0))= randi(4);
+    
+    % use reproducible random numbers
+    s = rng;
+    rng(0,'twister');
+    ntIntSeq(ntIntSeq == 0) = randi(4,1,sum(ntIntSeq == 0));
+    rng(s);
 
     if untrustedRegion > 0
         ntIntSeq = [ntIntSeq(end-untrustedRegion+1:end) ntIntSeq ntIntSeq(1:untrustedRegion)];
@@ -37,7 +42,10 @@ function [ probBinding] = cb_theory(ntSeq, NETROPSINconc,YOYO1conc,yoyo1BindingC
     nSize = size(ntIntSeq,2);
 
     % This will be our output vector
-    probBinding = zeros(nSize,1);
+    yoyoBinding = zeros(nSize,1);
+    netropsinBinding = zeros(nSize,1);
+
+    
 
 
     % First, based on sequence ntIntSeq, we want to calculate which binding are
@@ -134,20 +142,31 @@ function [ probBinding] = cb_theory(ntSeq, NETROPSINconc,YOYO1conc,yoyo1BindingC
 
     denominator = leftVec(1,:)*rightVec(:,1);
 
-    if isnetrop==1
-        oMat = diag([0,0,0,0,0,1,1,1,1]); % this selects yoyo1 probability binding vec.
-    else
-        oMat = diag([0,1,1,1,1,0,0,0,0]); % this selects netropsin probability binding vec.
-    end
-
-    probBinding(1) = leftVec(1,:)*oMat*rightVec(:,1)/denominator;
+    oMat = diag([0,0,0,0,0,1,1,1,1]); % this selects yoyo1 probability binding vec.
+    yoyoBinding(1) = leftVec(1,:)*oMat*rightVec(:,1)/denominator;
 
     for i=2:nSize
-        probBinding(i) = leftVec(i,:)*oMat*rightVec(:,i)*maxVecDiv(i-1)/denominator;
+        yoyoBinding(i) = leftVec(i,:)*oMat*rightVec(:,i)*maxVecDiv(i-1)/denominator;
     end
 
     if untrustedRegion > 0
-        probBinding = probBinding(untrustedRegion+1:end-untrustedRegion);
+        yoyoBinding = yoyoBinding(untrustedRegion+1:end-untrustedRegion);
+    end
+    
+    if isnetrop == 2
+        oMat = diag([0,1,1,1,1,0,0,0,0]); % this selects netropsin probability binding vec.
+        netropsinBinding(1) = leftVec(1,:)*oMat*rightVec(:,1)/denominator;
+
+        for i=2:nSize
+            netropsinBinding(i) = leftVec(i,:)*oMat*rightVec(:,i)*maxVecDiv(i-1)/denominator;
+        end
+
+        if untrustedRegion > 0
+            netropsinBinding = netropsinBinding(untrustedRegion+1:end-untrustedRegion);
+        end
+        probBinding = [yoyoBinding netropsinBinding];
+    else
+        probBinding = yoyoBinding;
     end
 
 end

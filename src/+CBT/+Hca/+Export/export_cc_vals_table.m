@@ -23,8 +23,10 @@ function [T] = export_cc_vals_table( theoryStruct,comparisonStructAll, barcodeGe
            end
         end
         maxcc = maxccoef;
+        
+        [d,name,ext] = fileparts(barcodeGen{i}.name);
 
-        N = matlab.lang.makeValidName(barcodeGen{i}.name);
+        N = matlab.lang.makeValidName(name);
         
         T2 = table(maxcc',lengthPx', pos',stretch' ,'VariableNames',{N,strcat(['len_'  num2str(i)]),strcat(['pos_'  num2str(i)]),strcat(['stretch_'  num2str(i)])});
         T = [T T2];

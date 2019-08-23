@@ -26,7 +26,7 @@ function [ theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq] = compute_hca_t
     
     % change the bp with unknown letters into random letters (for better
     % barcodes close to unknown positions
-    seq(positions) = randseq(length(positions)); % change the unknowns into random
+    %seq(positions) = randseq(length(positions)); % change the unknowns into random
     
     if length(seq)< 500000
         overlapLength = 0;

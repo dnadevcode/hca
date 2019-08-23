@@ -4,6 +4,11 @@ v (future)
 - dendogram for consensus
 - add additional tab to change/view settings
 - change the way stretching is done, so that the end points are not fixed
+- add dtw similarity tool
+
+v 3.2.6
+
+- Made theory generation reproducible by fixing the ring for generating random nucleotides
 
 v 3.2.5
 

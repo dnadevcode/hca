@@ -19,12 +19,11 @@ function [ sets ] = compute_free_conc( sets )
         disp('Computing free concentrations');
         
         rs = lambdaSequence.Sequence;
-        probsBinding1 = @(x) cb_theory(rs, x(2),x(1),sets.model.yoyoBindingConstant,sets.model.netropsinBindingConstant, 1000, 1);
-        probsBinding2 = @(x) cb_theory(rs, x(2),x(1),sets.model.yoyoBindingConstant,sets.model.netropsinBindingConstant, 1000, 2);
+        probsBinding = @(x) cb_theory(rs, x(2),x(1),sets.model.yoyoBindingConstant,sets.model.netropsinBindingConstant, 1000, 2);
 
         x0 = [sets.theoryGen.concY sets.theoryGen.concN];
 
-        fun = @(x) x0-x-[mean(probsBinding1(x)) mean(probsBinding2(x))]*sets.theoryGen.concDNA*0.25;
+        fun = @(x) x0-x-mean(probsBinding(x))*sets.theoryGen.concDNA*0.25;
 
         % we minimise the sum square
         fun2 = @(x) sum(fun(x).^2);
