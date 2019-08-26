@@ -40,6 +40,10 @@ function [ sets ] = get_user_settings( sets )
         sets.edgeSettings = str2double(answer{6});
         sets.random.generate = str2double(answer{7});
     
+        if sets.edgeSettings == 0
+            sets.skipDoubleTanhAdjustment = 1;
+        end
+        
         % add filter settings if filtering is enabled
         if sets.filterSettings.filter
             % here we add settings
