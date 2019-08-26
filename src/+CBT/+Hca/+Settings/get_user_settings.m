@@ -85,10 +85,10 @@ function [ sets ] = get_user_settings( sets )
 
         if sets.edgeSettings
             % add edge detection choices here
-            prompt = {'Skip double tan adjustment'};
+            prompt = {'Skip double tan (default is 0, use double tan)'};
             title = 'Edge detection settings';
             dims = [1 35];
-            definput = {'1'};
+            definput = {'0'};
             answer = inputdlg(prompt,title,dims,definput);
 
             sets.skipDoubleTanhAdjustment = str2double(answer{1});

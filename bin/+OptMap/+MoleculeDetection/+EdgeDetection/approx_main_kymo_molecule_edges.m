@@ -21,34 +21,9 @@ function [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = ap
     %   Charleston Noble
     %     (original version, algorithm)
     
-
-    otsuApproxSettings = edgeDetectionSettings.otsuApproxSettings;
-    import OptMap.MoleculeDetection.EdgeDetection.basic_otsu_approx_main_kymo_molecule_edges;
-    [moleculeStartEdgeIdxsFirstApprox, moleculeEndEdgeIdxsFirstApprox, mainKymoMoleculeMaskFirstApprox] = basic_otsu_approx_main_kymo_molecule_edges(...
-        kymo, ...
-        otsuApproxSettings.globalThreshTF, ...
-        otsuApproxSettings.smoothingWindowLen, ...
-        otsuApproxSettings.imcloseHalfGapLen, ...
-        otsuApproxSettings.numThresholds, ...
-        otsuApproxSettings.minNumThresholdsFgShouldPass ...
-    );
-
-    
-    if (all(isnan(moleculeStartEdgeIdxsFirstApprox)) || all(isnan(moleculeEndEdgeIdxsFirstApprox)))
-        error('Edge detections missing');
-    elseif (any(isnan(moleculeStartEdgeIdxsFirstApprox)) || any(isnan(moleculeEndEdgeIdxsFirstApprox)))
-        import OptMap.KymoAlignment.nearest_nonnan;
-        moleculeStartEdgeIdxsFirstApprox = floor(nearest_nonnan(moleculeStartEdgeIdxsFirstApprox));
-        moleculeEndEdgeIdxsFirstApprox = ceil(nearest_nonnan(moleculeStartEdgeIdxsFirstApprox));
-        % warning('Missing edge detections filled in');
-    end
-    
-    
-    if edgeDetectionSettings.skipDoubleTanhAdjustment
-        moleculeStartEdgeIdxs = moleculeStartEdgeIdxsFirstApprox;
-        moleculeEndEdgeIdxs = moleculeEndEdgeIdxsFirstApprox;
-        mainKymoMoleculeMask = mainKymoMoleculeMaskFirstApprox;
-    else
+    if ~edgeDetectionSettings.skipDoubleTanhAdjustment
+        moleculeStartEdgeIdxsFirstApprox = ones(size(kymo,1),1);
+        moleculeEndEdgeIdxsFirstApprox = size(kymo,2)*ones(size(kymo,1),1);
         import OptMap.MoleculeDetection.EdgeDetection.DoubleTanh.adjust_kymo_edge_detection;
         tanhSettings = edgeDetectionSettings.tanhSettings;
         [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = adjust_kymo_edge_detection(...
@@ -57,5 +32,23 @@ function [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = ap
             moleculeEndEdgeIdxsFirstApprox, ...
             tanhSettings ...
         );
+
+    else
+        
+        otsuApproxSettings = edgeDetectionSettings.otsuApproxSettings;
+        import OptMap.MoleculeDetection.EdgeDetection.basic_otsu_approx_main_kymo_molecule_edges;
+        [moleculeStartEdgeIdxsFirstApprox, moleculeEndEdgeIdxsFirstApprox, mainKymoMoleculeMaskFirstApprox] = basic_otsu_approx_main_kymo_molecule_edges(...
+            kymo, ...
+            otsuApproxSettings.globalThreshTF, ...
+            otsuApproxSettings.smoothingWindowLen, ...
+            otsuApproxSettings.imcloseHalfGapLen, ...
+            otsuApproxSettings.numThresholds, ...
+            otsuApproxSettings.minNumThresholdsFgShouldPass ...
+        );
     end
+    
+	if (all(isnan(moleculeStartEdgeIdxsFirstApprox)) || all(isnan(moleculeEndEdgeIdxsFirstApprox)))
+        error('Edge detections missing');
+    end
+    
 end
