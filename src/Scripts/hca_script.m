@@ -102,7 +102,11 @@ function [] = hca_script( tifs,settings, theoryfiles )
         barcodeGenC = barcodeGen;
     end     
     
-%     
+%     fname = strcat([sets.theoryFileFold{idx} 'rawBarcode.txt']);
+%     fileID = fopen(fname,'w');
+%     fprintf(fileID,'%2.5f ',barcodeGenC{1}.rawBarcode);
+%     fclose(fileID);
+         
 %     sets.theoryFile=[];
 %     sets.theoryFileFold = [];
 
@@ -129,6 +133,13 @@ function [] = hca_script( tifs,settings, theoryfiles )
     additional_computations(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct,comparisonStructAll,sets );
         
     
+%     
+%     barNr = 1;
+%     theoryNr = 8;
+%     import CBT.Hca.Export.export_exp_vs_theory;
+%     export_exp_vs_theory(comparisonStructAll,theoryStruct,barcodeGenC,sets,barNr,theoryNr);
+
+
 %         
 %         
 %     theoryGen.sets = sets.theoryGen;

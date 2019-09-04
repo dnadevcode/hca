@@ -52,6 +52,11 @@ function [ sets ] = set_fast_sets(adddefaulttheorysets)
     sets.consensus.promptForBarcodeClusterLimit = 1;
     sets.consensus.threshold = 0.75;
 
+    % add comparison with DTW:
+    sets.comparison.useDTW = 1;
+    % add comparison with PCC:
+    sets.comparison.usePCC = 1;
+
     
     % Random cutouts
     sets.random.noOfCutouts = 2; % number of random cutouts from the input set

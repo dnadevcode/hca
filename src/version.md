@@ -6,6 +6,10 @@ v (future)
 - change the way stretching is done, so that the end points are not fixed
 - add dtw similarity tool
 
+v 3.2.8.1
+
+- fix the bug in the modified otsu code
+
 v 3.2.7
 
 - change the edge detection so that either otsu or tan method would be used, but not both

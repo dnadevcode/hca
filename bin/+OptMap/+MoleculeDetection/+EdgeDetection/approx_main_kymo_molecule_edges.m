@@ -37,7 +37,7 @@ function [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = ap
         
         otsuApproxSettings = edgeDetectionSettings.otsuApproxSettings;
         import OptMap.MoleculeDetection.EdgeDetection.basic_otsu_approx_main_kymo_molecule_edges;
-        [moleculeStartEdgeIdxsFirstApprox, moleculeEndEdgeIdxsFirstApprox, mainKymoMoleculeMaskFirstApprox] = basic_otsu_approx_main_kymo_molecule_edges(...
+        [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = basic_otsu_approx_main_kymo_molecule_edges(...
             kymo, ...
             otsuApproxSettings.globalThreshTF, ...
             otsuApproxSettings.smoothingWindowLen, ...
@@ -47,7 +47,7 @@ function [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = ap
         );
     end
     
-	if (all(isnan(moleculeStartEdgeIdxsFirstApprox)) || all(isnan(moleculeEndEdgeIdxsFirstApprox)))
+	if (all(isnan(moleculeStartEdgeIdxs)) || all(isnan(moleculeEndEdgeIdxs)))
         error('Edge detections missing');
     end
     
