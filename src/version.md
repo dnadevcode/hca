@@ -6,6 +6,9 @@ v (future)
 - change the way stretching is done, so that the end points are not fixed
 - add dtw similarity tool
 
+v 3.2.8.2
+-fix bug that wouldn't save large theories
+
 v 3.2.8.1
 
 - fix the bug in the modified otsu code

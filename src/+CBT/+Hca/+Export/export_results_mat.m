@@ -8,7 +8,7 @@ function [matFilepath] = export_results_mat(hcaSessionStruct, resultKey)
         return;
     end
     matFilepath = fullfile(matDirpath, matFilename);
-    save(matFilepath, 'hcaSessionStruct');
+    save(matFilepath, 'hcaSessionStruct','-v7.3');
     
     fprintf('Saved HCA data ''%s'' to ''%s''\n', resultKey, matFilepath);
 end
