@@ -15,8 +15,6 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
     % predefine cell for barcode structure
     barcodeGen = cell(1,numBar);
     
-
-
     disp('Starting generating barcodes...')
     tic
     % this computes barcode structure for nralign or other alignment methods 
@@ -30,7 +28,7 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
         % saved for later, maybe we want to 
         kymoStructs{i}.alignedKymo = filter_kymos(kymoStructs{i}.alignedKymo,sets.filterSettings);
         % generate barcode data
-        [barcodeGen{i}] = gen_barcode_data(kymoStructs{i}.alignedKymo,kymoStructs{i}.leftEdgeIdxs, kymoStructs{i}.rightEdgeIdxs);
+        [barcodeGen{i}] = gen_barcode_data(kymoStructs{i}.alignedKymo,kymoStructs{i}.leftEdgeIdxs, kymoStructs{i}.rightEdgeIdxs,sets.skipEdgeDetection);
         barcodeGen{i}.name =  kymoStructs{i}.name;
     end
 

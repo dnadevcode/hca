@@ -1,4 +1,4 @@
-function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdgeIdxs)
+function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdgeIdxs, simple)
     % gen_barcode_data
     %
     %     Args:
@@ -10,32 +10,46 @@ function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdge
     %         barcodeGenData: Return structure
     % 
 
-    leftEdgeIdx = round(nanmean(leftEdgeIdxs));
-    rightEdgeIdx = round(nanmean(rightEdgeIdxs));
-    
-    if rightEdgeIdx <= leftEdgeIdx
-        disp('ah');
+    if nargin < 4
+        simple = 0;
     end
     
-    % Determine indices for rotated barcode with background cropped out
-    barcodeIdxs = leftEdgeIdx:rightEdgeIdx;
-    rawBarcode = nanmean(alignedKymo, 1);
+    if simple == 1
+        barcodeGenData.rawBarcode = nanmean(alignedKymo,1);
+        barcodeGenData.bgMeanApprox = nan;
+        barcodeGenData.bgStdApprox = nan;
+        barcodeGenData.lE = 1;
+        barcodeGenData.rE = length(barcodeGenData.rawBarcode);
+        barcodeGenData.rawBg = nan;
+    else
     
-    % define background indices
-    bgIndices = true(1, size(alignedKymo, 2));
-    bgIndices(barcodeIdxs) = 0;
+        leftEdgeIdx = round(nanmean(leftEdgeIdxs));
+        rightEdgeIdx = round(nanmean(rightEdgeIdxs));
 
-    nonBarcodeVals = alignedKymo(:, bgIndices);
-    nonBarcodeVals = nonBarcodeVals(:);
-    nonBarcodeDistFit = fitdist(nonBarcodeVals, 'Normal');
-    barcodeGenData.bgMeanApprox =  nonBarcodeDistFit.mu;
-    barcodeGenData.bgStdApprox = nonBarcodeDistFit.sigma;
-    
-    rawBg = nanmean(rawBarcode(bgIndices));
-  
-    barcodeGenData.rawBarcode = rawBarcode(barcodeIdxs);
+        if rightEdgeIdx <= leftEdgeIdx
+            disp('ah');
+        end
 
-    barcodeGenData.lE = leftEdgeIdx;
-    barcodeGenData.rE = rightEdgeIdx;
-    barcodeGenData.rawBg = rawBg;
+        % Determine indices for rotated barcode with background cropped out
+        barcodeIdxs = leftEdgeIdx:rightEdgeIdx;
+        rawBarcode = nanmean(alignedKymo, 1);
+
+        % define background indices
+        bgIndices = true(1, size(alignedKymo, 2));
+        bgIndices(barcodeIdxs) = 0;
+
+        nonBarcodeVals = alignedKymo(:, bgIndices);
+        nonBarcodeVals = nonBarcodeVals(:);
+        nonBarcodeDistFit = fitdist(nonBarcodeVals, 'Normal');
+        barcodeGenData.bgMeanApprox =  nonBarcodeDistFit.mu;
+        barcodeGenData.bgStdApprox = nonBarcodeDistFit.sigma;
+
+        rawBg = nanmean(rawBarcode(bgIndices));
+
+        barcodeGenData.rawBarcode = rawBarcode(barcodeIdxs);
+
+        barcodeGenData.lE = leftEdgeIdx;
+        barcodeGenData.rE = rightEdgeIdx;
+        barcodeGenData.rawBg = rawBg;
+    end
 end
