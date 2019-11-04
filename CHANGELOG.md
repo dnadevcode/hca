@@ -1,4 +1,8 @@
-# 3.8.3
+# 3.2.8.4
+
+- add a check whether there is any points in the background, if none, we just print nan's as the background values
+
+# 3.2.8.3
 
 - add an option to skip edge detection (for runs where barcode is saved as kymograph/txt file)
 

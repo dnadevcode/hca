@@ -5,6 +5,10 @@ v (future)
 - add additional tab to change/view settings
 - change the way stretching is done, so that the end points are not fixed
 - add dtw similarity tool
+i
+
+v 3.2.8.4
+- fix so that barcode generation works when edges only at the borders detected
 
 v 3.2.8.3
 - add option to skip edge detection altogether

@@ -38,7 +38,7 @@ function [ sets ] = set_fast_sets(adddefaulttheorysets)
     
     % edge detection  settings
     sets.skipEdgeDetection = 0; % skip edge detection
-    sets.skipDoubleTanhAdjustment = 0;
+    sets.skipDoubleTanhAdjustment = 1;
     import OptMap.MoleculeDetection.EdgeDetection.get_default_edge_detection_settings;
     sets.edgeDetectionSettings = get_default_edge_detection_settings(sets.skipDoubleTanhAdjustment);
     

@@ -29,7 +29,7 @@ function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdge
         if rightEdgeIdx <= leftEdgeIdx
             disp('ah');
         end
-
+        
         % Determine indices for rotated barcode with background cropped out
         barcodeIdxs = leftEdgeIdx:rightEdgeIdx;
         rawBarcode = nanmean(alignedKymo, 1);
@@ -40,9 +40,16 @@ function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdge
 
         nonBarcodeVals = alignedKymo(:, bgIndices);
         nonBarcodeVals = nonBarcodeVals(:);
-        nonBarcodeDistFit = fitdist(nonBarcodeVals, 'Normal');
-        barcodeGenData.bgMeanApprox =  nonBarcodeDistFit.mu;
-        barcodeGenData.bgStdApprox = nonBarcodeDistFit.sigma;
+        
+        if isempty(nonBarcodeVals)
+            barcodeGenData.bgMeanApprox =  nan;
+            barcodeGenData.bgStdApprox = nan;
+        else
+            nonBarcodeDistFit = fitdist(nonBarcodeVals, 'Normal');
+            barcodeGenData.bgMeanApprox =  nonBarcodeDistFit.mu;
+            barcodeGenData.bgStdApprox = nonBarcodeDistFit.sigma;
+        end
+
 
         rawBg = nanmean(rawBarcode(bgIndices));
 
