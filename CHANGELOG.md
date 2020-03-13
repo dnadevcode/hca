@@ -1,3 +1,52 @@
+# Future (4.1):
+implement small things from Wishlist for HCA 4.0 into HCA 4.1, in particular:
+- make a script for p-value generation visible, i.e. optional step after computing CC values, assuming that 
+p-value database matrix is pre-calculated (otherwise it would take too much time and wouldn't make sense)
+- extra functions for additional HCA plots (or ressurect old scripts written for this)
+Also todo:
+- include UCR_DTW method as optional similarity search method, as well as MP/MPdist (Matrix profile). Note though that 
+these two methods are slower (matrix profile runs in O(n^2) as opposed to current method which is O(nlogn), but provides much 
+more informative output.
+- include possibility to run some sort of SV detection of experiment on the theory (most likely using MP)
+- both HCA_GUI and HCA_theory in principle can be run without any gui's now, and all the necessary settings and files can be provided via
+'hca_settings.txt', and 'theory_settings.txt'. Need to add clear instructions in the README on how to do this.
+- further investigate how parallelization can be employed in the better way. I.e. MASS_PCC is ridiculously easy to parallelize, so one 
+option for linear theories would be to concatenate all the theories into one, and then run a single MASS_PCC routine (the indices in each 
+subrange of pixels can be identified easily since we know indices of each theory).
+- remove some files that are no longer used, i.e. old way to compute theory, unnecessary GUI's, 
+- reduce the dependencies, i.e. bin file, because now i.e. the whole +CBT/+Consensus folder is copied over.
+- locate some missing files, i.e. gen_dtw_mean for an additional method of kymo alignment, which is currently in a different project, 
+/ clustering/src/gen_dtw_mean.m. (why?)
+
+also (copied over from version file)
+- will not be merged into gitlab.
+- dendogram for consensus
+- add additional tab to change/view settings
+- change the way stretching is done, so that the end points are not fixed
+- add dtw similarity tool
+- change that the fft would be computed for smaller series and then stiched together
+to avoid memory issues.
+- check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
+- also add consensus for different kind of maps?
+
+# 4.0.0
+* Theory generation update
+- Change the theory generation function so that it would be more memory efficient. 
+- Save theories also as txt files - in the future can keep these and mat file with settings.
+- Move the random number generator outside the subfragments generation, so that we wouldn't have
+repetitive structures. So theories with NNNNN's will look slightly different
+- Added extra parameters for theory generation (i.e. overlap length, how many fragments to cut the theory into)
+which were previously hardcoded but now can be changed through the settings file
+- Removed output GUI, so all the necessary outputs are saved to user provided location on disk
+* Comparison of theory to experiments
+- Included a more memory-efficient code, MASS_PCC, as additional possibility to speed up calculations (especially against long theories)
+This can be enabled using 
+comparisonMethod = 'mass_pcc' in the files/hca_settings.txt; % method for comparison of exp vs theory
+
+- re-enabled parpool over the theories (so should ideally give speed up equal to number of processors (of course in reality less 
+because of overhead etc)
+- 
+
 # 3.2.8.4
 
 - add a check whether there is any points in the background, if none, we just print nan's as the background values

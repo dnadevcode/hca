@@ -17,21 +17,18 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
     % TODO: return warnings to the places where it is important to know
     % what is being done and to check for consistency
     
+    % timestamp for the results
+    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+
     if nargin < 1 % if settings were not provided
-        import CBT.Hca.Settings.set_fast_sets;
-        sets = set_fast_sets();
-        
-%         sets.kymosets.askforkymos = 1; % sould we ask for kymos
-%         sets.kymosets.askforsets = 0;
-%         sets.consensus.promptForBarcodeClusterLimit = 0;
-%         sets.theory.askfortheory = 1;
-%         sets.genConsensus = 1;
+        % import settings
+        import CBT.Hca.Import.import_hca_settings;
+        [sets] = import_hca_settings('hca_settings.txt');
     end
     
     if nargin < 2 
-
-        import CBT.Hca.Settings.get_user_settings;
         % load all user selected settings
+        import CBT.Hca.Settings.get_user_settings;
         sets = get_user_settings(sets);
         
         % add kymographs
@@ -75,6 +72,8 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
         end
 
     
+        %% now user theories. They could already be in txt files (if generated 
+        % (with HCA 4.0.0), but we should keep support for older theory files too 
         sets.theoryFile=[];
         sets.theoryFileFold = [];
 

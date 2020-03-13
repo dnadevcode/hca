@@ -44,9 +44,10 @@ function [ theoryStruct ] = load_theory( sets )
         end
             
         for i=1:length(bars)
-            fname = strcat([sets.theoryFileFold{idx} num2str(jj)  '.txt']);
+            fname = fullfile(sets.theoryFileFold{idx}, strcat(num2str(jj),'.txt'));
             fileID = fopen(fname,'w');
-            fprintf(fileID,'%2.5f ',bars{i});
+            % choose the precision from settings
+            fprintf(fileID,strcat(['%2.' num2str(sets.theory.precision) 'f ']),bars{i});
             fclose(fileID);
             theoryStruct{jj}.filename = fname;
             theoryStruct{jj}.name = names{i};

@@ -11,6 +11,6 @@ function [cache] = create_import_tab(hMenuParent, tsHCC, tabTitle,cache )
 
     % import kymographs
     import Fancy.UI.Templates.launch_import_ui;
-    [lm,cache] = launch_import_ui(hMenuParent,hPanelKymoImport,tsHCC,tabTitle,cache);
+    [lm,cache] = launch_import_ui(hTabKymoImport,hPanelKymoImport,tsHCC,tabTitle,cache);
 end
 

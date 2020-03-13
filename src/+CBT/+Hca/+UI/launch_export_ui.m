@@ -1,24 +1,38 @@
-function [cache] = launch_export_ui(ts, cache)
-% LAUNCH_EXPORT_UI
-    %   adds a tab with list management UI/functionality for
-    %   exportable data
-    %  ts
-    %   tabbed screen handle
-    %  exportDisplayNames
-    %   cell array of display names for values
-    %  exportValues
-    %   cell array of values
+function [cache] = launch_export_ui(ts, cache,tabTitle,tabsubTitle,method)
+%   launch_export_ui
+%   adds a tab with list management UI/functionality for
+%   exportable data
+%
+%   Args:
+%             ts
+%             tabbed screen handle
+%             exportDisplayNames
+%             cell array of display names for values
+%             exportValues
+%             cell array of values
+%   Returns:
+%           cache
+
     
      if nargin < 2
         cache = containers.Map();
      end
     
+     if nargin < 3
+        tabTitle = 'Export hca comparison results';
+     end
+     
+     if nargin < 4
+         tabsubTitle = 'Export Selected HCA results';
 
+     end
 
-    tabTitle = 'Export hca comparison results';
+     if nargin < 5
+         method = '';
+     end
+     
     [hTab] = ts.create_tab(tabTitle);
     hTabPanel = uipanel(hTab, 'Position', [0, 0, 1, 1]);
-    %ts.select_tab(hTab);
 
     import Fancy.UI.FancyList.FancyListMgrBtnSet;
     flmbs = FancyListMgrBtnSet();
@@ -33,7 +47,7 @@ function [cache] = launch_export_ui(ts, cache)
     function [btnExportClusterMat] = make_export_cluster_mat_btn()
         import Fancy.UI.FancyList.FancyListMgrBtn;
         btnExportClusterMat = FancyListMgrBtn(...
-            'Export Selected HCA results', ...
+            tabsubTitle, ...
             @(~, ~, lm) on_export_selected_cluster_mat(lm));
         function [] = on_export_selected_cluster_mat(lm)
             import CBT.Hca.Export.export_results_mat;
@@ -62,27 +76,25 @@ function [cache] = launch_export_ui(ts, cache)
             
             for selectedItemNum=1:numSelectedItems
                 clusterKey = selectedItemNames{selectedItemNum};
-                if isequal(selectedItemValues{selectedItemNum},3)
-                    exportData = hcaSessionStruct.theoryGen;
-                else
-                    if isequal(selectedItemValues{selectedItemNum},2)
+                selectedValue = selectedItemValues{selectedItemNum};
+                switch selectedValue
+                    case 3
+                        exportData = hcaSessionStruct.theoryGen;
+                    case 2
                         exportData = hcaSessionStructLight;
-                    else
-
-                        if isequal(selectedItemValues{selectedItemNum},4)
-                            import CBT.Hca.Export.export_sets_txt;
-                        	export_sets_txt(sets, clusterKey);
-                            break;
-                        end
-                        hcaSessionStruct.sets = sets;
+                    case 1
                         exportData = hcaSessionStruct;
-                    end
+                    case 4
+                        hcaSessionStruct.sets = sets;
+                        import CBT.Hca.Export.export_sets_txt;
+                        export_sets_txt(sets, clusterKey);
+                    othewise
+                        error('nothing selected');                      
                 end
                  
                 export_results_mat(exportData, clusterKey);
-
             end
-        end            
+        end
     end
 
     import Fancy.UI.FancyList.FancyListMgr;
@@ -90,7 +102,12 @@ function [cache] = launch_export_ui(ts, cache)
     lm.set_ui_parent(hTabPanel);
     lm.make_ui_items_listbox();
 
+    switch method
+        case 'theory'
+            lm.add_list_items({'theoryGen'}, {3});
+        otherwise
+            lm.add_list_items({'hcaSessionStruct','hcaSessionStructLight','theoryGen','sets'}, {1,2,3,4});
+    end
     
-    lm.add_list_items({'hcaSessionStruct','hcaSessionStructLight','theoryGen','sets'}, {1,2,3,4});
     lm.add_button_sets(flmbs,flmbs2);
 end

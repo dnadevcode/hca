@@ -19,6 +19,7 @@ function [thyCurve_pxRes] = convert_bpRes_to_pxRes(thyCurve_bpRes, meanBpExt_pix
                   thyCurve_bpRes, ...
                   thyCurve_bpRes(1:round(2*s)));
     for i = 1:round(length(thyCurve_bpRes)/s)
+%         data2= xtraseq(floor((i*s)-s+1):floor((i*s)+s));
         thyCurve_pxRes(i) = mean(xtraseq(floor((i*s)-s+1):floor((i*s)+s)));
     end
 % 

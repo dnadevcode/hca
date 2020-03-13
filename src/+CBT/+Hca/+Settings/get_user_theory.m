@@ -10,8 +10,21 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
     %     Returns:
     %         theoryStruct: Return structure
 
-    
-    
+     if ~sets.theory.askfortheory
+          try 
+            fid = fopen(sets.theories); 
+            fastaNames = textscan(fid,'%s','delimiter','\n'); fclose(fid);
+            for i=1:length(fastaNames)
+                [FILEPATH,NAME,EXT] = fileparts(fastaNames{1}{i});
+
+                sets.theoryFile{i} = strcat(NAME,EXT);
+                sets.theoryFileFold{i} = FILEPATH;
+            end
+        catch
+            sets.theory.askfortheory = 1;
+          end
+          
+     end
     if sets.theory.askfortheory
         % loads figure window
         import Fancy.UI.Templates.create_figure_window;
@@ -50,7 +63,7 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
 
     tic
     import CBT.Hca.Core.Analysis.convert_nm_ratio;
-    theoryStruct = convert_nm_ratio(sets.theory.nmbp, theoryStruct );
+    theoryStruct = convert_nm_ratio(sets.theory.nmbp, theoryStruct,sets );
     toc
     
 	datetime=datestr(now);

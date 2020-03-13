@@ -1,4 +1,4 @@
-function [ probBinding] = cb_theory(ntSeq, NETROPSINconc,YOYO1conc,yoyo1BindingConstant,values, untrustedRegion,isnetrop)
+function [ probBinding] = cb_theory(ntIntSeq, NETROPSINconc,YOYO1conc,yoyo1BindingConstant,values, untrustedRegion,isnetrop)
     % cb_theory
     % Computing cb theory
     %     Args:
@@ -23,18 +23,10 @@ function [ probBinding] = cb_theory(ntSeq, NETROPSINconc,YOYO1conc,yoyo1BindingC
     %     S = 8.0;
     %     netropsinBindingConstant = [S^4 W*S^3 (S^2)*(W^2) S*W^3 W^4];
     % end;
-
-
-
-    % convert leters to digits
-    ntIntSeq = nt2int(ntSeq, 'ACGTOnly',1);
     
-    % use reproducible random numbers
-    s = rng;
-    rng(0,'twister');
-    ntIntSeq(ntIntSeq == 0) = randi(4,1,sum(ntIntSeq == 0));
-    rng(s);
+        
 
+    % so this depends on ovrelap length.
     if untrustedRegion > 0
         ntIntSeq = [ntIntSeq(end-untrustedRegion+1:end) ntIntSeq ntIntSeq(1:untrustedRegion)];
     end

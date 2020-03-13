@@ -5,11 +5,14 @@ function [ theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq] = compute_hca_t
     % :param sets: settings file
     % :param overlapLength: overlap length, which should be quite long
     % :returns: theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq
+    % 
+    % TODO: to be removed if compute_theory_barcode produces the same
+    % results for fixed overlap/etc parameters given here
     
     import CBT.Hca.Core.Theory.cb_theory;
 
     if nargin < 3
-        overlapLength = 3000;
+        overlapLength = 10000;
     end
     
     % find bp positions where the letters are undefined or unknown, these
@@ -24,6 +27,11 @@ function [ theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq] = compute_hca_t
         seq = [repmat('A',1,10000) seq repmat('A',1,10000)];
     end
     
+    % The only difference between 3.8.4 and 4.0:
+    % convert to int to keep the same structure as HCA 4.0
+    seq = nt2int(seq, 'ACGTOnly',1);
+
+    seq(seq==0) = 15;
     % change the bp with unknown letters into random letters (for better
     % barcodes close to unknown positions
     %seq(positions) = randseq(length(positions)); % change the unknowns into random
@@ -57,19 +65,16 @@ function [ theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq] = compute_hca_t
     numSeqs = length(seqSet);
     theoryProb_bpRes = cell(numSeqs, 1);
 
-    disp('started generating theory barcode.. 0%')
-
-    tic
-    parfor seqNum = 1:numSeqs
+ 
+    for seqNum = 1:numSeqs
         ntSeq = seqSet{seqNum};
         % compute YOYO-1 binding probabilities
-        probsBinding = cb_theory(ntSeq, cN,  cY,yoyo1BindingConstant,values, untrustedRegion);
+        probsBinding = cb_theory(ntSeq, cN,  cY,yoyo1BindingConstant, values, untrustedRegion);
 
         % YOYO-1 binding probabilities
         theoryProb_bpRes{seqNum} = probsBinding;
     end
-    disp('done generating theory barcode... 100%')
-    toc
+
     clear seqSet
  
     psfSigmaWidth_bps = sets.theoryGen.psfSigmaWidth_nm / sets.theoryGen.meanBpExt_nm;
@@ -111,4 +116,3 @@ function [ theoryCurveUnscaled_pxRes, bitmask, probSeq,theorSeq] = compute_hca_t
     % letters
     bitmask = undefinedBasepairs(round(1:1/meanBpExt_pixels:length(undefinedBasepairs)));
 end
-

@@ -12,18 +12,44 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
     % create the rezult structure
     comparisonStructure = cell(1, length(barcodeGen));
     %ccM = cell(length(rawBarcodes),1);
+    
+    switch sets.comparisonMethod
+        case 'unmasked_pcc_corr'
+            import SignalRegistration.unmasked_pcc_corr;
+            comparisonFun = @(x,y,z) unmasked_pcc_corr(x,y,z);
+        case 'mass_pcc'
+            % choose k just higher than the length of small sequence for
+            % best precision. (larger k though could increase speed)
+            comparisonFun = @(x,y,z) unmasked_MASS_PCC(y,x,z,2^(4+nextpow2(length(x))));
+        case 'ucr'
+            import SignalRegistration.ucr_dtw_score;
+%             comparisonFun = @(x,y,z) ucr_dtw_score(theoryStruct.filename, barC, barB, sets);
+
+%             comparisonStructure{idx}.ucr = ucr_dtw_score(theoryStruct.filename, barC, barB, sets);
+        otherwise
+            error('undefined method');
+    end
+            
 
     % stretch factors
     stretchFactors = sets.theory.stretchFactors;
-
+    try % some versions of sets might not have this number, therefore we add a test here
+        minLength = sets.comparison.minLength;
+    catch
+        minLength = 20;
+    end
+    
+    % load theory barcode txt file. For UCR DTW (c++ code), we only need the name of the
+    % file so this can be skipped.
     fileID = fopen(theoryStruct.filename,'r');
     formatSpec = '%f';
     theorBar = transpose(fscanf(fileID,formatSpec));
     fclose(fileID);
-    theorBit = ones(1,length(theorBar));
+%     theorBit = ones(1,length(theorBar));
 
    	import CBT.Hca.Core.filter_barcode; % in case we need to filter barcode
-	import SignalRegistration.unmasked_pcc_corr;
+% 	import SignalRegistration.unmasked_pcc_corr;
+
 	%import SignalRegistration.masked_pcc_corr;
     import CBT.Hca.UI.Helper.get_best_parameters;
     
@@ -50,6 +76,9 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
 
         % run the loop for the stretch factors
         for j=1:length(stretchFactors)
+            % TODO: choose interpolation method. I.e. could use the ideal
+            % sinc interpolation for possibly better results
+            
             % here interpolate both barcode and bitmask 
             barC = interp1(barTested, linspace(1,lenBarTested,lenBarTested*stretchFactors(j)));
             barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
@@ -65,12 +94,12 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
                 xcorrMax(j) = nan;
                 %xcorrs = masked_pcc_corr(theorBar, barC, theorBit,barB);
             else
-                if sum(barB) <= 20 % move this to settings
+                if sum(barB) <= minLength % move this to settings
                     disp(strcat(['Warning, after bitmasking, the experiment '  barcodeGen{idx}.name ' with stretching ' num2str(stretchFactors(j)) ' is shorter than 20 pixels']))
                     xcorrMax(j) = nan;    
                 else
                     % faster function, only when barC has bitmask only on left and right
-                    xcorrs = unmasked_pcc_corr(barC, theorBar, barB);
+                    xcorrs = comparisonFun(barC, theorBar, barB);
                     [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or] = get_best_parameters(xcorrs, 3 );
                     % now find the maximum score for this stretching parameter
                     xcorrMax(j) = rezMax{j}.maxcoef(1);
@@ -78,8 +107,11 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
             end             
         end       
         
+                                  
         % find which stretching parameter had the best score
         [value,b] = max(xcorrMax);
+        
+      
         
         % select the results for this best stretching parameter and output
         % them. If there were no values computed for this barcode, we don't
@@ -95,6 +127,14 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
              comparisonStructure{idx}.pos(1:3) = nan;
              comparisonStructure{idx}.or(1:3) = nan;
         end
+        
+          % can also add ucr score here for convenience
+%         if sets.comparison.useDTW
+%             % check that the positions are returned correctly, and how can
+%             % this be implemented as an alternative to pcc, and how
+%             % Sakoe-Chiba band corresponds to stretching
+%             comparisonStructure{idx}.ucr = ucr_dtw_score(theoryStruct.filename, barC, barB, sets); 
+%         end
     end 
 
 end

@@ -1,5 +1,22 @@
 function [ sets ] = get_user_theory_sets( sets )
     
+
+    if ~sets.promptfortheory    
+        try 
+            fid = fopen(sets.fastas); 
+            fastaNames = textscan(fid,'%s','delimiter','\n'); fclose(fid);
+            for i=1:length(fastaNames)
+                [FILEPATH,NAME,EXT] = fileparts(fastaNames{1}{i});
+
+                sets.theoryNames{i} = strcat(NAME,EXT);
+                sets.theoryFold{i} = FILEPATH;
+            end
+        catch
+            sets.promptfortheory  = 1;
+        %         error('No valid fasta provided, please check the provided file');
+        end
+    end
+    
     if sets.promptfortheory    
         % loads figure window
         import Fancy.UI.Templates.create_figure_window;
@@ -12,8 +29,13 @@ function [ sets ] = get_user_theory_sets( sets )
         dd = cache('selectedItems');
         sets.theoryNames = dd(1:end/2);
         sets.theoryFold = dd((end/2+1):end);
+        delete(hMenuParent);
+
     end
     
+    if sets.promptforsavetheory
+       sets.resultsDir =  uigetdir(pwd,'Pick a directory where to save the theory results');
+    end
 
 end
 

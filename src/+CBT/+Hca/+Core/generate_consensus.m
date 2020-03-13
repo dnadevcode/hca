@@ -8,6 +8,12 @@ function [ consensusStruct ] = generate_consensus( barcodes, bitmasks, bgMeanApp
     % output: consensusStruct
 
     % code by Albertas Dvirnas, edited 09/11/18
+    
+    for k=1:length(bgMeanApprox)
+        if isnan(bgMeanApprox{k})
+            bgMeanApprox{k} = 0;
+        end
+    end
 
     % number of barcodes
     numBarcodes = length(barcodes);

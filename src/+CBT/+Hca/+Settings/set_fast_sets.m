@@ -25,7 +25,7 @@ function [ sets ] = set_fast_sets(adddefaulttheorysets)
     % all the different setting choices
     sets.kymosets.askforsets = 1; % should we ask for settings
 	sets.timeFramesNr = 0; % 0 - take all timeframes
-    sets.alignMethod = 1; % 1 - nralign, 2 - ssdalign
+    sets.alignMethod = 1; % 1 - nralign, 2 - ssdalign, 3 - ssg
    	sets.filterSettings.filter = 0; % filter
     sets.genConsensus = 0; % generate consensus
     sets.random.generate = 0; % generate random
@@ -70,7 +70,7 @@ function [ sets ] = set_fast_sets(adddefaulttheorysets)
     sets.theoryFileFold{1} = '';
     sets.theoryFile{1} = '';
     sets.theory.askfornmbp = 1;
-    sets.theory.nmbp = 0.238;
+    sets.theory.nmbp = 0.225;
 	%sets.theory.skipStretch = 1; %0 - do not stretch,  1 - stretch
 	sets.theory.stretchFactors = [0.95 0.96 0.9700    0.9800    0.9900    1.0000    1.0100    1.0200    1.0300 1.04 1.05];
 %         % 

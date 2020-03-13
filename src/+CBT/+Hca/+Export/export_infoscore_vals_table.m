@@ -40,8 +40,12 @@ function [T] = export_infoscore_vals_table( barcodeGenC,matDirpath )
     for i=1:length(barcodeGenC)
         der =diff(barcodeGenC{i}.rawBarcode(logical(barcodeGenC{i}.rawBitmask)));
         stder = std(der);
-        [PKS,~] = findpeaks(der, 'MinPeakHeight',3*stder);
-        is5(i) = length(PKS);
+        try 
+            [PKS,~] = findpeaks(der, 'MinPeakHeight',3*stder);
+            is5(i) = length(PKS);
+        catch
+            is5(i) = nan;
+        end
     end
     
 	TS5 =  table(is5' ,'VariableNames',{'NOALJ'});

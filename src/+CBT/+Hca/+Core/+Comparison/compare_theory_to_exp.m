@@ -21,7 +21,7 @@ function [comparisonStruct] = compare_theory_to_exp(barcodeGen,theoryStruct, set
             
     comparisonStruct = cell(1,length(theoryStruct));
     % unfiltered comparison
-    for barNr = 1:length(theoryStruct)
+    parfor barNr = 1:length(theoryStruct)
         disp(strcat(['comparing to theory barcode ' num2str(barNr) '_' theoryStruct{barNr}.filename] ));
 
         import CBT.Hca.Core.Comparison.on_compare_theory_to_exp;

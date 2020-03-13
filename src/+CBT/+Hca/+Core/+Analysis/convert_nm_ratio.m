@@ -1,4 +1,4 @@
-function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct )
+function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
     % this function converts one nm/bp ratio (standard is 0.3) to another
     % (for example 0.2).
     
@@ -50,7 +50,7 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct )
         seq = ifft(fft(seq).*multF); 
         %fname = strcat(['fold/theory_' barcodeData.hcaSessionStruct.theoryNames{i} '.txt']);
         fileID = fopen(theoryStruct{i}.filename,'w');
-        fprintf(fileID,'%2.5f ', seq);
+        fprintf(fileID,strcat(['%2.' num2str(sets.theory.precision) 'f ']), seq);
         fclose(fileID);
         theoryStruct{i}.meanBpExt_nm = newNmBp;
         theoryStruct{i}.length = length(seq);

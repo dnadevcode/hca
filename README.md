@@ -15,5 +15,9 @@ Separate project folder for the HCA (Human Chromosome Analysis) and Bacterial ch
 matlab
 addpath(genpath(pwd));
 
+# GUI'S:
 Hca_theory - theory
 Hca_gui - experiments
+
+# /src/Scripts/ has a number of test scripts
+

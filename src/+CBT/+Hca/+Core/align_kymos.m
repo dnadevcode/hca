@@ -27,14 +27,31 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
             [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, sets.edgeDetectionSettings);
         end   
     else
+        if sets.alignMethod==3
+            for i=1:length(kymoStructs)
+                import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
+                [ leftEdgeIdxs,rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(double(kymoStructs{i}.unalignedKymo), sets.edgeDetectionSettings);
+     
+                [~, kymoStructs{i}.alignedKymo] =  gen_dtw_mean(double(kymoStructs{i}.unalignedKymo),leftEdgeIdxs,rightEdgeIdxs)';
+                kymoStructs{i}.leftEdgeIdxs = 1;
+                kymoStructs{i}.rightEdgeIdxs = length(kymoStructs{i}.alignedKymo);
+                % nralign doesn't compute the left and right edge idx, so we
+                % compute them here
+%                 import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
+%                 [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, sets.edgeDetectionSettings);
+     
+            
+            end
+        else
 
-        for i=1:length(kymoStructs)
-            kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
-            % nralign doesn't compute the left and right edge idx, so we
-            % compute them here
-            import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
-            [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, sets.edgeDetectionSettings);
-        end       
+            for i=1:length(kymoStructs)
+                kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
+                % nralign doesn't compute the left and right edge idx, so we
+                % compute them here
+                import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
+                [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, sets.edgeDetectionSettings);
+            end   
+        end
     end
 
     timePassed = toc;

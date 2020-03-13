@@ -294,5 +294,7 @@ function [ model ] = cb_model()
     end
 	model.netropsinBindingConstant = 0.4*bindingConstantsMat./1E6;
 	model.yoyoBindingConstant = 26;
+%     model.netropsinBindingConstant = bindingConstantsMat;
+% 	model.yoyoBindingConstant = 1e+8;
 end
 

@@ -17,9 +17,9 @@ function [ sets ] = compute_free_conc( sets )
 
         tic
         disp('Computing free concentrations');
-        
-        rs = lambdaSequence.Sequence;
-        probsBinding = @(x) cb_theory(rs, x(2),x(1),sets.model.yoyoBindingConstant,sets.model.netropsinBindingConstant, 1000, 2);
+        ntIntSeq = nt2int( lambdaSequence.Sequence, 'ACGTOnly',1);
+
+        probsBinding = @(x) cb_theory(ntIntSeq, x(2),x(1),sets.model.yoyoBindingConstant,sets.model.netropsinBindingConstant, 1000, 2);
 
         x0 = [sets.theoryGen.concY sets.theoryGen.concN];
 

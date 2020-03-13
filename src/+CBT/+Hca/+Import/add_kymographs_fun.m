@@ -11,14 +11,18 @@ function [kymoStructs] = add_kymographs_fun(sets)
     %   Example: 
     %       sets.kymoFold has to be a folder with kymograph .tif files
 
-    % this is only applied for the non-gui version at the moment
-    if sets.kymosets.readfirstfolder == 1
-        listing = dir(sets.kymosets.kymofilefold{1});
-        for i=3:length(listing)
-            sets.kymosets.kymofilefold{i-2} = sets.kymosets.kymofilefold{1};
-            sets.kymosets.filenames{i-2} = listing(i).name;
-        end
-    end
+%     
+%     if nargin< 2
+%         matKymopathShort ='kymos.txt';
+%     end
+%     
+    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+
+    matKymopathShort = fullfile(sets.output.matDirpath, strcat(['kymos_' sprintf('%s_%s', timestamp) '.txt']));
+    fd = fopen(matKymopathShort,'w');    fclose(fd);
+        
+        
+
     
     % predefine structure
     kymoStructs = cell(1,length(sets.kymosets.filenames));
@@ -29,7 +33,10 @@ function [kymoStructs] = add_kymographs_fun(sets)
         % TODO: preferably extract position in the original movie as well
         % from the name
         % save unaligned kymograph
-        kymoStructs{i}.unalignedKymo = imread(strcat([sets.kymosets.kymofilefold{i} kymoStructs{i}.name ]));
+        kymoStructs{i}.unalignedKymo = imread(fullfile(sets.kymosets.kymofilefold{i},kymoStructs{i}.name));
+        
+        fd = fopen(matKymopathShort,'a'); fprintf(fd, '%s \n',fullfile(sets.kymosets.kymofilefold{i},kymoStructs{i}.name)); fclose(fd);
+
     end
 end
 

@@ -10,7 +10,23 @@ function [ sets ] = get_user_settings( sets )
     %     Returns:
     %         sets: Return structure
 
-    if sets.kymosets.askforkymos    
+    if ~sets.kymosets.askforkymos 
+        try 
+            fid = fopen(sets.kymosets.kymoFile); 
+            fastaNames = textscan(fid,'%s','delimiter','\n'); fclose(fid);
+            for i=1:length(fastaNames)
+                [FILEPATH,NAME,EXT] = fileparts(fastaNames{1}{i});
+
+                sets.kymosets.filenames{i} = strcat(NAME,EXT);
+                sets.kymosets.kymofilefold{i} = FILEPATH;
+            end
+        catch
+            sets.kymosets.askforkymos   = 1;
+        end
+%         sets.kymosets.kymoFile = 'kymos_2020-03-13_14_06_31_.txt';
+    end
+    
+    if sets.kymosets.askforkymos 
         % loads figure window
         import Fancy.UI.Templates.create_figure_window;
         [hMenuParent, tsHCA] = create_figure_window('CB HCA tool','HCA');
@@ -22,6 +38,7 @@ function [ sets ] = get_user_settings( sets )
         dd = cache('selectedItems');
         sets.kymosets.filenames = dd(1:end/2);
         sets.kymosets.kymofilefold = dd((end/2+1):end);
+        delete(hMenuParent);
     end
     
     % add kymograph settings
@@ -88,16 +105,33 @@ function [ sets ] = get_user_settings( sets )
             % number of untrusted pixels
             sets.bitmasking.untrustedPx = sets.bitmasking.deltaCut*sets.bitmasking.psfSigmaWidth_nm/sets.bitmasking.prestretchPixelWidth_nm;
         end
-
+    
+        % edge settings. Add a new possibility, of just fitting the sigmoid
+        % with new method introduced at v0.4
         if sets.edgeSettings
-            % add edge detection choices here
-            prompt = {'Skip double tan (default is 0, use double tan)'};
-            title = 'Edge detection settings';
-            dims = [1 35];
-            definput = {'0'};
-            answer = inputdlg(prompt,title,dims,definput);
+            answer = questdlg('Which edge detection method you want to choose', ...
+            'Edge detection settings', ...
+            'Otsu','Double tanh','Error function','Otsu');
+            % Handle response
+            switch answer
+                case 'Otsu'
+                    sets.edgeDetectionSettings.method = 'Otsu';
+                case 'Double tanh'
+                    sets.edgeDetectionSettings.method = 'Double tanh';
+                case 'Error function'
+                    sets.edgeDetectionSettings.method = 'Error Function';
+            end
 
-            sets.skipDoubleTanhAdjustment = str2double(answer{1});
+            
+            
+%             % add edge detection choices here
+%             prompt = {'Skip double tan (default is 0, use double tan)'};
+%             title = 'Edge detection settings';
+%             dims = [1 35];
+%             definput = {'0'};
+%             answer = inputdlg(prompt,title,dims,definput);
+
+%             sets.skipDoubleTanhAdjustment = str2double(answer{1});
 
             % would like to adjust these based on the experimental conditions!
             import OptMap.MoleculeDetection.EdgeDetection.get_default_edge_detection_settings;

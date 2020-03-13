@@ -69,7 +69,8 @@ function [lm,cache] = launch_movie_import_ui(hMenuParent, hPanelKymoImport, tsHC
         function [] = on_extract_movies_from_list(lm)
             [selectedItems, ~] = get_selected_list_items(lm);
             cache('selectedItems') = selectedItems;
-            close(hMenuParent);
+            delete(hMenuParent);
+            uiresume(gcf); 
         end
     end
     
