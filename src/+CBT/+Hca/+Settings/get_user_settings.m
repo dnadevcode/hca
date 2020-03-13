@@ -14,7 +14,7 @@ function [ sets ] = get_user_settings( sets )
         try 
             fid = fopen(sets.kymosets.kymoFile); 
             fastaNames = textscan(fid,'%s','delimiter','\n'); fclose(fid);
-            for i=1:length(fastaNames)
+            for i=1:length(fastaNames{1})
                 [FILEPATH,NAME,EXT] = fileparts(fastaNames{1}{i});
 
                 sets.kymosets.filenames{i} = strcat(NAME,EXT);
