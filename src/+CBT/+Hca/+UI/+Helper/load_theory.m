@@ -18,8 +18,8 @@ function [ theoryStruct ] = load_theory( sets )
     jj = 1;
 
     for idx=1:length(sets.theoryFileFold)
-        addpath(genpath(sets.theoryFileFold{idx}));
-        barcodeData = load(sets.theoryFile{idx});
+        %         addpath(genpath(sets.theoryFileFold{idx}));
+        barcodeData = load(fullfile(sets.theoryFileFold{idx},sets.theoryFile{idx}));
         
         try % there can be different kind of input data, so use the appropriate one
             bars = barcodeData.hcaSessionStruct.theoryGen.theoryBarcodes;

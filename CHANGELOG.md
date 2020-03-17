@@ -29,6 +29,9 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+# 4.0.2
+- Fix theory loading, so that unnecessary folders would not be added to path
+
 # 4.0.0
 * Theory generation update
 - Change the theory generation function so that it would be more memory efficient. 

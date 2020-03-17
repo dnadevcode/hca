@@ -1,6 +1,8 @@
 v (future, see CHANGELOG)
 
-v 4.0.1 (Current)
+v 4.0.2 (17/03/2020, Current)
+
+v 4.0.1 
 
 v 3.2.8.4
 - fix so that barcode generation works when edges only at the borders detected
