@@ -29,6 +29,10 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+# 4.1
+- Add option to split all barcodes into subbarcodes
+- Added extra comparison methods (MP, Spearman), that can be run
+
 # 4.0.2
 - Fix theory loading, so that unnecessary folders would not be added to path
 

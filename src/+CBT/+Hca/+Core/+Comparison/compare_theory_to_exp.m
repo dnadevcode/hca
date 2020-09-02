@@ -16,14 +16,30 @@ function [comparisonStruct] = compare_theory_to_exp(barcodeGen,theoryStruct, set
     disp('Starting comparing exp to theory...')
     tic
     if sets.genConsensus && ~isempty(consensusStructs)
-        barcodeGen{end+1} = consensusStructs;
+        try
+            for idx=1:length(consensusStructs) % add all possibleconsensuses
+                barcodeGen{end+1} = consensusStructs{idx};
+            end
+        catch
+            barcodeGen{end+1} = consensusStructs;
+        end
     end
+    
+    stretchFactors = sets.theory.stretchFactors;
+    comparisonMethod = sets.comparisonMethod;
+    w = 200;
             
-    comparisonStruct = cell(1,length(theoryStruct));
+    rezMax = cell(1,length(theoryStruct));
+    bestBarStretch = cell(1,length(theoryStruct));
+    bestLength = cell(1,length(theoryStruct));
+
     % unfiltered comparison
     parfor barNr = 1:length(theoryStruct)
         disp(strcat(['comparing to theory barcode ' num2str(barNr) '_' theoryStruct{barNr}.filename] ));
-
+        
+%         import CBT.Hca.Core.Comparison.on_compare;
+%         [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr}] = on_compare(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w);
+% 
         import CBT.Hca.Core.Comparison.on_compare_theory_to_exp;
         comparisonStruct{barNr} = on_compare_theory_to_exp(barcodeGen,theoryStruct{barNr}, sets);
     end
