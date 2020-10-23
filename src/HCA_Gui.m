@@ -51,7 +51,10 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
         import CBT.Hca.Core.gen_consensus;
         consensusStructs = CBT.Hca.Core.gen_consensus(barcodeGen,sets);
         %
-
+        % Alternative:
+        %         import CBT.Hca.UI.Helper.select_all_consensus;
+        %         [consensusStruct,sets] = select_all_consensus(consensusStructs,sets);
+        
         % select consensus
         import CBT.Hca.UI.Helper.select_consensus
         [consensusStruct,sets] = select_consensus(consensusStructs,sets);
@@ -91,7 +94,7 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
 
         % compare theory to experiment
          import CBT.Hca.Core.Comparison.compare_distance;
-         [rezMax,bestBarStretch,bestLength] = compare_distance(barcodeGenC,theoryStruct, sets, consensusStructs );
+         [rezMax,bestBarStretch,bestLength] = compare_distance(barcodeGenC,theoryStruct, sets, consensusStruct );
 %         import CBT.Hca.Core.Comparison.compare_theory_to_exp;
 %         comparisonStructAll = compare_theory_to_exp(barcodeGenC, theoryStruct, sets, consensusStruct);
         
