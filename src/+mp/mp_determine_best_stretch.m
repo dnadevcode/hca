@@ -1,10 +1,11 @@
-function [bestStretch,maxCoef] = mp_determine_best_stretch(query_txt,data_txt,sets)
+function [bestStretch,maxCoef,r] = mp_determine_best_stretch(query_txt,data_txt,sets)
     %
     if nargin < 3
         sets.stretch =  0.7:0.01:1.3;
         sets.r = 100;
         sets.k = 2^14;
-        
+        sets.circ = 1;
+        sets.analysis.interpolationMethod = 'linear';
     end
     
     stretch = sets.stretch;
@@ -24,7 +25,7 @@ function [bestStretch,maxCoef] = mp_determine_best_stretch(query_txt,data_txt,se
 %     stretch = 0.7:0.01:1.3;
 %     
     % original interval
-    t = 1:lenD;
+%     t = 1:lenD;
 %     import CBT.Hca.UI.Helper.get_best_parameters_mp;
 
 
@@ -37,7 +38,7 @@ function [bestStretch,maxCoef] = mp_determine_best_stretch(query_txt,data_txt,se
     % make a loop over stretch factors
      for j=1:length(stretch)
          % rescale
-        len1 = round(lenD*stretch(j));
+%         len1 = round(lenD*stretch(j));
         y = interpolate_data(query_txt,lenD,lenD*stretch(j),sets);
 
 %         y = imresize(query_txt, [1,len1]);

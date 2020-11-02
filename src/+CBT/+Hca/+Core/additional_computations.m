@@ -25,10 +25,13 @@ function [] = additional_computations( barcodeGenC, consensusStruct, comparisonS
     import CBT.Hca.Export.export_cc_vals_table;
     [T] = export_cc_vals_table( theoryStruct, comparisonStructAll, barcodeGenC,matDirpath);
 
+    try
     if sets.saveinfoscores
         % export_infoscore_results. Temporary moved
         import CBT.Hca.Export.export_infoscore_vals_table;
         [T] = export_infoscore_vals_table( barcodeGenC,fullfile(sets.output.matDirpath,'infoscore'));
+    end
+    catch
     end
     
     % todo: include additional plots in a later version

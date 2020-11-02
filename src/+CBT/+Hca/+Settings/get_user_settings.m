@@ -32,7 +32,7 @@ function [ sets ] = get_user_settings( sets )
         [hMenuParent, tsHCA] = create_figure_window('CB HCA tool','HCA');
 
         import Fancy.UI.Templates.create_import_tab;
-        cache = create_import_tab(hMenuParent,tsHCA,'kymo');
+        cache = create_import_tab(hMenuParent,tsHCA,'Data');
         uiwait(gcf);  
         
         dd = cache('selectedItems');
@@ -161,6 +161,19 @@ function [ sets ] = get_user_settings( sets )
 
             sets.subfragment.numberFragments = str2double(answer{1}); % number of random cutouts from the input set
         end
+        
+        if isequal(sets.comparisonMethod,'mp')
+            prompt = {'Sliding window width','Generate p-values'};
+            title = 'Choose sliding window width';
+            dims = [1 35];
+            definput = {'100','1'};
+            answer = inputdlg(prompt,title,dims,definput);
+
+            sets.w =  str2double(answer{1});
+            sets.computepval = str2double(answer{2});
+
+        end
+        
         
         if sets.output.askforoutputdir
             sets.output.matDirpath = strcat([uigetdir(pwd,'Choose a folder where you want to save the output') '/']);

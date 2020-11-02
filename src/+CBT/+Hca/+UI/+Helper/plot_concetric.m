@@ -16,6 +16,16 @@ function plot_concetric(hAxis,barStruct,sets)
 %     sets.NONCIRCADD = 20; % add pixels to the end to make sure it looks non-circular
 %     numBarcodes = 2;
 
+if barStruct.matchTable(3) <= 0
+    barStruct.matchTable(3) = barStruct.matchTable(3)+length(barStruct.bar2);
+end
+
+if barStruct.matchTable(1) <= 0
+    barStruct.matchTable(1) = barStruct.matchTable(1)+length(barStruct.bar1);
+end
+
+
+% barStruct.matchTable(barStruct.matchTable(:,3) <= 0,3) = 
     % this table should be a bit different, in case comparison is linear.
     % When we do not allow loop-arounds..
     import CBT.Hca.UI.Helper.create_full_table;

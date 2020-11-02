@@ -39,12 +39,18 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
     import CBT.Hca.UI.Helper.plot_best_pos;
     plot_best_pos(fig1,comparisonStruct, numBar, sets, markers,lengthBorders);
 
-    subplot(2,2,3), hold on
+    ax=subplot(2,2,3), hold on
 %     if isequal(sets.comparisonMethod,'dtw')
 %         
 %     else
+    if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
+          import CBT.Hca.UI.Helper.plot_best_bar_mp;
+        resultStruct=plot_best_bar_mp(ax,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,1,sets);
+    else
+    %todo: improve this plot with more information
     import CBT.Hca.UI.Helper.plot_best_bar;
-    plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef);
+    plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets.userDefinedSeqCushion);
+    end
 %     end
 
     
@@ -57,10 +63,19 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
 %     plot_best_image(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef);
 % %     fig1=figure;
         hAxis = subplot(2,2,4); hold on
-
-    import CBT.Hca.UI.Helper.plot_best_concentric_image;
-    plot_best_concentric_image(hAxis,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets);
-
+	if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
+        sets.A = 'b';
+        sets.B = 'b';
+        sets.theory.isLinearTF = 1;
+        resultStruct.bar1 = (resultStruct.bar1-nanmean(resultStruct.bar1))/nanstd(resultStruct.bar1);
+        resultStruct.bar2 = (resultStruct.bar2-nanmean(resultStruct.bar2))/nanstd(resultStruct.bar2);
+        import CBT.Hca.UI.Helper.plot_concetric;
+        plot_concetric(hAxis,resultStruct,sets);
+    else
+        import CBT.Hca.UI.Helper.plot_best_concentric_image;
+        plot_best_concentric_image(hAxis,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets);
+    end
+    
     % option: plot all possible matches, i.e. for all 
     disp( strcat(['Number of timeframes for the unfiltered barcodes were = ' num2str(sets.timeFramesNr)]));
     
@@ -88,7 +103,15 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
                 max2 = nan(size(maxcoef));      max2(i,1) = maxcoef(i,1);
                 fig1 = figure('Visible', 'off');
 %                 fig1 = figure;
-                plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, max2);
+                if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
+                    ax1 = subplot(1,1,1);
+                    if max2~=0
+                        plot_best_bar_mp(ax1,barcodeGen,[],comparisonStruct, theoryStruct, max2,0,sets);
+                    end
+                else
+                    plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, max2);
+                end
+                % mp_based_on_output_pcc_test
                 saveas(fig1,fullfile(sets.output.matDirpath,sets.timestamp,'Plots',strcat([num2str(i) '_plot.jpg'])));
 
 %                 saveas(fig1,fullfile(sets.output.matDirpath,sets.timestamp,'Plots',strcat([sets.timestamp '_' num2str(i) '_plot.eps'])),'epsc');

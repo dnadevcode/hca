@@ -9,7 +9,7 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
     % with it
     
     
-    if newNmBp >= min(cellfun(@(x) x.meanBpExt_nm,theoryStruct))
+    if newNmBp >= (min(cellfun(@(x) x.meanBpExt_nm,theoryStruct))-0.001)
         disp('Nm/bp ratio not converted. At least one barcode has nmbp lower than user-input' )
         return
     end

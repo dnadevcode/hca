@@ -24,13 +24,16 @@ function [fig1,maxcoef] = plot_max_coef( fig1,comparisonStruct, numBar, sets, ma
 
     ylabel('Barcode nr.','Interpreter','latex')
     xlabel('Maximum match score','Interpreter','latex')
-%     xlim([0.5 1])
-    xlim([min(maxcoef(:)) max(maxcoef(:))]);
+	try    
+        xlim([min(maxcoef(:)) max(maxcoef(:))]);
+    catch
+         xlim([0.5 1]);
+    end
     ylim([0,size(maxcoef,1)+2])
     if size(maxcoef,2) == 1
-        legend({'$\hat C$','Consensus line'},'Location','sw','Interpreter','latex')
+        legend({'$\hat C$','Theories separator'},'Location','southoutside','Interpreter','latex')
     else
-        legend({'$\hat C$','$C_2$','$C_3$','Consensus line'},'Location','sw','Interpreter','latex')
+        legend({'$\hat C$','$C_2$','$C_3$','Consensus line'},'Location','southoutside','Interpreter','latex')
     end
 end
 

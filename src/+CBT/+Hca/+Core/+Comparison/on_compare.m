@@ -42,11 +42,13 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
 %             comparisonStructure{idx}.ucr = ucr_dtw_score(theoryStruct.filename, barC, barB, sets);
         case 'mp'
             import mp.mp_dist_stomp_with_masks;
-            comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_dist_stomp_with_masks(X1',[X2 X2(1:w-1)]', bitX1', bitX2', w,2^(4+nextpow2(length(X1))));
+            comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_dist_stomp_with_masks(X1',X2', bitX1', bitX2', w,2^(4+nextpow2(length(X1))),[],theoryStruct.isLinearTF);
 
         case 'mpAll' % mp for all subfragments separately
             import mp.mp_dist_stomp_with_masks_all;
-            comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_dist_stomp_with_masks_all(X1',[X2 X2(1:w-1)]', bitX1', bitX2', w,2^(4+nextpow2(length(X1))));
+             comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_dist_stomp_with_masks_all(X1',X2', bitX1', bitX2', w,2^(4+nextpow2(length(X1))));
+
+%             comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_dist_stomp_with_masks_all(X1',[X2 X2(1:w-1)]', bitX1', bitX2', w,2^(4+nextpow2(length(X1))));
 
 %             [scoreMatPCC,scorePos,orientation,secondPos, abMatchTemp] = mp_dist_stomp_with_masks(X1,X2, bitX1, bitX2, w, kk,par,islinear)
 
@@ -106,8 +108,12 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         % rezMaz stores the results for one barcode
         rezMax = cell(1,length(stretchFactors));
        
+        try
         % barTested barcode to be tested
         barTested = barcodeGen{idx}.rawBarcode;
+        catch
+        barTested = barcodeGen{idx}.barcode;
+        end
         
         % in case barcode should be filtered
 %         barTested = filter_barcode(barTested, sets.filterSettings);
@@ -116,7 +122,11 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         lenBarTested = length(barTested);
         
         % barBitmask - bitmask of this barcode
+        try
         barBitmask = barcodeGen{idx}.rawBitmask;
+        catch
+        barBitmask = barcodeGen{idx}.bitmask;
+        end
         
 %         if isequal(sets.comparisonMethod,'dtw')
 %             sets.idx = strcat(theoryStruct.name,num2str(idx));
@@ -130,9 +140,11 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             % here interpolate both barcode and bitmask 
             barC = interp1(barTested, linspace(1,lenBarTested,lenBarTested*stretchFactors(j)));
             barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
-
-            [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or,rezMax{j}.secondPos,rezMax{j}.lengthMatch,rezMax{j}.dist] = comparisonFun(barC, theorBar, barB,theorBit,w);
-
+            try
+                [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or,rezMax{j}.secondPos,rezMax{j}.lengthMatch,rezMax{j}.dist] = comparisonFun(barC, theorBar, barB,theorBit,w);
+            catch
+                rezMax{j}.maxcoef = 0;rezMax{j}.pos=0;rezMax{j}.or=0;rezMax{j}.secondPos=0;rezMax{j}.lengthMatch=0;rezMax{j}.dist=0;
+            end
             xcorrMax(j) = rezMax{j}.maxcoef(1);
         end
 

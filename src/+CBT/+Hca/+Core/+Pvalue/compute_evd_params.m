@@ -5,6 +5,7 @@ function [ parameters ] = compute_evd_params( cc,x0 )
     %       cc,x0
     %     Returns:
     %         parameters
+    %  import CBT.Hca.Core.Pvalue.compute_evd_params
 
     import CBT.Hca.Core.Pvalue.functional_form_helping_fun;
     f = @(y) abs(functional_form_helping_fun(y,cc));

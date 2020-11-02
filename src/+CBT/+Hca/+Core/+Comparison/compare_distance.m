@@ -40,15 +40,17 @@ function [rezMax,bestBarStretch,bestLength,rezMaxAll] = compare_distance(barcode
 
     % Computing distances for each theory against all experiments. This
     % loop can be parallelized (parfor)
-    parfor barNr = 1:length(theoryStruct)
+   	parfor barNr = 1:length(theoryStruct)
         disp(strcat(['comparing to theory barcode ' num2str(barNr) '_' theoryStruct{barNr}.filename] ));
-      
-%         import CBT.Hca.Core.Comparison.on_compare_mp_all;
-%         [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
-
-        import CBT.Hca.Core.Comparison.on_compare;
-        [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr}] = on_compare(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
-% % 
+        
+        if isequal(comparisonMethod,'mpAll')
+            import CBT.Hca.Core.Comparison.on_compare_mp_all;
+            [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
+        else
+            import CBT.Hca.Core.Comparison.on_compare;
+            [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr}] = on_compare(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
+        end
+        % % 
 %         import CBT.Hca.Core.Comparison.on_compare_theory_to_exp;
 %         comparisonStruct{barNr} = on_compare_theory_to_exp(barcodeGen,theoryStruct{barNr}, sets);
     end

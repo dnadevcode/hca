@@ -138,9 +138,9 @@ function [fullTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2,c
                 %
                  barfragq{i} = [ barfragq{i} bar1(tempTable(j,1):tempTable(j,2))];
                  if tempTable(j,5) == 1
-                      barfragr{i} =[ barfragr{i}; bar2(tempTable(j,3):tempTable(j,4))'];
+                      barfragr{i} =[ barfragr{i} bar2(tempTable(j,3):tempTable(j,4))'];
                  else
-                     barfragr{i} =[ barfragr{i}; bar2(tempTable(j,3):-1:tempTable(j,4))'];
+                     barfragr{i} =[ barfragr{i} bar2(tempTable(j,3):-1:tempTable(j,4))'];
                  end
                  lenDiff  = length(barfragr{i}) -length(barfragq{i});
                   if abs(lenDiff) > 0

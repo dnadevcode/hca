@@ -9,6 +9,8 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
     % 
     %     Returns:
     %         theoryStruct: Return structure
+    
+    askfornm = sets.theory.askfornmbp;
 
      if ~sets.theory.askfortheory
           try 
@@ -40,13 +42,22 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
 
     end
     
-    % now load theory
-    import CBT.Hca.UI.Helper.load_theory;
-    theoryStruct = load_theory(sets);
+   [ fd,fr,fl ] = fileparts(sets.theoryFile{1});
+    if ~isequal(fl,'.mat')&&~isequal(fl,'.txt')
+            outdirpath = sets.output.matDirpath;
+
+        % want this to use all the theory files and fols
+        [t,matFilepathShort,theoryStruct, sets,theoryGen] = HCA_theory_parallel('',0.3,'theory_settings_parallel.txt',sets.theoryFile,sets.theoryFileFold);
+         sets.output.matDirpath = outdirpath;
+    else
+        % now load theory
+        import CBT.Hca.UI.Helper.load_theory;
+        theoryStruct = load_theory(sets);
+    end
     try delete(hMenuParent); catch; end;
 
     
-    if sets.theory.askfornmbp
+    if askfornm
         % here we add settings
         prompt = {'Nm/bp ratio for the experiments','Stretch factor', 'step'};
         title = 'Comparison to theory settings';

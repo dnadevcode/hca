@@ -50,6 +50,15 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
                 import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
                 [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, edgeDetectionSettings);
             end  
+        case 0
+            edgeDetectionSettings = sets.edgeDetectionSettings;
+            for i=1:length(kymoStructs)
+%                 i
+                kymoStructs{i}.alignedKymo = double(kymoStructs{i}.unalignedKymo);
+                import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
+                [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, edgeDetectionSettings);       
+            end
+            
         case 4
             % this case is based on Ostenato code - where we find the main
             % region to align

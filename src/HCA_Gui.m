@@ -90,7 +90,7 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
 
         % get user theory
         import CBT.Hca.Settings.get_user_theory;
-        [theoryStruct, sets] = get_user_theory(sets);
+        [theoryStruct, ~] = get_user_theory(sets);
 
         % compare theory to experiment
          import CBT.Hca.Core.Comparison.compare_distance;

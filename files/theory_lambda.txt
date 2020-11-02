@@ -10,7 +10,7 @@ savetxts = 1;
 resultsDir = 'theoryData';
 fastas = 'theories_parallel.txt';
 % Theory generation
-skipBarcodeGenSettings = 0;  % whether to skip barcode generatoin settings   
+skipBarcodeGenSettings = 1;  % whether to skip barcode generatoin settings   
 skipChangeBpNmRatio = 0;
 
 % lambda folder
@@ -27,12 +27,12 @@ psfSigmaWidth_nm = 300;
 concN=6;
 concY=0.02;
 concDNA = 0.2;
-isLinearTF = 0;
+isLinearTF = 1;
 deltaCut = 3;
 widthSigmasFromMean = 4;
 yoyo1BindingConstant = 26; % yoyo binding constant
 computeFreeConcentrations = 1;
 method = 'literature';      % method    
 k = 2^15;                   % k has to be k=m*2^d. k should be longer than smallest experiment size
-m = 2^13;                   % harcoded parameters for literature, can be changed here by the user
+m = 2^11;                   % harcoded parameters for literature, can be changed here by the user
 

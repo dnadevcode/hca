@@ -1,4 +1,4 @@
-function [scoreMatPCC,scorePos,orientation,secondPos, w] = mp_dist_stomp_with_masks_all(X1,X2, bitX1, bitX2, w, kk,par,islinear)
+function [scoreMatPCC,scorePos,orientation,secondPos, w,dist] = mp_dist_stomp_with_masks_all(X1,X2, bitX1, bitX2, w, kk,par,islinear)
 
     %   Args:
     %           X1
@@ -12,7 +12,8 @@ function [scoreMatPCC,scorePos,orientation,secondPos, w] = mp_dist_stomp_with_ma
         islinear = 0;
     end
     
-    islinear = 1;
+%     islinear = 1;
+    dist = [];
 %     n = length(X1);
 %     m = length(X2);
     

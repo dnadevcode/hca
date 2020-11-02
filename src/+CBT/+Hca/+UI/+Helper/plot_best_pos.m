@@ -26,9 +26,9 @@ function [fig1] = plot_best_pos( fig1,comparisonStruct, numBar, sets, markers,le
     xlabel('Best position (px)','Interpreter','latex')  
     ylabel('Barcode nr.','Interpreter','latex')
     if size(pos,2) == 1
-        legend({'$\hat C$','Consensus line'},'Location','ne','Interpreter','latex')
+        legend({'$\hat C$','Theories seperator'},'Location','southoutside','Interpreter','latex')
     else
-        legend({'$\hat C$','$C_2$','$C_3$','Consensus line'},'Location','ne','Interpreter','latex')
+        legend({'$\hat C$','$C_2$','$C_3$','Consensus line'},'Location','southoutside','Interpreter','latex')
     end
     
     ylim([0,size(pos,1)+2])

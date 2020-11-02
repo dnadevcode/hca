@@ -12,7 +12,7 @@ function [scoreMatPCC,scorePos,orientation,secondPos, w,dist] = mp_dist_stomp_wi
         islinear = 0;
     end
     
-    islinear = 1;
+%     islinear = 1;
     dist = [];
 %     n = length(X1);
 %     m = length(X2);
@@ -46,6 +46,18 @@ function [scoreMatPCC,scorePos,orientation,secondPos, w,dist] = mp_dist_stomp_wi
     import CBT.Hca.UI.Helper.get_best_parameters_mp;
     [ maxcoef,pos,or,idxpos ] = get_best_parameters_mp( mpAB,mpIAB,mpDAB, 1, 50, islinear, length(X2));
 % or
+
+    % here can add a fix for plotting later, since we want to know the
+    % position of first index of the barcode along the second barcode. Then
+    % when wanting to compare barcodes at specific positions, we should
+    % already consider flipped first barcode and take (idxpos+lb) on that. 
+    % the bitmask remains the same even if there is a bigger bitmask on the
+    % second barcode.
+%     lb = find(bitX1,1,'first');
+%     if ~or
+%        pos = pos+idxpos+lb-2-(length(X1)-idxpos-lb-w+2);
+%        idxpos = pos+(length(X1)-lb-idxpos-w+2)-lb;
+%     end
     % TODO: check if islinear = 1 works with flipped orientation
 % 
 %         if ~or(1)
