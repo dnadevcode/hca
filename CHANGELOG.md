@@ -1,4 +1,4 @@
-# Future (4.1):
+# Future (4.3):
 implement small things from Wishlist for HCA 4.0 into HCA 4.1, in particular:
 - make a script for p-value generation visible, i.e. optional step after computing CC values, assuming that 
 p-value database matrix is pre-calculated (otherwise it would take too much time and wouldn't make sense)
@@ -29,6 +29,10 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+# 4.2
+- added possibility to generate theory directly via HCA_Gui (if fasta is selected, the program interprets that as needing to generate new theory)
+- added compatibility for mp (also with seemingly less bugs when plotting, which appeared before from the way position from the mp is reported)
+- added simple p-value generation (random fragments vs non-random theory) in HCA_Run (though it's not pregenerated, so slow for long theories
 # 4.1
 - Add option to split all barcodes into subbarcodes
 - Added extra comparison methods (MP, Spearman), that can be run

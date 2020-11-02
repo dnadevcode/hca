@@ -1,6 +1,10 @@
 v (future, see CHANGELOG)
 
-v 4.1 (current)
+v 4.2 
+- mp comparison method is now functional,
+- can add consensus
+
+v 4.1 
 - add some additional comparison methods (still in development), add posibility to split barcodes into multiple smaller ones
 v 4.0.2 (17/03/2020, Current)
 

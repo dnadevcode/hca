@@ -18,6 +18,6 @@ addpath(genpath(pwd));
 # GUI'S:
 Hca_theory - theory
 Hca_gui - experiments
-
+Hca_run - same as gui but allows adding consensus and p-val calc
 # /src/Scripts/ has a number of test scripts
 
