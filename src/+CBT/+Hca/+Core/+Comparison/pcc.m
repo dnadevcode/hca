@@ -11,7 +11,7 @@ function [pcc_table] = pcc(a,b)
     seq1 = zscore(a,1);
     seq2 = zscore(b,1);
 
-    pcc_table =1./length(seq1)*seq1*seq2';
+    pcc_table =1./length(seq1)*seq1*seq2;
 
 end
 

@@ -73,10 +73,17 @@ function [hcaStruct] = HCA_Run(sets, hcaStruct)
                 import CBT.Hca.Core.gen_consensus;
                 consensusStructs = CBT.Hca.Core.gen_consensus(barcodeGen,sets);
                 %
-
+                    
+                % change the select_consensus ... And then save in a simple
+                % way
                 % select consensus
-                import CBT.Hca.UI.Helper.select_consensus
-                [consensusStruct,sets] = select_consensus(consensusStructs,sets);
+                
+%                 select_same_cut_consensus
+                import CBT.Hca.UI.Helper.select_same_cut_consensus
+                [consensusStruct,sets] = select_same_cut_consensus(consensusStructs,sets);
+
+%                 import CBT.Hca.UI.Helper.select_consensus
+%                 [consensusStruct,sets] = select_consensus(consensusStructs,sets);
 
                     %% These two options I am not sure if I should keep here?
                 % generate random cut-outs
