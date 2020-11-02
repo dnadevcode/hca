@@ -167,12 +167,12 @@ function [fullTable] = plot_sv_full( resultStruct,sets,name,qr,plotonlypass,bpPe
     ax.XTickLabel = [ticksx];   
     xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')
 
-    [tempTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2',1);
+    [tempTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2,1);
 %     import functions.convert_matchtable;
 %     tempTable = convert_matchtable(tempTable);
 %     [tempTable,barfragq2,barfragr2] = create_full_table(tempTable, bar2,bar1);
 %     tempTable = convert_matchtable(tempTable);
-    legend({strcat(['$\hat C_{\rm ' qr '}=$' num2str(pcc(barfragq{1},barfragr{1}),'%0.4f')]), name},'Interpreter','latex','Location','southoutside')
+    legend({strcat(['$\hat C_{\rm ' qr '}=$' num2str(pcc(barfragq{1},barfragr{1}'),'%0.4f')]), name},'Interpreter','latex','Location','southoutside')
 
     ax = subplot(1,4,4);
 
