@@ -32,7 +32,7 @@ function [pval] = compute_pvals_simple(theoryStruct,comparisonStruct,sets)
                 coeffs = cellfun(@(x) x.maxcoef,rezMax{1});
                 %
                 params = compute_evd_params(coeffs,100);
-                pval(i) = p(comparisonStruct{i}.maxcoef,params(1),params(2));
+                pval(i) = p(comparisonStruct{i}.maxcoef(1),params(1),params(2));
             else
                 pval(i) = 1;
             end

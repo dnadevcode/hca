@@ -43,6 +43,14 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         case 'mp'
             import mp.mp_dist_stomp_with_masks;
             comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_dist_stomp_with_masks(X1',X2', bitX1', bitX2', w,2^(4+nextpow2(length(X1))),[],theoryStruct.isLinearTF);
+        case 'mpnan'
+            % removes all placements where at least one pixel is taken from a
+            % nan region.
+            % todo: this function itself does not include possibility of
+            % being circular, so inputed X1, X2 should include extra
+            % values..
+            import mp.mp_profile_stomp_nan_dna;
+            comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_profile_stomp_nan_dna(X1',X2', bitX1', bitX2', w,2^(4+nextpow2(length(X1))));
 
         case 'mpAll' % mp for all subfragments separately
             import mp.mp_dist_stomp_with_masks_all;
@@ -90,7 +98,13 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     formatSpec = '%f';
     theorBar = transpose(fscanf(fileID,formatSpec));
     fclose(fileID);
-    theorBit = ones(1,length(theorBar));
+    try
+        fileID = fopen(strrep(theoryStruct.filename,'_barcode','_bitmask'),'r');
+        theorBit = transpose(fscanf(fileID,'%f'));
+        fclose(fileID);
+    catch
+        theorBit = ones(1,length(theorBar));
+    end
     
     % if we want match to be circular
 
@@ -100,7 +114,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     bestBarStretch = zeros(1,length(barcodeGen));
     bestLength = zeros(1,length(barcodeGen));
     % for all the barcodes run
-    for idx=1:length(barcodeGen)
+    parfor idx=1:length(barcodeGen)
 %         idx
         % xcorrMax stores the  maximum coefficients
         xcorrMax = zeros(1,length(stretchFactors));
@@ -127,13 +141,6 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         catch
         barBitmask = barcodeGen{idx}.bitmask;
         end
-        
-%         if isequal(sets.comparisonMethod,'dtw')
-%             sets.idx = strcat(theoryStruct.name,num2str(idx));
-%             comparisonStructure{idx} = ucr_dtw_score(theoryStruct.filename, barTested, barBitmask, sets);
-%             comparisonStructure{idx}.bestBarStretch = 1;
-%             comparisonStructure{idx}.length = lenBarTested;
-%         else
 
         % run the loop for the stretch factors
         for j=1:length(stretchFactors)
@@ -148,10 +155,8 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             xcorrMax(j) = rezMax{j}.maxcoef(1);
         end
 
-
         % find which stretching parameter had the best score
         [value,b] = max(xcorrMax);
-
 
         % select the results for this best stretching parameter and output
         % them. If there were no values computed for this barcode, we don't
@@ -161,25 +166,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             bestBarStretch(idx) = stretchFactors(b);
             bestLength(idx) = round(lenBarTested*stretchFactors(b));
         end
-%                 comparisonStructure{idx} = rezMax{b};
-%                 comparisonStructure{idx}.bestBarStretch = stretchFactors(b);
-%                 comparisonStructure{idx}.length = round(lenBarTested*stretchFactors(b));
-%             else
-%                  comparisonStructure{idx}.maxcoef(1:3) = nan;
-%                  comparisonStructure{idx}.bestBarStretch = nan;
-%                  comparisonStructure{idx}.length = nan;
-%                  comparisonStructure{idx}.pos(1:3) = nan;
-%                  comparisonStructure{idx}.or(1:3) = nan;
-%             end
-          % can also add ucr score here for convenience
-%         if sets.comparison.useDTW
-  %             % check that the positions are returned correctly, and how can
-%             % this be implemented as an alternative to pcc, and how
-%             % Sakoe-Chiba band corresponds to stretching
-%             comparisonStructure{idx}.ucr = ucr_dtw_score(theoryStruct.filename, barC, barB, sets); 
-%         end
     end 
-
 end
 % % 
 % %% test pccs

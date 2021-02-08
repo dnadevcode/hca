@@ -23,7 +23,7 @@ function [ comparisonStructure ] = on_compare_theory_to_exp( barcodeGen,theorySt
         case 'mass_pcc'
             % choose k just higher than the length of small sequence for
             % best precision. (larger k though could increase speed)
-            comparisonFun = @(x,y,z,w) unmasked_MASS_PCC(y,x,z,2^(4+nextpow2(length(x))));
+            comparisonFun = @(x,y,z,w) unmasked_MASS_PCC(y,x,z,w,2^(4+nextpow2(length(x))));
         case 'dtw'
             
             import SignalRegistration.ucr_dtw_score;

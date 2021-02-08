@@ -373,10 +373,10 @@ void error(int id)
     else if ( id == 4 )
     {
         printf("ERROR : Invalid Number of Arguments!!!\n");
-        printf("Command Usage:  UCR_DTW.exe  data-file  query-file   m   R\n\n");
-        printf("For example  :  UCR_DTW.exe  data.txt   query.txt   128  0.05\n");
+        ///printf("Command Usage:  UCR_DTW.exe  data-file  query-file   m   R\n\n");
+        ///printf("For example  :  UCR_DTW.exe  data.txt   query.txt   128  0.05\n");
     }
-    exit(1);
+    ///exit(1);
 }
 
 class mystream : public std::streambuf
@@ -438,7 +438,10 @@ void cpp_dtw(char *Data_File, char *Query_File, int m, double R, double *y, doub
 
     qp = fopen(Query_File,"r");
     if( qp == NULL )
+    {
         error(2);
+        return;
+    }
 
     /// start the clock
     t1 = clock();
@@ -447,73 +450,112 @@ void cpp_dtw(char *Data_File, char *Query_File, int m, double R, double *y, doub
     /// malloc everything here
     q = (double *)malloc(sizeof(double)*m);
     if( q == NULL )
+    {
         error(1);
+        return;        
+    }
     qo = (double *)malloc(sizeof(double)*m);
     if( qo == NULL )
+    {
         error(1);
+        return;        
+    }
     uo = (double *)malloc(sizeof(double)*m);
     if( uo == NULL )
+    {
         error(1);
+        return;        
+    }
     lo = (double *)malloc(sizeof(double)*m);
     if( lo == NULL )
+    {
         error(1);
-
+        return;        
+    }
     order = (int *)malloc(sizeof(int)*m);
     if( order == NULL )
+    {
         error(1);
-
+        return;        
+    }
     Q_tmp = (Index *)malloc(sizeof(Index)*m);
     if( Q_tmp == NULL )
+    {
         error(1);
-
+        return;        
+    }
     u = (double *)malloc(sizeof(double)*m);
     if( u == NULL )
+    {
         error(1);
-
+        return;        
+    }
     l = (double *)malloc(sizeof(double)*m);
     if( l == NULL )
+    {
         error(1);
-
+        return;        
+    }
     cb = (double *)malloc(sizeof(double)*m);
     if( cb == NULL )
+    {
         error(1);
-
+        return;        
+    }
     cb1 = (double *)malloc(sizeof(double)*m);
     if( cb1 == NULL )
+    {
         error(1);
-
+        return;        
+    }
     cb2 = (double *)malloc(sizeof(double)*m);
     if( cb2 == NULL )
+    {
         error(1);
-
+        return;        
+    }
     u_d = (double *)malloc(sizeof(double)*m);
     if( u == NULL )
+    {
         error(1);
-
+        return;        
+    }
     l_d = (double *)malloc(sizeof(double)*m);
     if( l == NULL )
+    {
         error(1);
-
+        return;        
+    }
     t = (double *)malloc(sizeof(double)*m*2);
     if( t == NULL )
+    {
         error(1);
-
+        return;        
+    }
     tz = (double *)malloc(sizeof(double)*m);
     if( tz == NULL )
+    {
         error(1);
-
+        return;        
+    }
     buffer = (double *)malloc(sizeof(double)*EPOCH);
     if( buffer == NULL )
+    {
         error(1);
-
+        return;        
+    }
     u_buff = (double *)malloc(sizeof(double)*EPOCH);
     if( u_buff == NULL )
+    {
         error(1);
-
+        return;        
+    }
     l_buff = (double *)malloc(sizeof(double)*EPOCH);
     if( l_buff == NULL )
+    {
         error(1);
-
+        return;        
+    }
 
     /// Read query file
     bsf = INF; /// So this finds global solution
@@ -741,13 +783,13 @@ void cpp_dtw(char *Data_File, char *Query_File, int m, double R, double *y, doub
     *s = sqrt(bsf);
     
     /// printf is just easier for formating ;)
-    /*
+    ///*
     printf("\n");
     printf("Pruned by LB_Kim    : %6.2f%%\n", ((double) kim / i)*100);
     printf("Pruned by LB_Keogh  : %6.2f%%\n", ((double) keogh / i)*100);
     printf("Pruned by LB_Keogh2 : %6.2f%%\n", ((double) keogh2 / i)*100);
     printf("DTW Calculation     : %6.2f%%\n", 100-(((double)kim+keogh+keogh2)/i*100));
-   */ 
+   //*/ 
     /// return 0;
     
 }
@@ -767,11 +809,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     
 	double R;
     /*Variable declarations as in C*/
-  ///  char Data_File, Query_File;
+    ///  char Data_File, Query_File;
     int M;
     
     
-    int L; /// length of the overlap
+    ///int L; /// length of the overlap
 
 	int buflen0,status0;
     int buflen1,status1;
@@ -792,7 +834,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
     
     M = mxGetScalar(prhs[2]); /// overlap length
-    R = mxGetScalar(prhs[3]);
+    R = mxGetScalar(prhs[3]); /// Sakoe-Chiba width
     
       /* Get the length of the input string. */
     buflen0 = (mxGetM(prhs[0]) * mxGetN(prhs[0])) + 1;
@@ -803,7 +845,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     * input_buf. */
    	status0 = mxGetString(prhs[0], input_buf0, buflen0);
   
-          /* Get the length of the input string. */
+	/* Get the length of the input string. */
     buflen1 = (mxGetM(prhs[1]) * mxGetN(prhs[1])) + 1;
     /* Allocate memory for input and output strings. */
 	input_buf1 =(char *) mxCalloc(buflen1, sizeof(char));
@@ -812,14 +854,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     * input_buf. */
    	status1 = mxGetString(prhs[1], input_buf1, buflen1);
     
-    /*
+//     /*
     mexPrintf("Number of inputs:  %d\n", nrhs);
     mexPrintf("Number of outputs: %d\n", nlhs);
 	mexPrintf("M: %d\n", M);
     mexPrintf("R: %4.3f\n", R);
     mexPrintf("Data_File: %s\n", input_buf0);
     mexPrintf("Query_File: %s\n", input_buf1);
-    */
+//     */
     
 	plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	y = mxGetPr(plhs[0]);

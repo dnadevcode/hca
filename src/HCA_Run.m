@@ -36,12 +36,13 @@ function [hcaStruct] = HCA_Run(sets, hcaStruct)
         import CBT.Hca.Settings.get_user_settings;
         sets = get_user_settings(sets);
         sets.timestamp = timestamp;
+        mkdir(sets.timestamp);
 
         % data wrapper after user settings
         try
             % check if it's a mat file (consensus/theory)
             % or kymographs (.tif)
-            [ff,fd,fl] = fileparts(sets.kymosets.filenames{1})
+            [ff,fd,fl] = fileparts(sets.kymosets.filenames{1});
         catch
             fl = 'rand';
         end
@@ -81,6 +82,17 @@ function [hcaStruct] = HCA_Run(sets, hcaStruct)
 %                 select_same_cut_consensus
                 import CBT.Hca.UI.Helper.select_same_cut_consensus
                 [consensusStruct,sets] = select_same_cut_consensus(consensusStructs,sets);
+% 
+%                 figure,hist(cellfun(@(x) length(x.rawBarcode),barcodeGen(consensusStruct{1}.barcodesInConsensus)))
+% 
+%                 figure,histogram(cellfun(@(x) length(x.rawBarcode),barcodeGen),'Normalization','count','BinMethod','integers')
+%                 hold on
+%                 
+%                 lengths = cellfun(@(y) cellfun(@(x) length(x.rawBarcode),barcodeGen(y.barcodesInConsensus)),consensusStruct,'un',false);
+%                 histogram(lengths(1),'Normalization','count','BinMethod','integers')
+%                 histogram(lengths(2),'BinMethod','integers')
+%                 histogram(lengths(3),'BinMethod','integers')
+%                 legend({'All lengths histogram','Clust1','Clust2','Clust3'})
 
 %                 import CBT.Hca.UI.Helper.select_consensus
 %                 [consensusStruct,sets] = select_consensus(consensusStructs,sets);
@@ -174,7 +186,7 @@ function [hcaStruct] = HCA_Run(sets, hcaStruct)
         import CBT.Hca.Core.Comparison.combine_theory_results;
         [comparisonStruct] = combine_theory_results(theoryStruct, rezMax,bestBarStretch,bestLength);
         
-        if max(cellfun(@(x) x.maxcoef,comparisonStruct)) == 0
+        if max(cellfun(@(x) x.maxcoef(1),comparisonStruct)) == 0
             disp("No barcodes had length longer than preselected window length");
             return;
         end
@@ -199,7 +211,7 @@ function [hcaStruct] = HCA_Run(sets, hcaStruct)
 
         %
       %  sets.displayResults = 1;
-        sets.plotallmatches = 1;
+        sets.plotallmatches = 0;
         import CBT.Hca.UI.get_display_results;
         get_display_results(barcodeGenC,[], comparisonStruct, theoryStruct, sets);
 

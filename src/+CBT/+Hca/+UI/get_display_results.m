@@ -43,7 +43,7 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
 %     if isequal(sets.comparisonMethod,'dtw')
 %         
 %     else
-    if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
+    if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpnan') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
           import CBT.Hca.UI.Helper.plot_best_bar_mp;
         resultStruct=plot_best_bar_mp(ax,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,1,sets);
     else

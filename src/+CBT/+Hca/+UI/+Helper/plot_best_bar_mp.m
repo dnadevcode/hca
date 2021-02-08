@@ -64,7 +64,7 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
     
     
     
-    
+
     
     % in this case we change method that we use for plotting
     resultStruct.bar1 = expBar; % this also needs to be rescaled in case there was scaling
@@ -82,27 +82,35 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 %         pcc(b1,b2)
 %     end
 
-    resultStruct.matchTable = [comparisonStruct{ii}.secondPos+shift-1 comparisonStruct{ii}.secondPos+comparisonStruct{ii}.lengthMatch-1+shift-1 ...
-        comparisonStruct{ii}.pos+comparisonStruct{ii}.secondPos-1+shift-1 comparisonStruct{ii}.pos+comparisonStruct{ii}.secondPos-1+shift-1+comparisonStruct{ii}.lengthMatch-1 ~comparisonStruct{ii}.or+1];
-    resultStruct.matchTable(3:4) = mod(resultStruct.matchTable(3:4)-1,length(resultStruct.bar2))+1;
-    resultStruct.matchTable(1:2) = mod(resultStruct.matchTable(1:2)-1,length(resultStruct.bar1))+1;
-    if resultStruct.matchTable(5) == 2
-        tmp = resultStruct.matchTable(3:4);
-        resultStruct.matchTable(3) = tmp(2);
-        resultStruct.matchTable(4) = tmp(1);
-    end
+    %
+     resultStruct.matchTable = [ comparisonStruct{ii}.pos(1)  comparisonStruct{ii}.pos(1)+length(resultStruct.bar1)-1 1 length(resultStruct.bar1) comparisonStruct{ii}.or(1)+1];
+     if resultStruct.matchTable(5) == 2
+         resultStruct.matchTable(3:4) = resultStruct.matchTable(4:-1:3);
+     end
+     
+%     resultStruct.matchTable = [comparisonStruct{ii}.secondPos(1)+shift-1 comparisonStruct{ii}.secondPos(1)+comparisonStruct{ii}.lengthMatch-1+shift-1 ...
+%         comparisonStruct{ii}.pos(1)+comparisonStruct{ii}.secondPos(1)-1+shift-1 comparisonStruct{ii}.pos(1)+comparisonStruct{ii}.secondPos(1)-1+shift-1+comparisonStruct{ii}.lengthMatch-1 ~comparisonStruct{ii}.or(1)+1];
+%     resultStruct.matchTable(3:4) = mod(resultStruct.matchTable(3:4)-1,length(resultStruct.bar2))+1;
+%     resultStruct.matchTable(1:2) = mod(resultStruct.matchTable(1:2)-1,length(resultStruct.bar1))+1;
+%     if resultStruct.matchTable(5) == 2
+%         tmp = resultStruct.matchTable(3:4);
+%         resultStruct.matchTable(3) = tmp(2);
+%         resultStruct.matchTable(4) = tmp(1);
+%     end
 
     
     if onlydirectcomp
-       bpPerPx = 1;
+
+        [tempTable,barfragq,barfragr] = create_full_table( resultStruct.matchTable,theorBar,expBar,1);
+
+        plot( resultStruct.matchTable(1):resultStruct.matchTable(2), (barfragq{1}-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'color','red')
+        hold on 
+        plot( resultStruct.matchTable(1):resultStruct.matchTable(2), (barfragr{1}-nanmean( barfragr{1}))/nanstd(barfragr{1},1),'black')
+        
+        % we should also plot best position..
+        bpPerPx = 1;
         labelstr = 'Position (px)';
         str2 = 'px';
-        [tempTable,barfragq,barfragr] = create_full_table( resultStruct.matchTable,expBar,theorBar,1);
-
-        plot( zscore(barfragq{1}),'color','red')
-        hold on 
-        plot(zscore(barfragr{1}),'black')
-
         ticks = 1:50/bpPerPx:2*length(theorBar);
         ticksx = resultStruct.matchTable(3)+floor(ticks*bpPerPx);
         ax.XTick = [ticks];
@@ -110,9 +118,26 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
         xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')
         title(strcat(['Experimental barcode vs theory ']),'Interpreter','latex');
 %     %
+   
+        [a,b] = max(comparisonStruct{ii}.dist);
+        pq = b;
+        b1 = resultStruct.bar1(pq:pq+comparisonStruct{ii}.lengthMatch-1);
+        pd = comparisonStruct{ii}.secondPos(1);
+        b2 = resultStruct.bar2(pd:pd+comparisonStruct{ii}.lengthMatch-1);
+        plot(pd:pd+comparisonStruct{ii}.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+
+        if comparisonStruct{ii}.or(1)==1
+            pccV =  pcc(fliplr(b1),b2');
+        else
+            pccV =  pcc(b1,b2');
+        end
+    
+     
+     
+     
         import CBT.Hca.Core.Comparison.pcc;
         
-        legend({strcat(['$\hat C_{\rm ' num2str(ii) '}=$' num2str(pcc(barfragq{1},barfragr{1}),'%0.4f')]), niceName},'Interpreter','latex','location','southoutside')
+        legend({strcat(['$\hat C_{\rm ' num2str(ii) '}=$' num2str(pccV,'%0.4f')]), niceName},'Interpreter','latex','location','southoutside')
 % 
 % 
 

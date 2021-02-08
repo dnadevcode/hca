@@ -1,4 +1,4 @@
-function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(theory, shortVec, shortVecBit, sets)
+function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(theory, shortVec, shortVecBit,longVecBit, w)
     %   ucr_dtw_score - computes dtw score based on "trillion" code from UCR
     %
     %
@@ -8,16 +8,19 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(theory, shortV
     %       rezMax - which stores maxcoef,pos, and or
     %
     
-    if nargin < 4   
-        % Sakoe-Chiba band, this corresponds to stretch factor
-%         R = sets.theory.stretchFactors(end)-1;
-        R = 0.01;
-        nameFiles = num2str(randi(100));
-        dtwscriptpath = fullfile(pwd,'ucr_dtw.sh');
-        matDirpath = fullfile(pwd,'output');
-    end
+%     if nargin < 4   
+%         % Sakoe-Chiba band, this corresponds to stretch factor
+% %         R = sets.theory.stretchFactors(end)-1;
+%         R = 0.01;
+%         nameFiles = num2str(randi(100));
+%         dtwscriptpath = fullfile(pwd,'ucr_dtw.sh');
+%         matDirpath = fullfile(pwd,'output');
+%     end
 
-    
+    [pos(1,1), scores(1,1)] = OVERLAPPING_DTW_MEX(theory,shortVec, length(shortVec), 1.05);
+    [pos(1,2), scores(1,2)] = OVERLAPPING_DTW_MEX(theory,flipud(shortVec), length(shortVec), 1.05);
+
+
     % needs to compute dtw
     shortVecCut = shortVec(logical(shortVecBit));
 
@@ -29,45 +32,45 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(theory, shortV
     % parfor is used
     
     % should regulate the precision via settings file..
-    
-    fname1 = strcat([nameFiles 'query.txt']); fileID = fopen(fname1,'w');
-    fprintf(fileID,'%2.5f ',shortVecCut); fclose(fileID);
-    
-    
-    fname2 = strcat([nameFiles 'queryrev.txt']); fileID = fopen(fname2,'w');
-    fprintf(fileID,'%2.5f ',fliplr(shortVecCut)); fclose(fileID);
-    
-    % this is a bit dumb since we save the theory again
-    fname3 = strcat([nameFiles 'theory.txt']); fileID = fopen(fname3,'w');
-    fprintf(fileID,'%2.5f ',theory); fclose(fileID);
-    
+%     
+%     fname1 = strcat([nameFiles 'query.txt']); fileID = fopen(fname1,'w');
+%     fprintf(fileID,'%2.5f ',shortVecCut); fclose(fileID);
+%     
+%     
+%     fname2 = strcat([nameFiles 'queryrev.txt']); fileID = fopen(fname2,'w');
+%     fprintf(fileID,'%2.5f ',fliplr(shortVecCut)); fclose(fileID);
+%     
+%     % this is a bit dumb since we save the theory again
+%     fname3 = strcat([nameFiles 'theory.txt']); fileID = fopen(fname3,'w');
+%     fprintf(fileID,'%2.5f ',theory); fclose(fileID);
+%     
 
     
 %     pathToScript = fullfile(sets.dtwscriptpath,'ucr_dtw.sh');
+% 
+%     pathToScript = dtwscriptpath;
+% 
+%     outFile = fullfile(matDirpath,strcat([nameFiles 'output.txt']));
+% %     tic
+%     ucrCode = fullfile(strrep(dtwscriptpath,'ucr_dtw.sh','a.out'));
+% 
+%     cmdStr       = [pathToScript ' ' fname1 ' ' fname2 ' ' fname3 ' ' num2str(M) ' ' num2str(R) ' ' matDirpath ' ' outFile ' ' ucrCode];
+%     system(cmdStr);
+% %     toc
+%     delete(fname1);
+%     delete(fname2);
+%     delete(fname3);
 
-    pathToScript = dtwscriptpath;
-
-    outFile = fullfile(matDirpath,strcat([nameFiles 'output.txt']));
-%     tic
-    ucrCode = fullfile(strrep(dtwscriptpath,'ucr_dtw.sh','a.out'));
-
-    cmdStr       = [pathToScript ' ' fname1 ' ' fname2 ' ' fname3 ' ' num2str(M) ' ' num2str(R) ' ' matDirpath ' ' outFile ' ' ucrCode];
-    system(cmdStr);
-%     toc
-    delete(fname1);
-    delete(fname2);
-    delete(fname3);
-
-
-    % smart would be to use mpi to save to different parts of the file..
-    A = importdata(outFile);
-    delete(outFile);
-    
-    % just make the coeff negative, so we look for max instead of min
-    coef = -[A(2) A(4)];
-    pos = [A(1) A(3)];
-    [rezMax.maxcoef,rezMax.or ] = max(coef);
-    rezMax.pos = pos(rezMax.or)+1-find(shortVecBit,1,'first')+1;
+% 
+%     % smart would be to use mpi to save to different parts of the file..
+%     A = importdata(outFile);
+%     delete(outFile);
+%     
+%     % just make the coeff negative, so we look for max instead of min
+%     coef = -[A(2) A(4)];
+%     pos = [A(1) A(3)];
+%     [rezMax.maxcoef,rezMax.or ] = max(coef);
+%     rezMax.pos = pos(rezMax.or)+1-find(shortVecBit,1,'first')+1;
     
     
 %     % mex the c function. This Should be mexed before    

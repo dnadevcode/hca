@@ -34,6 +34,8 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     if  sets.theoryGen.computeBitmask
         import CBT.Hca.Core.Theory.compute_theory_bitmask;
         bitmask = compute_theory_bitmask(chr1,sets);
+    else
+        bitmask = [];
     end
 
   

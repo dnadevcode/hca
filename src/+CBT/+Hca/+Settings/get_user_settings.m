@@ -162,8 +162,8 @@ function [ sets ] = get_user_settings( sets )
             sets.subfragment.numberFragments = str2double(answer{1}); % number of random cutouts from the input set
         end
         
-        if isequal(sets.comparisonMethod,'mp')
-            prompt = {'Sliding window width','Generate p-values'};
+        if isequal(sets.comparisonMethod,'mp')||isequal(sets.comparisonMethod,'mpnan')
+            prompt = {'Sliding window width','Generate p-values (only in HCA_Run)'};
             title = 'Choose sliding window width';
             dims = [1 35];
             definput = {'100','1'};

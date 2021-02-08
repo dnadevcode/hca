@@ -1,6 +1,6 @@
 function [edgeDetectionSettings] = get_default_edge_detection_settings(skipDoubleTanhAdjustment)
     edgeDetectionSettings.skipDoubleTanhAdjustment = skipDoubleTanhAdjustment;
-
+    edgeDetectionSettings.method = 'Otsu';
     % TODO: stop hardcoding these things
     
     otsuApproxSettings.globalThreshTF = true;
