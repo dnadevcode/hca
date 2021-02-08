@@ -16,10 +16,7 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
     
     % TODO: return warnings to the places where it is important to know
     % what is being done and to check for consistency
-    
-    % timestamp for the results
-    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
-
+  
     if nargin < 1 % if settings were not provided
         % import settings
         import CBT.Hca.Import.import_hca_settings;
@@ -30,7 +27,10 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
         % load all user selected settings
         import CBT.Hca.Settings.get_user_settings;
         sets = get_user_settings(sets);
-        
+         
+        % timestamp for the results
+        sets.timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+ 
         % add kymographs
         import CBT.Hca.Import.add_kymographs_fun;
         [kymoStructs] = add_kymographs_fun(sets);

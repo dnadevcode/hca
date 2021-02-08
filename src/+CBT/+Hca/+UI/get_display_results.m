@@ -103,10 +103,10 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
                 max2 = nan(size(maxcoef));      max2(i,1) = maxcoef(i,1);
                 fig1 = figure('Visible', 'off');
 %                 fig1 = figure;
-                if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
+                if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpnan')  || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
                     ax1 = subplot(1,1,1);
                     if max2~=0
-                        plot_best_bar_mp(ax1,barcodeGen,[],comparisonStruct, theoryStruct, max2,0,sets);
+                        plot_best_bar_mp(ax1,barcodeGen,[],comparisonStruct, theoryStruct, max2,1,sets);
                     end
                 else
                     plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, max2);
