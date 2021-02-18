@@ -404,9 +404,11 @@ private:
 };
 
 
+
+
 /// Main Function
 /// int main(  int argc , char *argv[] )
-void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *s)
+void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *y, double *s)
 {
 
     scoped_redirect_cout mycout_redirect;
@@ -417,8 +419,10 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
     double *u, *l, *qo, *uo, *lo,*tz,*cb, *cb1, *cb2,*u_d, *l_d;
 
     // outputs..
-    *y = 0;
+    // y = 0;
+
     *s = 0;
+
 
     /// name the parameters
     double d;
@@ -427,9 +431,10 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
     int r = -1;
     long long loc = 0;
     double t1,t2;
-    int kim = 0,keogh = 0, keogh2 = 0;
+    int kim = 0,keogh = 0, keogh2 = 0; int bm=0;
     double dist=0, lb_kim=0, lb_k=0, lb_k2=0;
-    double *buffer, *u_buff, *l_buff;
+    double *buffer,*u_buff, *l_buff;
+    double *bufferb,*tb;
     Index *Q_tmp;
 
     /// For every EPOCH points, all cummulative values, such as ex (sum), ex2 (sum square), will be restarted for reducing the floating point error.
@@ -441,6 +446,7 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
 	else
             r = floor(R);
     // printf("%d\n",r);
+
 
 
     /// start the clock
@@ -461,8 +467,12 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
     u_d = (double *)malloc(sizeof(double)*m);
     l_d = (double *)malloc(sizeof(double)*m);
     t = (double *)malloc(sizeof(double)*m*2);
+    tb = (double *)malloc(sizeof(double)*m*2);
+
     tz = (double *)malloc(sizeof(double)*m);
     buffer = (double *)malloc(sizeof(double)*EPOCH);
+    bufferb = (double *)malloc(sizeof(double)*EPOCH);
+
     u_buff = (double *)malloc(sizeof(double)*EPOCH);
     l_buff = (double *)malloc(sizeof(double)*EPOCH);
 
@@ -472,6 +482,9 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
         return;
     }
 }
+
+
+
 
     /// Read query file
     bsf = INF; /// So this finds global solution
@@ -509,6 +522,7 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
     fclose(File2);
 
 
+
     // test purposes: save lower and upper lemire to txt files
 
     /// Sort the query one time by abs(z-norm(q[i]))
@@ -543,28 +557,39 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
     bool done = false;
     int it=0, ep=0, k=0;
     long long I;    /// the starting index of the data in current chunk of size EPOCH
-
+    double curbit = 0;
     /// Read first m-1 points
-    ep=0;
-    if (it==0)
-    {   for(k=0; k<m-1; k++)
-            buffer[k] = data[k];
-    }
-    printf("%f\n",buffer[0]);
+    // ep=0;
+    // if (it==0)
+    // {   for(k=0; k<m-1; k++)
+    //         buffer[k] = data[k];
+    //         bufferb[k] = b[k];
+    //         // printf(" %4.3f \n",  bufferb[k]);
+    //
+    // }
+    // printf("%f\n",buffer[0]);
+    // printf(" %3d \n", b[99]);
 
-/*
     while(!done)
     {
-
+        // printf("Iteration %d\n",it);
         /// Read first m-1 points
+         // printf(" %3d \n",m);
         ep=0;
         if (it==0)
-        {   for(k=0; k<m-1; k++)
+        {   for(k=0; k<m-1; k++){
                 buffer[k] = data[k];
+                bufferb[k] = b[k];
+                // printf(" %3d \n", b[k]);
+            }
+
+
         }
         else
-        {   for(k=0; k<m-1; k++)
+        {   for(k=0; k<m-1; k++){
                 buffer[k] = buffer[EPOCH-m+1+k];
+                bufferb[k] = bufferb[EPOCH-m+1+k];
+            }
         }
 
         /// Read buffer of size EPOCH or when all data has been read.
@@ -572,14 +597,15 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
         while(ep<EPOCH && EPOCH*it+ep <= n )
         {
             buffer[ep] = data[EPOCH*it+ep];
+            bufferb[ep] = b[EPOCH*it+ep];
             ep++;
         }
 
         /// Data are read in chunk of size EPOCH.
-        /// When there is nothing to read, the loop is end. Could it happen that for a few points we dont compute the dtw?
+        /// When there is nothing to read, the loop ends. Could it happen that for a few points we dont compute the dtw?
         if (ep<=m-1)
-        {   done = true;
-        } else
+            done = true;
+        else
         {   lower_upper_lemire(buffer, ep, r, l_buff, u_buff);
 
             /// Just for printing a dot for approximate a million point. Not much accurate.
@@ -596,28 +622,38 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
                 /// Calcualte sum and sum square. need better accuracy maybe for floating point?
                 ex += d;
                 ex2 += d*d;
+                curbit += bufferb[i];
+                // printf(" %llu \n", i);
+                // printf(" %3f \n", curbit);
 
                 /// t is a circular array for keeping current data
                 t[i%m] = d;
-
                 /// Double the size for avoiding using modulo "%" operator
                 t[(i%m)+m] = d;
+
+                tb[i%m] = bufferb[i];
+                /// Double the size for avoiding using modulo "%" operator
+                tb[(i%m)+m] = bufferb[i];
+                /// same for bitmask
 
                 /// Start the task when there are more than m-1 points in the current chunk
                 if( i >= m-1 )
                 {
-                    mean = ex/m;
+
+                    // here an extra if: check if we're on a nan (bitmasked) pixel
+                    mean = ex/m; //mean
                     std = ex2/m;
-                    std = sqrt(std-mean*mean);
+                    std = sqrt(std-mean*mean); //std
 
                     /// compute the start location of the data in the current circular array, t
                     j = (i+1)%m;
                     /// the start location of the data in the current chunk
                     I = i-(m-1);
-
+                    // curbit=m;//tempdisable
+                    if (curbit > m-0.5)
+                    {
                     /// Use a constant lower bound to prune the obvious subsequence
                     lb_kim = lb_kim_hierarchy(t, q, j, m, mean, std, bsf);
-
                     if (lb_kim < bsf)
                     {
                         /// Use a linear time lower bound to prune; z_normalization of t will be computed on the fly.
@@ -667,11 +703,14 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
                             keogh++;
                     } else
                         kim++;
-
+                    } else
+                        bm++;
                     /// Reduce obsolute points from sum and sum square
                     ex -= t[j];
                     ex2 -= t[j]*t[j];
+                    curbit -= tb[j];
                 }
+
             }
 
             /// If the size of last chunk is less then EPOCH, then no more data and terminate.
@@ -679,10 +718,33 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
                 done=true;
             else
                 it++;
+            // done=true;
         }
 
     }
 
+    i= (it)*(EPOCH-m+1) + ep;
+
+    *y = loc;
+    *s = sqrt(bsf);
+
+    t2 = clock();
+    /// Note that loc and i are long long.
+    cout << "Location : " << loc << endl;
+    cout << "Distance : " << sqrt(bsf) << endl;
+    cout << "Data Scanned : " << i << endl;
+    cout << "Total Execution Time : " << (t2-t1)/CLOCKS_PER_SEC << " sec" << endl;
+    printf("\n");
+    printf("Pruned by bitmask    : %6.2f%%\n", ((double) bm / i)*100);
+    printf("Pruned by LB_Kim    : %6.2f%%\n", ((double) kim / i)*100);
+    printf("Pruned by LB_Keogh  : %6.2f%%\n", ((double) keogh / i)*100);
+    printf("Pruned by LB_Keogh2 : %6.2f%%\n", ((double) keogh2 / i)*100);
+    printf("DTW Calculation     : %6.2f%%\n", 100-(((double)kim+keogh+keogh2+bm)/i*100));
+    // return
+
+/*
+    *y = loc;
+    *s = sqrt(bsf);
 
     i= (it)*(EPOCH-m+1) + ep;
 
@@ -702,7 +764,9 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
     free(l_buff);
     free(u_buff);
 
-    t2 = clock();
+    // return 0;
+
+
 */
 
 }
@@ -710,7 +774,314 @@ void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *
 
 
 
-/*
+
+//
+// /// Main Function
+// /// int main(  int argc , char *argv[] )
+// void cpp_dtw(double *data, double *q, int n,int m, double R, double *y, double *s)
+// {
+//
+//
+//     double bsf;      /// best-so-far
+//     double *t;       /// data array and query array
+//     int *order;      ///new order of the query
+//     double *u, *l, *qo, *uo, *lo,*tz,*cb, *cb1, *cb2,*u_d, *l_d;
+//
+//     // outputs..
+//     *y = 0;
+//     *s = 0;
+//
+//     /// name the parameters
+//     double d;
+//     long long i , j;
+//     double ex , ex2 , mean, std;
+//     int r = -1;
+//     long long loc = 0;
+//     double t1,t2;
+//     int kim = 0,keogh = 0, keogh2 = 0;
+//     double dist=0, lb_kim=0, lb_k=0, lb_k2=0;
+//     double *buffer, *u_buff, *l_buff;
+//     Index *Q_tmp;
+//
+//     /// For every EPOCH points, all cummulative values, such as ex (sum), ex2 (sum square), will be restarted for reducing the floating point error.
+//     int EPOCH = 100000;
+//
+//     /// Sakoe-Chiba band
+//     if (R<=1)
+//             r = floor(R*m);
+// 	else
+//             r = floor(R);
+//     // printf("%d\n",r);
+//
+//
+//     /// start the clock
+//     t1 = clock();
+//
+// // initializations
+// {
+//     qo = (double *)malloc(sizeof(double)*m);
+//     uo = (double *)malloc(sizeof(double)*m);
+//     lo = (double *)malloc(sizeof(double)*m);
+//     order = (int *)malloc(sizeof(int)*m);
+//     Q_tmp = (Index *)malloc(sizeof(Index)*m);
+//     u = (double *)malloc(sizeof(double)*m);
+//     l = (double *)malloc(sizeof(double)*m);
+//     cb = (double *)malloc(sizeof(double)*m);
+//     cb1 = (double *)malloc(sizeof(double)*m);
+//     cb2 = (double *)malloc(sizeof(double)*m);
+//     u_d = (double *)malloc(sizeof(double)*m);
+//     l_d = (double *)malloc(sizeof(double)*m);
+//     t = (double *)malloc(sizeof(double)*m*2);
+//     tz = (double *)malloc(sizeof(double)*m);
+//     buffer = (double *)malloc(sizeof(double)*EPOCH);
+//     u_buff = (double *)malloc(sizeof(double)*EPOCH);
+//     l_buff = (double *)malloc(sizeof(double)*EPOCH);
+//
+//     if( qo == NULL || uo == NULL || lo == NULL|| order == NULL|| Q_tmp == NULL || u == NULL || l == NULL || cb == NULL|| cb1 == NULL || cb2 == NULL ||u_d == NULL|| l_d == NULL || t == NULL ||  tz == NULL )
+//     {
+//         error(1);
+//         return;
+//     }
+// }
+//
+//     /// Read query file
+//     bsf = INF; /// So this finds global solution
+//     j = 0;
+//     ex = ex2 = 0;
+//
+//     // compute statistics for query /// alternatively use Error-free transformation here
+//     for( i = 0 ; i < m ; i++ )
+//     {
+//         ex += q[i];    /// if the numbers are very big, would have some numerical issues?
+//         ex2 += q[i]*q[i];
+//     }
+//     //Sum(a,b)
+//
+//     /// Do z-normalize the query, keep in same array, q
+//     mean = ex/m;
+//     std = ex2/m;
+//     std = sqrt(std-mean*mean);
+//     for( i = 0 ; i < m ; i++ )
+//          q[i] = (q[i] - mean)/std;
+//
+//     lower_upper_lemire(q, m, r, l, u);
+//
+//     // printf("%f\n",l[0]);
+//     // printf("%f\n",u[0]);
+//     FILE *File2;
+//     File2 = fopen("lemire_l.txt", "w+");
+//     for(int k = 0 ; k < m ; k++ )
+//         fprintf(File2,"%f ",l[k]);
+//     fclose(File2);
+//
+//     File2 = fopen("lemire_u.txt", "w+");
+//     for(int k = 0 ; k < m ; k++ )
+//         fprintf(File2,"%f ",u[k]);
+//     fclose(File2);
+//
+//
+//     // test purposes: save lower and upper lemire to txt files
+//
+//     /// Sort the query one time by abs(z-norm(q[i]))
+//     for( i = 0; i<m; i++)
+//     {
+//         Q_tmp[i].value = q[i];
+//         Q_tmp[i].index = i;
+//     }
+//     qsort(Q_tmp, m, sizeof(Index),comp);
+//
+//     /// also create another arrays for keeping sorted envelop
+//     for( i=0; i<m; i++)
+//     {   int o = Q_tmp[i].index;
+//         order[i] = o;
+//         qo[i] = q[o];
+//         uo[i] = u[o];
+//         lo[i] = l[o];
+//     }
+//     free(Q_tmp);
+//
+//
+//     /// Initial the cummulative lower bound / also consider uper bound maybe?
+//     for( i=0; i<m; i++)
+//     {   cb[i]=0;
+//         cb1[i]=0;
+//         cb2[i]=0;
+//     }
+//
+//     i = 0;          /// current index of the data in current chunk of size EPOCH
+//     j = 0;          /// the starting index of the data in the circular array, t
+//     ex = ex2 = 0;
+//     bool done = false;
+//     int it=0, ep=0, k=0;
+//     long long I;    /// the starting index of the data in current chunk of size EPOCH
+//
+//     /// Read first m-1 points
+//     ep=0;
+//     if (it==0)
+//     {   for(k=0; k<m-1; k++)
+//             buffer[k] = data[k];
+//     }
+//     printf("%f\n",buffer[0]);
+//
+// /*
+//     while(!done)
+//     {
+//
+//         /// Read first m-1 points
+//         ep=0;
+//         if (it==0)
+//         {   for(k=0; k<m-1; k++)
+//                 buffer[k] = data[k];
+//         }
+//         else
+//         {   for(k=0; k<m-1; k++)
+//                 buffer[k] = buffer[EPOCH-m+1+k];
+//         }
+//
+//         /// Read buffer of size EPOCH or when all data has been read.
+//         ep=m-1; // create buffer.. since all data is already loaded, might not be necessary?
+//         while(ep<EPOCH && EPOCH*it+ep <= n )
+//         {
+//             buffer[ep] = data[EPOCH*it+ep];
+//             ep++;
+//         }
+//
+//         /// Data are read in chunk of size EPOCH.
+//         /// When there is nothing to read, the loop is end. Could it happen that for a few points we dont compute the dtw?
+//         if (ep<=m-1)
+//         {   done = true;
+//         } else
+//         {   lower_upper_lemire(buffer, ep, r, l_buff, u_buff);
+//
+//             /// Just for printing a dot for approximate a million point. Not much accurate.
+//             if (it%(1000000/(EPOCH-m+1))==0)
+//                 fprintf(stderr,".");
+//
+//             /// Do main task here..
+//             ex=0; ex2=0;
+//             for(i=0; i<ep; i++)
+//             {
+//                 /// A bunch of data has been read and pick one of them at a time to use
+//                 d = buffer[i];
+//
+//                 /// Calcualte sum and sum square. need better accuracy maybe for floating point?
+//                 ex += d;
+//                 ex2 += d*d;
+//
+//                 /// t is a circular array for keeping current data
+//                 t[i%m] = d;
+//
+//                 /// Double the size for avoiding using modulo "%" operator
+//                 t[(i%m)+m] = d;
+//
+//                 /// Start the task when there are more than m-1 points in the current chunk
+//                 if( i >= m-1 )
+//                 {
+//                     mean = ex/m;
+//                     std = ex2/m;
+//                     std = sqrt(std-mean*mean);
+//
+//                     /// compute the start location of the data in the current circular array, t
+//                     j = (i+1)%m;
+//                     /// the start location of the data in the current chunk
+//                     I = i-(m-1);
+//
+//                     /// Use a constant lower bound to prune the obvious subsequence
+//                     lb_kim = lb_kim_hierarchy(t, q, j, m, mean, std, bsf);
+//
+//                     if (lb_kim < bsf)
+//                     {
+//                         /// Use a linear time lower bound to prune; z_normalization of t will be computed on the fly.
+//                         /// uo, lo are envelop of the query.
+//                         lb_k = lb_keogh_cumulative(order, t, uo, lo, cb1, j, m, mean, std, bsf);
+//                         if (lb_k < bsf)
+//                         {
+//                             /// Take another linear time to compute z_normalization of t.
+//                             /// Note that for better optimization, this can merge to the previous function.
+//                             for(k=0;k<m;k++)
+//                             {   tz[k] = (t[(k+j)] - mean)/std;
+//                             }
+//
+//                             /// Use another lb_keogh to prune
+//                             /// qo is the sorted query. tz is unsorted z_normalized data.
+//                             /// l_buff, u_buff are big envelop for all data in this chunk
+//                             lb_k2 = lb_keogh_data_cumulative(order, tz, qo, cb2, l_buff+I, u_buff+I, m, mean, std, bsf);
+//                             if (lb_k2 < bsf)
+//                             {
+//                                 /// Choose better lower bound between lb_keogh and lb_keogh2 to be used in early abandoning DTW
+//                                 /// Note that cb and cb2 will be cumulative summed here.
+//                                 if (lb_k > lb_k2)
+//                                 {
+//                                     cb[m-1]=cb1[m-1];
+//                                     for(k=m-2; k>=0; k--)
+//                                         cb[k] = cb[k+1]+cb1[k];
+//                                 }
+//                                 else
+//                                 {
+//                                     cb[m-1]=cb2[m-1];
+//                                     for(k=m-2; k>=0; k--)
+//                                         cb[k] = cb[k+1]+cb2[k];
+//                                 }
+//
+//                                 /// Compute DTW and early abandoning if possible
+//                                 dist = dtw(tz, q, cb, m, r, bsf);
+//
+//                                 if( dist < bsf )
+//                                 {   /// Update bsf
+//                                     /// loc is the real starting location of the nearest neighbor in the file
+//                                     bsf = dist;
+//                                     loc = (it)*(EPOCH-m+1) + i-m+1;
+//                                 }
+//                             } else
+//                                 keogh2++;
+//                         } else
+//                             keogh++;
+//                     } else
+//                         kim++;
+//
+//                     /// Reduce obsolute points from sum and sum square
+//                     ex -= t[j];
+//                     ex2 -= t[j]*t[j];
+//                 }
+//             }
+//
+//             /// If the size of last chunk is less then EPOCH, then no more data and terminate.
+//             if (ep<EPOCH)
+//                 done=true;
+//             else
+//                 it++;
+//         }
+//
+//     }
+//
+//
+//     i= (it)*(EPOCH-m+1) + ep;
+//
+//     free(q);
+//     free(u);
+//     free(l);
+//     free(uo);
+//     free(lo);
+//     free(qo);
+//     free(cb);
+//     free(cb1);
+//     free(cb2);
+//     free(tz);
+//     free(t);
+//     free(l_d);
+//     free(u_d);
+//     free(l_buff);
+//     free(u_buff);
+//
+//     t2 = clock();
+// */
+//
+// }
+//
+//
+//
+//
+// /*
 
 
 
@@ -773,16 +1144,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 
     /* Check for proper number of arguments. */
-    if (nrhs != 5) {
-        mexErrMsgTxt("Five inputs required.");
+    if (nrhs != 6) {
+        mexErrMsgTxt("Six inputs required.");
 	}
     else if (nlhs > 2) {
         mexErrMsgTxt("Too many output arguments");
     }
 
-    lenD = mxGetScalar(prhs[2]); /// data length
-    lenQ = mxGetScalar(prhs[3]); /// query length
-    R = mxGetScalar(prhs[4]); /// Sakoe-Chiba width
+    lenD = mxGetScalar(prhs[3]); /// data length
+    lenQ = mxGetScalar(prhs[4]); /// query length
+    R = mxGetScalar(prhs[5]); /// Sakoe-Chiba width
 
     //   /* Get the length of the input string. */
     // buflen0 = (mxGetM(prhs[0]) * mxGetN(prhs[0])) + 1;
@@ -811,8 +1182,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     q = (double *)malloc(sizeof(double)*lenQ);
     q = mxGetPr(prhs[1]);
 
+    double *b;
+    b = (double *)malloc(sizeof(double)*lenD);
+    b = mxGetPr(prhs[2]);
+    // b = (int *) mxGetPr(prhs[2]);
+
     // print a single value
-    // mexPrintf("%f\n", q[0]);
+    mexPrintf("%4.3f\n", b[99]);
+    mexPrintf("%4.3f\n", b[100]);
+    mexPrintf("%4.3f\n", b[101]);
+
     // mexPrintf("%f\n", d[0]);
 
     // q =  mxGetData(prhs[1]);
@@ -834,7 +1213,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	s = mxGetPr(plhs[1]);
 
 
-    cpp_dtw(d, q, lenD, lenQ, R, y, s);
+    cpp_dtw(d, q,b, lenD, lenQ, R, y, s);
 
 
 }

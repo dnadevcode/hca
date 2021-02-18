@@ -1,4 +1,4 @@
-function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(theory, shortVec, shortVecBit,longVecBit, w)
+function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, querybit, databit, w)
     %   ucr_dtw_score - computes dtw score based on "trillion" code from UCR
     %
     %
@@ -17,18 +17,83 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(theory, shortV
 %         matDirpath = fullfile(pwd,'output');
 %     end
 
-    [pos(1,1), scores(1,1)] = OVERLAPPING_DTW_MEX(theory,shortVec, length(shortVec), 1.05);
-    [pos(1,2), scores(1,2)] = OVERLAPPING_DTW_MEX(theory,flipud(shortVec), length(shortVec), 1.05);
+    % for query, only select the non-nan bit
+    query = query(logical(querybit));
+    locStart = find(query,1,'first');
+    
+    R= 5;  % describes the Sakoe-Chiba band, so in this case we don't allow any local stretching
+    % and instead increase this if we want better output
+%   
+% mex 'NAN_DTW_MEX.cpp';
+    % check: what happens if bitmask is all ones?
+%     tic
+    [posD(1), score1] = NAN_DTW_MEX(data,query,double(databit<50), length(data), length(query), R);
+    [posD(2), score2] = NAN_DTW_MEX(data,fliplr(query),double(databit<50), length(data), length(query), R);
+%     toc
+    
+    % take the negative of minscore - then this will be max
+    [mincoef,or] = min([score1,score2]);
+    maxcoef = -mincoef;
+    pos = posD(or)+1; % if we want location for the full query
+    
+    secondPos = locStart;
+    lenM = length(query);
+
+    %     
+    % relation of R to MAXSAMP?
+    %     seems ok!!
+    b1 = zscore(data(posD(1)+1:posD(1)+length(query)),1);
+    b2 = zscore(query,1);
+    if or==2
+        b2=fliplr(b2);
+    end
+
+    [~,IX,IY] = dtw(b1,b2,'squared',R);
+    
+    dist=[IX IY];
+    % DIST
+%     sqrt(DIST) % gives the same output!
+% 
+% %plotting stuff:
+% figure
+% hold on
+% v1=zscore(b1,1)+3;
+% plot(v1)
+% v2=zscore(b2,1)-3;
+% plot(v2)
+% for i=1:10:length(IX)
+%     plot([IX(i),IY(i)],[v1(IX(i)),v2(IY(i))]);
+% end
+% figure
+% plot(IX,IY,'o-',[IX(1) IX(end)],[IY(1) IY(end)])
 
 
-    % needs to compute dtw
-    shortVecCut = shortVec(logical(shortVecBit));
+    % todo: recover the score and position on the 2 barcodes based on the
+    % position found here:
+%     figure,plot(zscore(data(pos:pos+length(query)-1),1))
+%     hold on
+%     plot(zscore(query,1))
+    %     
+%     [dist,ix,iy] = dtw(zscore(query,1),zscore(data(pos:pos+length(query)-1),1),45);
+%     sqrt(dist)
 
-    % rand number, later change this to idx of barcode 
-%     nameFiles = sets.idx;
-    % length of experiment
-    M = sum(shortVecBit);
-    % save experiment in temporary txt file. Check how this behaves in case
+%     
+%     [dist,ix,iy] = dtw(zscore(query,1),zscore(data(pos:pos+length(query)-1),1),45);
+%     sqrt(dist)
+
+
+%     [pos(1,1), scores(1,1)] = OVERLAPPING_DTW_MEX(theory,shortVec, length(shortVec), 1.05);
+%     [pos(1,2), scores(1,2)] = OVERLAPPING_DTW_MEX(theory,flipud(shortVec), length(shortVec), 1.05);
+
+% 
+%     % needs to compute dtw
+%     shortVecCut = shortVec(logical(shortVecBit));
+% 
+%     % rand number, later change this to idx of barcode 
+% %     nameFiles = sets.idx;
+%     % length of experiment
+%     M = sum(shortVecBit);
+%     % save experiment in temporary txt file. Check how this behaves in case
     % parfor is used
     
     % should regulate the precision via settings file..

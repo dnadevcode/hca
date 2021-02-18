@@ -434,7 +434,10 @@ void cpp_dtw(char *Data_File, char *Query_File, int m, double R, double *y, doub
     /// check if the files can be opened
     fp = fopen(Data_File,"r");
     if( fp == NULL )
+    {
         error(2);
+        return;
+    }
 
     qp = fopen(Query_File,"r");
     if( qp == NULL )

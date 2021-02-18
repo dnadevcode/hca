@@ -5,7 +5,7 @@
 timeFramesNr = 0; % 0 - take all timeframes
 alignMethod = 1; % 1 - nralign, 2 - ssdalign, 3 - ssg
 genConsensus = 0; % generate consensus
-plotallmatches = 0;
+plotallmatches = 1;
 adddefaulttheorysets = 0;
   
 skipEdgeDetection = 0; % skip edge detection

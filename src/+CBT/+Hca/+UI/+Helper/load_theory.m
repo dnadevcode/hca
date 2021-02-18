@@ -50,6 +50,7 @@ function [ theoryStruct ] = load_theory( sets )
                 catch
                     try
                         bars = barcodeData.theoryGen.theoryBarcodes;
+                        bits = barcodeData.theoryGen.theoryBitmasks;
                         names = barcodeData.theoryGen.theoryNames;
                         setsB = barcodeData.theoryGen.sets;        
                     catch
@@ -75,11 +76,19 @@ function [ theoryStruct ] = load_theory( sets )
             end
 
             parfor i=1:length(bars)
-                fname = fullfile(theoryFold, strcat(num2str(i),'.txt'));
+                fname = fullfile(theoryFold, strcat(num2str(i),'_barcode.txt'));
                 fileID = fopen(fname,'w');
                 % choose the precision from settings
                 fprintf(fileID,strcat(['%2.' num2str(precision) 'f ']),bars{i});
                 fclose(fileID);
+                try
+                    fnameb = strrep(fname,'_barcode','_bitmask');
+                    fileID = fopen(fnameb,'w');
+                    % choose the precision from settings
+                    fprintf(fileID,strcat(['%2.' num2str(precision) 'f ']),bits{i});
+                    fclose(fileID);
+                catch
+                end
                 theoryStructN{i}.filename = fname;
                 theoryStructN{i}.name = names{i};
                 theoryStructN{i}.length =  length(bars{i});

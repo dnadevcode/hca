@@ -1,4 +1,4 @@
-function [ model ] = choose_cb_model(name)
+function [ model ] = choose_cb_model(name,pattern)
     % choose_cb_model
     % Generates theory model parameters for the competitive binding model
     % Puts the parameter values in an n-dimensional matrix, where n is the
@@ -18,6 +18,7 @@ function [ model ] = choose_cb_model(name)
     if nargin < 1
         name = 'literature';
     end
+    
     
     switch name
         case 'literature'
@@ -48,8 +49,12 @@ function [ model ] = choose_cb_model(name)
             % multiply the constants by parameters from th epaper
             model.netropsinBindingConstant = 0.4*bindingConstantsMat./1E6;
             model.yoyoBindingConstant = 26;
-        case 'TCGA'
-            model.pattern = nt2int("TCGA");
+        case 'enzyme'
+            if nargin < 2
+                pattern = 'TCGA';
+            end
+            
+            model.pattern = nt2int(pattern);
 
         otherwise
     end

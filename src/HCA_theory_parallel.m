@@ -43,6 +43,7 @@ if ~sets.skipBarcodeGenSettings
     sets.theoryGen = get_theory_sets(sets.theoryGen); %
 end
 
+% sets.theoryGen.meanBpExt_nm = 2;
 tic;
 % make theoryData folder
 mkdir(sets.resultsDir);
@@ -59,8 +60,10 @@ fd = fopen(matFastapathShort,'w');
 fclose(fd);
 
 % compute free concentrations
-import CBT.Hca.Core.Theory.compute_free_conc;
-sets = compute_free_conc(sets);
+if isequal(sets.theoryGen.method,'literature')
+    import CBT.Hca.Core.Theory.compute_free_conc;
+    sets = compute_free_conc(sets);
+end
 
 theoryGen = struct();
 theoryBarcodes = cell(1,length(sets.theoryNames));
@@ -99,6 +102,8 @@ parfor idx = 1:length(sets.theoryNames)
     theoryNames{idx} = header;
     theoryIdx{idx} = idx;
     bpNm{idx} = bpNmV;
+
+  
     
     
         

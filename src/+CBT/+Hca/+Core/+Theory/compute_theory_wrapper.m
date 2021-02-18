@@ -17,10 +17,14 @@ function [x] = compute_theory_wrapper(ts, sets)
             x = run_simple_theory(ts);
         case "literature"
              x = run_literature_theory(ts',sets);
-        case "TCGA"
+        case "enzyme"
              x = zeros(length(ts),1);
              dots = strfind(ts',sets.model.pattern);
              x(dots) = 1;
+%         case "TCGA"
+%              x = zeros(length(ts),1);
+%              dots = strfind(ts',sets.model.pattern);
+%              x(dots) = 1;
         otherwise
             error('Incorrect method for theory generation selected' )
     end

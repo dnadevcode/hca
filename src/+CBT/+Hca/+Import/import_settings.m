@@ -7,7 +7,7 @@ function [sets] = import_settings(setsName)
     % add other models too.
     
     import CBT.Hca.Core.Theory.choose_cb_model;
-    [sets.model ] = choose_cb_model(sets.theoryGen.method);
+    [sets.model ] = choose_cb_model(sets.theoryGen.method,sets.model.pattern);
 
     
     

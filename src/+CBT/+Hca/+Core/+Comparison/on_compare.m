@@ -30,6 +30,8 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
 %             import CBT.Hca.UI.Helper.get_best_parameters;
 
 %             parameterfun = @(x)
+        case 'mass_dot'
+            comparisonFun = @(x,y,z,w,u) unmasked_MASS_DOT_CC(y,x,z,w,2^(4+nextpow2(length(x))),theoryStruct.isLinearTF,numPixelsAroundBestTheoryMask);            
         case 'mass_pcc'
             % choose k just higher than the length of small sequence for
             % best precision. (larger k though could increase speed)
@@ -37,7 +39,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         case 'dtw'
             
             import SignalRegistration.ucr_dtw_score;
-            comparisonFun = @(X1,X2, bitX1, bitX2, w) ucr_dtw_score(X1,X2, bitX1);
+            comparisonFun = @(X1,X2, bitX1, bitX2, w) ucr_dtw_score(X1,X2, bitX1,bitX2,w);
 
 %             comparisonStructure{idx}.ucr = ucr_dtw_score(theoryStruct.filename, barC, barB, sets);
         case 'mp'
