@@ -36,4 +36,5 @@ computeBitmask = 1; % whether to compute bitmask
 method = 'literature';      % method    
 k = 2^15;                   % k has to be k=m*2^d. k should be longer than smallest experiment size
 m = 2^13;                   % harcoded parameters for literature, can be changed here by the user
-
+[model]
+pattern = 'CB';

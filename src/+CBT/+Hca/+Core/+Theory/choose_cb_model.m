@@ -49,6 +49,7 @@ function [ model ] = choose_cb_model(name,pattern)
             % multiply the constants by parameters from th epaper
             model.netropsinBindingConstant = 0.4*bindingConstantsMat./1E6;
             model.yoyoBindingConstant = 26;
+            model.pattern = nt2int('CB');
         case 'enzyme'
             if nargin < 2
                 pattern = 'TCGA';

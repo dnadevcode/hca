@@ -27,6 +27,9 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+# 4.3.2
+Fix the theory settings file that would be missing a line which would fail the theory generation
+
 # 4.3
 - both HCA_GUI and HCA_theory in principle can be run without any gui's now, and all the necessary settings and files can be provided via
 'hca_settings.txt', and 'theory_settings.txt'.
