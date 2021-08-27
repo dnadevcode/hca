@@ -21,3 +21,5 @@ Hca_gui - experiments
 Hca_run - same as gui but allows adding consensus and p-val calc
 # /src/Scripts/ has a number of test scripts
 
+## Test
+results = runtests('pcc_compute_test.m') - other tests will be included in later versions

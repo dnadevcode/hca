@@ -29,6 +29,9 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+# 4.4
+Fixed some issues with MP, added unit tests to see if certain functions are working
+
 # 4.2
 - added possibility to generate theory directly via HCA_Gui (if fasta is selected, the program interprets that as needing to generate new theory)
 - added compatibility for mp (also with seemingly less bugs when plotting, which appeared before from the way position from the mp is reported)
