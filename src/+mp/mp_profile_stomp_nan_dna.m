@@ -4,7 +4,11 @@
 %     kk =128;
 % [mp,mpI] = mp_profile(aTS, bTS,r,kk);
 
-function [maxcoef,pos,or,idxpos,r, mp,mpI,mpPos,mpPIQ] = mp_profile_stomp_nan_dna(aTS, bTS, bitA, maskB, r, kk)
+function [maxcoef,pos,or,idxpos,r, mp,mpI,mpPos,mpPIQ] = mp_profile_stomp_nan_dna(aTS, bTS, bitA, maskB, r, kk,numPixelsAroundBestTheoryMask)
+
+    if nargin < 7
+        numPixelsAroundBestTheoryMask = 50;
+    end
     % mp profile stomp for DNA comparison (forward and reverse strand)
     % bitmasks should already included in aTS and bTS as NANs
     mpLength = length(aTS)-r+1;
@@ -15,7 +19,7 @@ function [maxcoef,pos,or,idxpos,r, mp,mpI,mpPos,mpPIQ] = mp_profile_stomp_nan_dn
     % mask both aTS and bTS (bTS is masked if it includes at least 50
     % undefined base-pairs
     nanValues = movmean(maskB,length(aTS),'Endpoints','discard');
-    bTS(bTS > 50) = nan;        % 50 is estimate.., mean approx 50 bp  (1/10th) in a pixel were nan's
+    bTS(maskB > 50) = nan;        % 50 is estimate.., mean approx 50 bp  (1/10th) in a pixel were nan's
     aTS(~bitA) = nan;
     
     % forward, simple
@@ -34,13 +38,13 @@ function [maxcoef,pos,or,idxpos,r, mp,mpI,mpPos,mpPIQ] = mp_profile_stomp_nan_dn
     % mpI is now position of the subfragment. But instead we might want to
     % compare the actual position // maybe not all, just best?
     import mp.convert_subfragment_pos_to_query;
-    [mpPIQ] = convert_subfragment_pos_to_query(mpI,length(aTS),r,mpPos);
+    [mpPIQ,mpI] = convert_subfragment_pos_to_query(mpI,length(aTS),r,mpPos);
     
     % now get parameters for best positions: maxcoef, pos, or, idxpos
     % (which means position on second barcode)
     % consider how this would be extracted from SCAMP also.
 	import mp.mp_best_params; % idxpos should be best pos on second barcode
-    [ maxcoef,pos,or,idxpos ] = mp_best_params( mp, mpI, mpPIQ, mpPos, 3, 50);    
+    [ maxcoef,pos,or,idxpos ] = mp_best_params( mp, mpI, mpPIQ, mpPos, 5, numPixelsAroundBestTheoryMask);    
 end
 
 function [mp,mpI] = mp_profile_stomp(aTS, bTS, r, kk)
@@ -67,16 +71,18 @@ function [mp,mpI] = mp_profile_stomp(aTS, bTS, r, kk)
     [X, sumx2, sumx, meanx, sigmax2, sigmax] = fastfindNNPre(bTS, r);
     [Y, sumy2, sumy, meany, sigmay2, sigmay] = fastfindNNPre(aTS, r);
     
+    % check if this is correct // nan should be for all that 
     meany(nansA(1:length(meany))) = nan;
     sigmay(nansA(1:length(meany))) = nan;
 %     firstNanA = find(nansA,1,'first');
     
     % find all 0-1 sequences.
     nanStarts = strfind(nansA',[0 1]);
-    nanStarts = nanStarts(nanStarts<=length(aTS)-r);
+%     nanStarts = nanStarts(nanStarts<=length(aTS)-r); % is it n-elements
+%     forward or backward that have to be bitmasked?
     for i=1:length(nanStarts)
-        meany(max(1,nanStarts(i)-r+2):nanStarts(i)) = nan;
-        sigmay(max(1,nanStarts(i)-r+2):nanStarts(i)) = nan;
+        meany(max(1,nanStarts(i)-r+2):min(nanStarts(i),length(meany))) = nan;
+        sigmay(max(1,nanStarts(i)-r+2):min(nanStarts(i),length(meany))) = nan;
     end
 
     %      find(nansA,[0;1])
@@ -88,14 +94,14 @@ function [mp,mpI] = mp_profile_stomp(aTS, bTS, r, kk)
     
 %     firstNan = find(nansB,1,'first');
     nanStarts = strfind(nansB',[0 1]);
-    nanStarts = nanStarts(nanStarts<=length(bTS)-r);
+%     nanStarts = nanStarts(nanStarts<=length(bTS)-r);
 
     meanx(nansB(1:length(meanx))) = nan;
     sigmax(nansB(1:length(meanx))) = nan;
     
     for i=1:length(nanStarts)
-        meanx(max(1,nanStarts(i)-r+2):nanStarts(i)) = nan;
-        sigmax(max(1,nanStarts(i)-r+2):nanStarts(i)) = nan;
+        meanx(max(1,nanStarts(i)-r+2):min(nanStarts(i),length(meanx))) = nan;
+        sigmax(max(1,nanStarts(i)-r+2):min(nanStarts(i),length(meanx))) = nan;
     end
 
     qRow = zeros(mpLength,1); % same as MP

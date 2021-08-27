@@ -2,7 +2,7 @@ function [thyCurve_pxRes] = convert_bpRes_to_pxRes(thyCurve_bpRes, meanBpExt_pix
     % Convert from bp resolution to pixel resolution
     % with moving average window.
     
-    if nargin > 3
+    if nargin < 3
         islinear = 0;
     end
 
@@ -14,10 +14,14 @@ function [thyCurve_pxRes] = convert_bpRes_to_pxRes(thyCurve_bpRes, meanBpExt_pix
     
     
     thyCurve_pxRes(round(length(thyCurve_bpRes)/s)) = 0;
-    xtraseq = cat(find(size(thyCurve_bpRes) - 1), ...
-                  thyCurve_bpRes(end-round(s):end), ...
-                  thyCurve_bpRes, ...
-                  thyCurve_bpRes(1:round(2*s)));
+    if islinear
+        xtraseq = [zeros(round(s),1); thyCurve_bpRes; zeros(round(s),1)];
+    else
+        xtraseq = cat(find(size(thyCurve_bpRes) - 1), ...
+                      thyCurve_bpRes(end-round(s):end), ...
+                      thyCurve_bpRes, ...
+                      thyCurve_bpRes(1:round(2*s)));
+    end
     for i = 1:round(length(thyCurve_bpRes)/s)
 %         data2= xtraseq(floor((i*s)-s+1):floor((i*s)+s));
         thyCurve_pxRes(i) = mean(xtraseq(floor((i*s)-s+1):floor((i*s)+s)));

@@ -114,7 +114,7 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
         name = 'consensus';
     end
 
-    title(strcat(['Experimental barcode vs theory ']),'Interpreter','latex');
+    title(strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
     %
     legend({strcat(['$\hat C_{\rm ' name '}=$' num2str(dd,'%0.2f')]), niceName},'Interpreter','latex')
 

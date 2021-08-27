@@ -13,6 +13,39 @@ function [ consensusStr,sets] = select_same_cut_consensus( consensusStructs, set
     end
 %     out =
 
+    % first find all bars in consensus
+    % how many clusters at each step? (cluster: > 1 barcode)
+%     cdix = consensusIndex;
+    numClusters = zeros(1,length(consensusStructs.treeStruct.barMatrix));
+    clusterVec = zeros(1,length(consensusStructs.treeStruct.barMatrix{1}));
+    clustCell = cell(1,length(consensusStructs.treeStruct.barMatrix));
+    for i=1:length(consensusStructs.treeStruct.barMatrix)
+        [score,idxs] = find(consensusStructs.treeStruct.barMatrix{i});
+        maxCl = max(clusterVec);
+%         clusterMin = min(clusterVec(idxs));
+        clusterMax = max(clusterVec(idxs));
+        if clusterMax==0
+            maxCl = maxCl+1;
+            clusterVec(idxs) = maxCl;
+        else
+             clusterVec(idxs) = clusterMax;
+        end       
+        clustCell{i} = clusterVec;
+        numClusters(i) =  length(unique((clustCell{i}( clustCell{i}~=0))));
+    end
+%         [locMatch,clusterMatch] =  ismember(find(consensusStructs.treeStruct.barMatrix{1}), fclusterVec);
+%         clusterVec = clusterVec +  consensusStructs.treeStruct.barMatrix{1}
+        
+%         consensusStructs.treeStruct.barMatrix{1}
+%     barsInCons = consensusStructs.treeStruct.barMatrix{end};
+%     for j=length(consensusStructs.treeStruct.barMatrix)-1:-1:1
+%         barsInConsTemp = consensusStructs.treeStruct.barMatrix{j};
+%         if sum(barsInConsTemp.*barsInCons) == 0
+%             cdix = [cdix j];
+%             barsInCons = barsInCons+barsInConsTemp;
+%         end
+%     end
+    
     
 
     if sets.consensus.promptForBarcodeClusterLimit == 1
@@ -22,7 +55,13 @@ function [ consensusStr,sets] = select_same_cut_consensus( consensusStructs, set
         title('Consensus comparison score plot','Interpreter','latex');
         xlabel('Number of averaged barcodes ', 'Interpreter','latex')
         ylabel('Maximal experiment vs experiment score', 'Interpreter','latex')
-        
+        subplot(1,2,2)
+        plot(numClusters)
+        xlabel('Number of averaged barcodes ', 'Interpreter','latex')
+        ylabel('Number of clusters (containing more than 1 element', 'Interpreter','latex')
+
+        % also number of clusters left at each point
+
         
       % here we add settings for this 
         prompt = {'Select consensus cluster threshold'};
@@ -58,7 +97,7 @@ function [ consensusStr,sets] = select_same_cut_consensus( consensusStructs, set
             barsInCons = barsInCons+barsInConsTemp;
         end
     end
-    
+    clust =[];
     for i=1:length(cdix)
 %     cons1 = consensusStructs.treeStruct.barMatrix(consensusIndex)
         idx = cdix(i);
@@ -92,53 +131,60 @@ function [ consensusStr,sets] = select_same_cut_consensus( consensusStructs, set
     % contribution! sometimes this would give error otherwise
     medianV = mode(pos);
     barswithcloseStarts = find(abs(pos -medianV) <=5);
-
-    % std(pos(:,1))
-    % barswithcloseStarts = indexing(barswithcloseStarts);
-    f = figure('Visible','off'); imagesc(consensusStructs.treeStruct.barcodes{idx}(barswithcloseStarts,:));
-    saveas(f,fullfile(sets.output.matDirpath, sets.timestamp,strcat(['filtered_cluster_' num2str(i) '.jpg'])))
-
-    shifted = circshift(consensusStructs.treeStruct.barcodes{idx}(barswithcloseStarts,:),[0,-medianV-6]);
-    f = figure('Visible','off'); imagesc(shifted);
-    saveas(f,fullfile(sets.output.matDirpath, sets.timestamp,strcat(['shifted_filtered_cluster_' num2str(i) '.jpg'])))
-
-
-        consensus = nanmean(shifted);
-        % numExL = 15;
-        % numExR = 10;
-        % 
-        bars = find(consensusStructs.treeStruct.barMatrix{idx});
-        % consensus(1:numExL) = nan;
-        % consensus(end-numExR+1:end) = nan;
-        clust{i}.clusterConsensusData.maxcoef = maxcoef;
-        clust{i}.clusterConsensusData.timestamp = sets.timestamp;
-        clust{i}.clusterConsensusData.barcodesInConsensus = bars(barswithcloseStarts);
-        clust{i}.clusterConsensusData.barcode = consensus;
-        clust{i}.clusterConsensusData.bitmask = ~isnan(consensus);
-        clust{i}.clusterConsensusData.indexWeights = sum(~isnan(shifted));
-        clust{i}.clusterConsensusData.stdErrOfTheMean = nanstd(shifted)./sqrt(clust{i}.clusterConsensusData.indexWeights);
-
-        clusterConsensusData = clust{i}.clusterConsensusData;
-        save(fullfile(sets.output.matDirpath, sets.timestamp,strcat(['filtered_clusterdata_' num2str(i) '.mat'])), 'clusterConsensusData','-v7.3') ;
-
-    % amount of times
-%     consensus.indexWeights = sum(~bitm);
-%     consensus.rawBitmask = sum(~bitm)> 3*std(sum(bitm));
-%     consensus.rawBarcode(~consensus.rawBitmask) = nan;
     
+    if barswithcloseStarts ~=1 % if only one element in cluster, something wrong since they should be same cut!
 
-    %consensus.rawBitmask = consensusStructs.treeStruct.treeBitmasks{consensusIndex}(row,:);
-%     consensus.time = consensusStructs.time;
-    % we have to retrace the name of this barcode
-    %
-    %consensus.name =  consensusStructs.treeStruct.clusteredBar{row};
-        disp('Barcodes that are included in the consensus are')
-        disp(num2str(clust{i}.clusterConsensusData.barcodesInConsensus))
+        % std(pos(:,1))
+        % barswithcloseStarts = indexing(barswithcloseStarts);
+        f = figure('Visible','off'); imagesc(consensusStructs.treeStruct.barcodes{idx}(barswithcloseStarts,:));
+        saveas(f,fullfile(sets.output.matDirpath, sets.timestamp,strcat(['filtered_cluster_' num2str(i) '.jpg'])))
+
+        shifted = circshift(consensusStructs.treeStruct.barcodes{idx}(barswithcloseStarts,:),[0,-medianV-6]);
+        f = figure('Visible','off'); imagesc(shifted);
+        saveas(f,fullfile(sets.output.matDirpath, sets.timestamp,strcat(['shifted_filtered_cluster_' num2str(i) '.jpg'])))
+
+
+            consensus = nanmean(shifted);
+            % numExL = 15;
+            % numExR = 10;
+            % 
+            bars = find(consensusStructs.treeStruct.barMatrix{idx});
+            % consensus(1:numExL) = nan;
+            % consensus(end-numExR+1:end) = nan;
+            clust{i}.clusterConsensusData.maxcoef = maxcoef;
+            clust{i}.clusterConsensusData.timestamp = sets.timestamp;
+            clust{i}.clusterConsensusData.barcodesInConsensus = bars(barswithcloseStarts);
+            clust{i}.clusterConsensusData.barcode = consensus;
+            clust{i}.clusterConsensusData.bitmask = ~isnan(consensus);
+            clust{i}.clusterConsensusData.indexWeights = sum(~isnan(shifted));
+            clust{i}.clusterConsensusData.stdErrOfTheMean = nanstd(shifted)./sqrt(clust{i}.clusterConsensusData.indexWeights);
+
+            clusterConsensusData = clust{i}.clusterConsensusData;
+            save(fullfile(sets.output.matDirpath, sets.timestamp,strcat(['filtered_clusterdata_' num2str(i) '.mat'])), 'clusterConsensusData','-v7.3') ;
+
+        % amount of times
+    %     consensus.indexWeights = sum(~bitm);
+    %     consensus.rawBitmask = sum(~bitm)> 3*std(sum(bitm));
+    %     consensus.rawBarcode(~consensus.rawBitmask) = nan;
+
+
+        %consensus.rawBitmask = consensusStructs.treeStruct.treeBitmasks{consensusIndex}(row,:);
+    %     consensus.time = consensusStructs.time;
+        % we have to retrace the name of this barcode
+        %
+        %consensus.name =  consensusStructs.treeStruct.clusteredBar{row};
+            disp('Barcodes that are included in the consensus are')
+            disp(num2str(clust{i}.clusterConsensusData.barcodesInConsensus))
+    else
 %     sets.consensus.barcodesInConsensus = consensus.indices;
+%         disp('Barcodes that are not included in the consensus are')
+%         disp(num2str(find(consB)))
     end
     
     for i=1:length(clust)
-        consensusStr{i} = clust{i}.clusterConsensusData;
+        if ~isempty(clust{i})
+            consensusStr{i} = clust{i}.clusterConsensusData;
+        end
     end
     timePassed = toc;
     display(strcat(['All consensuses generated in ' num2str(timePassed) ' seconds']));

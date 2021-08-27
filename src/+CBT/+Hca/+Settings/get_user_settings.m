@@ -111,18 +111,38 @@ function [ sets ] = get_user_settings( sets )
         % edge settings. Add a new possibility, of just fitting the sigmoid
         % with new method introduced at v0.4
         if sets.edgeSettings
-            answer = questdlg('Which edge detection method you want to choose', ...
-            'Edge detection settings', ...
-            'Otsu','Double tanh','Error function','Otsu');
-            % Handle response
-            switch answer
-                case 'Otsu'
-                    sets.edgeDetectionSettings.method = 'Otsu';
-                case 'Double tanh'
-                    sets.edgeDetectionSettings.method = 'Double tanh';
-                case 'Error function'
-                    sets.edgeDetectionSettings.method = 'Error Function';
+
+            spaceList = {'Otsu','Double tanh','Error function','Zscore'}; 
+            
+            [answer, tf] = listdlg('ListString', spaceList,...
+            'SelectionMode', 'Single', 'PromptString', 'Select item', 'Initialvalue', 1,'Name', 'Make choice');
+
+            if tf
+                sets.edgeDetectionSettings.method = spaceList{answer}; 
+            else
+                 sets.edgeDetectionSettings.method = 'Otsu';
+                % user canceled or closed dialog
             end
+% 
+%             answer = questdlg('Which edge detection method you want to choose', ...
+%             'Edge detection settings', ...
+%             'Otsu','Double tanh','Error function','Zscore','Otsu');
+%         
+%         
+%             answer = questdlg('Which edge detection method you want to choose', ...
+%             'Edge detection settings', ...
+%             'Otsu','Double tanh','Error function','Zscore','Otsu');
+%             % Handle response
+%             switch answer
+%                 case 'Otsu'
+%                     sets.edgeDetectionSettings.method = 'Otsu';
+%                 case 'Double tanh'
+%                     sets.edgeDetectionSettings.method = 'Double tanh';
+%                 case 'Error function'
+%                     sets.edgeDetectionSettings.method = 'Error Function';
+%                 case 'Zscore'
+%                     sets.edgeDetectionSettings.method = 'Zscore';
+%             end
 
             
             

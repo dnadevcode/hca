@@ -1,4 +1,4 @@
-function [ kymoStructs ] = edit_kymographs_fun(kymoStructs, timeFramesNr )
+function [ kymoStructs,passingKymos ] = edit_kymographs_fun(kymoStructs, timeFramesNr,timeFrameIdx )
     % edit_kymographs_fun
     % Function for putting the kymographs into a session file
     %
@@ -10,9 +10,14 @@ function [ kymoStructs ] = edit_kymographs_fun(kymoStructs, timeFramesNr )
     %         kymoStructs: kymoStructs
     %
 
+    if nargin < 3
+        timeFrameIdx = 1; % start of time-frame idx
+    end
     % If the setting for number of timeframes is non-zero, we have to
     % remove some rows from the kymographs, and remove the kymographs with
     % insuficient amount of rows altogether
+    timeframeTotal = cellfun(@(x) size(x.unalignedKymo, 1), kymoStructs)-timeFrameIdx+1;
+
     if timeFramesNr ~= 0
         % number of timegrames
         timeframeTotal = cellfun(@(x) size(x.unalignedKymo, 1), kymoStructs);
@@ -23,12 +28,13 @@ function [ kymoStructs ] = edit_kymographs_fun(kymoStructs, timeFramesNr )
         % save only the preselected number of rows
         for i=1:length(kymoStructs)
 %             try
-                kymoStructs{i}.unalignedKymo = kymoStructs{i}.unalignedKymo(1:timeFramesNr,:);
+                kymoStructs{i}.unalignedKymo = kymoStructs{i}.unalignedKymo(timeFrameIdx:timeFramesNr+timeFrameIdx-1,:);
 %             catch
 %                 kymoStructs{i} = [];
 %             end
-        end
+        end        
     end    
+    passingKymos = timeframeTotal >= timeFramesNr;
     
 end
 

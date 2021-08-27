@@ -1,4 +1,4 @@
-function [ xcorrs ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
+function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
     % masked_pcc_corr
     % Computes maskedPearson correlation coefficient using fft's
     %     Args:
@@ -91,6 +91,9 @@ function [ xcorrs ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
 	ccB = xiyi./denominator - numForward.*xbar.*ybar./denominator;
 
     xcorrs = [ccF;ccB];
+    
+    numElts =[]; % number of non-nan elements.
+    
 %     linear=1;
 %     if linear
 %         xcorrs(1,(length(longVec)-sum(w1)+1):end)=0;

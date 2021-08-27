@@ -1,4 +1,4 @@
-function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStruct,comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask)
+function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStruct,comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask, positionsOnThry)
     % on_compare_theory_to_exp
     % Compares experiments to single theory
     %     Args:
@@ -32,6 +32,11 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
 %             parameterfun = @(x)
         case 'mass_dot'
             comparisonFun = @(x,y,z,w,u) unmasked_MASS_DOT_CC(y,x,z,w,2^(4+nextpow2(length(x))),theoryStruct.isLinearTF,numPixelsAroundBestTheoryMask);            
+       case 'masked_pcc'
+            % choose k just higher than the length of small sequence for
+            % best precision. (larger k though could increase speed)
+            comparisonFun = @(x,y,z,w,u) masked_MASS_PCC(y,x,z,w,2^(4+nextpow2(length(x))),theoryStruct.isLinearTF,numPixelsAroundBestTheoryMask);
+
         case 'mass_pcc'
             % choose k just higher than the length of small sequence for
             % best precision. (larger k though could increase speed)
@@ -52,7 +57,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             % being circular, so inputed X1, X2 should include extra
             % values..
             import mp.mp_profile_stomp_nan_dna;
-            comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_profile_stomp_nan_dna(X1',X2', bitX1', bitX2', w,2^(4+nextpow2(length(X1))));
+            comparisonFun = @(X1,X2, bitX1, bitX2, w, kk) mp_profile_stomp_nan_dna(X1',X2', bitX1', bitX2', w,2^(4+nextpow2(length(X1))),numPixelsAroundBestTheoryMask);
 
         case 'mpAll' % mp for all subfragments separately
             import mp.mp_dist_stomp_with_masks_all;
@@ -65,7 +70,11 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
 %             comparisonFun = @(x,y,z,w) unmasked_MP(y,x,z,2^(4+nextpow2(length(x))));
 % 
 %             error('not yet implemented');
-            
+        case 'SEC-C'
+            % we here
+            error('Check https://github.com/Naderss/SEC_C for implementation');
+        case 'awarp'
+
         case 'hmm'
             % here we stor the hmm method used for structural variation
             % detection. However, the outputs need to be aligned...
@@ -108,7 +117,11 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         theorBit = ones(1,length(theorBar));
     end
     
-    % if we want match to be circular
+    % if we want to take a subtheory
+    if nargin >=7
+        theorBar = theorBar(positionsOnThry(1):positionsOnThry(2));
+        theorBit = theorBit(positionsOnThry(1):positionsOnThry(2));
+    end
 
    	import CBT.Hca.Core.filter_barcode; % in case we need to filter barcode
 
@@ -116,6 +129,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     bestBarStretch = zeros(1,length(barcodeGen));
     bestLength = zeros(1,length(barcodeGen));
     % for all the barcodes run
+    % parfor
     parfor idx=1:length(barcodeGen)
 %         idx
         % xcorrMax stores the  maximum coefficients
@@ -150,7 +164,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             barC = interp1(barTested, linspace(1,lenBarTested,lenBarTested*stretchFactors(j)));
             barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
             try
-                [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or,rezMax{j}.secondPos,rezMax{j}.lengthMatch,rezMax{j}.dist] = comparisonFun(barC, theorBar, barB,theorBit,w);
+                [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or,rezMax{j}.secondPos,rezMax{j}.lengthMatch,~] = comparisonFun(barC, theorBar, barB,theorBit,w);
             catch
                 rezMax{j}.maxcoef = 0;rezMax{j}.pos=0;rezMax{j}.or=0;rezMax{j}.secondPos=0;rezMax{j}.lengthMatch=0;rezMax{j}.dist=0;
             end
@@ -167,6 +181,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             rezMaxM{idx} = rezMax{b};
             bestBarStretch(idx) = stretchFactors(b);
             bestLength(idx) = round(lenBarTested*stretchFactors(b));
+%             rezMaxM{idx}.bestBarStretch = bestBarStretch;
         end
     end 
 end

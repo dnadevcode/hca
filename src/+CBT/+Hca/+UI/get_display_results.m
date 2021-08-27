@@ -1,4 +1,4 @@
-function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,theoryStruct, sets)
+function [resultStruct] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,theoryStruct, sets)
     % get_display_results 
     % Display results from the comparison of experiments vs theory
     %     Args:
@@ -7,7 +7,9 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
     %         comparisonStruct: 
     %         theoryStruct:
     %         sets:
-
+    
+    resultStruct = []; % do we want to return this?
+    
     % if it was chosen to display results
     if sets.displayResults ==0
         fig1 = figure('Visible', 'off');
@@ -44,12 +46,14 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
 %         
 %     else
     if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpnan') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
-          import CBT.Hca.UI.Helper.plot_best_bar_mp;
+        import CBT.Hca.UI.Helper.plot_best_bar_mp;
         resultStruct=plot_best_bar_mp(ax,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,1,sets);
+
+%         [resultStruct] = plot_bar(ax, comparisonStruct, theoryStruct{1}.filename, barcodeGen, 1, 1, w, sets)
     else
-    %todo: improve this plot with more information
-    import CBT.Hca.UI.Helper.plot_best_bar;
-    plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets.userDefinedSeqCushion);
+        %todo: improve this plot with more information
+        import CBT.Hca.UI.Helper.plot_best_bar;
+        plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets.userDefinedSeqCushion);
     end
 %     end
 
@@ -63,7 +67,7 @@ function [] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,t
 %     plot_best_image(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef);
 % %     fig1=figure;
         hAxis = subplot(2,2,4); hold on
-	if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
+	if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpnan')|| isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
         sets.A = 'b';
         sets.B = 'b';
         sets.theory.isLinearTF = 1;

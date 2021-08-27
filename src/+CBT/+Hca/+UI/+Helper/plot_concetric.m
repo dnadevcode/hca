@@ -29,7 +29,7 @@ end
     % this table should be a bit different, in case comparison is linear.
     % When we do not allow loop-arounds..
     import CBT.Hca.UI.Helper.create_full_table;
-    [temp_table,barfragq, barfragr] = create_full_table(barStruct.matchTable, barStruct.bar1,barStruct.bar2,1);
+    [temp_table,barfragq, barfragr] = create_full_table(barStruct.matchTable, [barStruct.bar1 barStruct.bar1],[barStruct.bar2 barStruct.bar2],1);
 
 %     import Plot.shift_barcode_data;
 %     [barStruct] = shift_barcode_data(barStruct);

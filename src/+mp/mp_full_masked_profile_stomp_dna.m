@@ -17,9 +17,9 @@ function [mp,mpI,indexes] = mp_full_masked_profile_stomp_dna(aTS, bTS, aBitTS,bB
     % bitmasks, no point in looping around to find the best match (could do
     % that in post processing if it was relevant..)
     
-    shortVecCut = aTS(logical(aBitTS));
+    shortVecCut = aTS(logical(aBitTS)); %barcode: use bitmask?
     % mask the bTS too
-    bTS = bTS(logical(bBitTS));
+    %bTS = bTS(logical(bBitTS)); theory -bitmask removed only in output
 
     %     numPos - number of positions for forward/reverse match
     import mp.mp_profile_stomp_dna;
@@ -61,7 +61,7 @@ function [mp,mpI,indexes] = mp_full_masked_profile_stomp_dna(aTS, bTS, aBitTS,bB
     % we substract back. We also need to substract the position on mpI! But
     % mpI still keeps information about this position
 %     mpI(indexes) = mod(mpI(indexes)-find(bitTS,1,'first')-find(indexes)+1,length(bTS)) +1;
-     mpI(indexes) = mpI(indexes)-find(aBitTS,1,'first')+find(bBitTS,1,'first')-find(indexes)+1;
+     mpI(indexes) = mpI(indexes)-find(aBitTS,1,'first')+1-find(indexes)+1;
 %     find(bBitTS,1,'first')
 %     mpIF = flipud(mpI);
 
@@ -73,7 +73,7 @@ function [mp,mpI,indexes] = mp_full_masked_profile_stomp_dna(aTS, bTS, aBitTS,bB
      indx = [1:length(mpI)]';
     
 %      mpI(indexes2) = mod(mpI(indexes2) - indx(indexes2) -find(bitTS,1,'first')+1,length(bTS))+1;
-    mpI(indexes2) = mpI(indexes2) - indx(indexes2) -find(aBitTS,1,'first')+find(bBitTS,1,'first')+1-numPos;
+    mpI(indexes2) = mpI(indexes2) - indx(indexes2) -find(aBitTS,1,'first')+1+1-numPos;
 %      mpI(262)-numPos-indx(262)+3-find(aBitTS,1,'first')-find(bBitTS,1,'first')
    
    %%

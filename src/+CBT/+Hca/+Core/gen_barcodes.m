@@ -66,24 +66,41 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
 	%% Prestretch barcodes to the same length
     % convert to common length, if chosen
     if  sets.genConsensus == 1
-        allLengths = cellfun(@(x) length(x.rawBarcode),barcodeGen);
-        commonLength = ceil(mean(allLengths));
-        stretchings = commonLength./allLengths;
-        strMin = min(stretchings);
-        strMax =  max(stretchings);
-        disp(strcat(['Barcodes are being stretched between ' num2str(strMin) ' and ' num2str(strMax)]));
+        
 
-        commonLength = ceil(commonLength);
+        allLengths = cellfun(@(x) length(x.rawBarcode),barcodeGen);
+       
+%         if sets.precomputeClusters
+            % here we should convert to common length based on clusters:
+        import OptMap.Consensus.compute_clusters;
+        [lC, clusterMeanCenters ] = compute_clusters(allLengths', 1.3 );% stop hardcoding
+%         else
+            
+        
+    
+        for k=1:length(clusterMeanCenters)
+            
+            commonLength =clusterMeanCenters(k);
+            stretchings = commonLength./allLengths(lC==k);
+            strMin = min(stretchings);
+            strMax =  max(stretchings);
+            disp(strcat([num2str(length(stretchings)) ' barcodes are being stretched between ' num2str(strMin) ' and ' num2str(strMax) '( ' num2str(min(allLengths(lC==k))) ',' num2str(max(allLengths(lC==k))) ')']));
+
+%         commonLength = ceil(commonLength);
 
         
         import CBT.Consensus.Core.convert_barcodes_to_common_length;
         import CBT.Consensus.Core.convert_bitmasks_to_common_length;
+%             tt =1;
+            bars =find(lC==k);
 
-        for i=1:numBar % change this to a simpler function
-            [barcodeGen{i}.stretchedBarcode] = cell2mat(convert_barcodes_to_common_length({barcodeGen{i}.rawBarcode}, commonLength));
-            [barcodeGen{i}.stretchedrawBitmask] = cell2mat(convert_bitmasks_to_common_length({barcodeGen{i}.rawBitmask}, commonLength));
-            barcodeGen{i}.stretchFactor = stretchings(i);
-        end  
+            for i=1:length(bars) % change this to a simpler function
+                [barcodeGen{bars(i)}.stretchedBarcode] = cell2mat(convert_barcodes_to_common_length({barcodeGen{bars(i)}.rawBarcode}, commonLength));
+                [barcodeGen{bars(i)}.stretchedrawBitmask] = cell2mat(convert_bitmasks_to_common_length({barcodeGen{bars(i)}.rawBitmask}, commonLength));
+                barcodeGen{bars(i)}.stretchFactor = stretchings(i);
+                barcodeGen{bars(i)}.lC = k;
+            end  
+        end
     end
   
     timePassed = toc;

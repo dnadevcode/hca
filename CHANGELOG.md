@@ -1,13 +1,15 @@
-# Future (4.4):
-- merge things from hca dual to main repository
+# Future (4.3):
 implement small things from Wishlist for HCA 4.0 into HCA 4.1, in particular:
 - make a script for p-value generation visible, i.e. optional step after computing CC values, assuming that 
 p-value database matrix is pre-calculated (otherwise it would take too much time and wouldn't make sense)
 - extra functions for additional HCA plots (or ressurect old scripts written for this)
 Also todo:
-
+- include UCR_DTW method as optional similarity search method, as well as MP/MPdist (Matrix profile). Note though that 
+these two methods are slower (matrix profile runs in O(n^2) as opposed to current method which is O(nlogn), but provides much 
+more informative output.
 - include possibility to run some sort of SV detection of experiment on the theory (most likely using MP)
-
+- both HCA_GUI and HCA_theory in principle can be run without any gui's now, and all the necessary settings and files can be provided via
+'hca_settings.txt', and 'theory_settings.txt'. Need to add clear instructions in the README on how to do this.
 - further investigate how parallelization can be employed in the better way. I.e. MASS_PCC is ridiculously easy to parallelize, so one 
 option for linear theories would be to concatenate all the theories into one, and then run a single MASS_PCC routine (the indices in each 
 subrange of pixels can be identified easily since we know indices of each theory).
@@ -27,15 +29,7 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
-# 4.3.2
-Fix the theory settings file that would be missing a line which would fail the theory generation
-
-# 4.3
-- both HCA_GUI and HCA_theory in principle can be run without any gui's now, and all the necessary settings and files can be provided via
-'hca_settings.txt', and 'theory_settings.txt'.
-- included UCR_DTW method as optional similarity search method
 # 4.2
-
 - added possibility to generate theory directly via HCA_Gui (if fasta is selected, the program interprets that as needing to generate new theory)
 - added compatibility for mp (also with seemingly less bugs when plotting, which appeared before from the way position from the mp is reported)
 - added simple p-value generation (random fragments vs non-random theory) in HCA_Run (though it's not pregenerated, so slow for long theories

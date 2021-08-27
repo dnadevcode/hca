@@ -22,7 +22,9 @@ function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdge
         barcodeGenData.rE = length(barcodeGenData.rawBarcode);
         barcodeGenData.rawBg = nan;
     else
-    
+        barcodeGenData.leftEdgeIdxs = leftEdgeIdxs;
+        barcodeGenData.rightEdgeIdxs = rightEdgeIdxs;
+        
         leftEdgeIdx = round(nanmean(leftEdgeIdxs));
         rightEdgeIdx = round(nanmean(rightEdgeIdxs));
 

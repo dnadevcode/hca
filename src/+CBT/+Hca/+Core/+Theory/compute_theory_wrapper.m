@@ -13,10 +13,18 @@ function [x] = compute_theory_wrapper(ts, sets)
 %         x = nan(length(ts),1);
 %     else
     switch sets.theoryGen.method
+        case "v1"
+            import CBT.Hca.Core.Theory.run_simple_theory_v1;
+            x = run_simple_theory_v1(ts);
+        case "test1"
+            x = run_simple_theory(ts);
         case "simple"
             x = run_simple_theory(ts);
         case "literature"
              x = run_literature_theory(ts',sets);
+        case "GC"
+            x = gc_rate(ts',4);
+%              x = run_literature_theory(ts',sets);
         case "enzyme"
              x = zeros(length(ts),1);
              dots = strfind(ts',sets.model.pattern);

@@ -21,11 +21,36 @@ function [moleculeStartEdgeIdxs, moleculeEndEdgeIdxs, mainKymoMoleculeMask] = ap
     
     method=  edgeDetectionSettings.method;
     
+%     if isequal(method,'Otsu')
     import OptMap.MoleculeDetection.EdgeDetection.get_default_edge_detection_settings;
     edgeDetectionSettings = get_default_edge_detection_settings(1);
-
+%     end
             
     switch method
+        case 'Zscore'
+            zscorevals = arrayfun(@(x) (kymo(x,:)-nanmean(kymo(x,:)))/nanstd(kymo(x,:),1)>0,1:size(kymo,1),'un',false);
+            
+            % maybe only the second passing barcode should be considered as
+            % edge.      
+            moleculeStartEdgeIdxs = cellfun(@(y) y(3), cellfun(@(x) find(x>0,3,'first'),zscorevals,'un',false));
+            moleculeEndEdgeIdxs =  cellfun(@(y) y(1),cellfun(@(x) find(x>0,3,'last'),zscorevals,'un',false));
+            
+%             figure, plot(cell2mat(moleculeStartEdgeIdxs'))
+            
+
+%             moleculeStartEdgeIdxs = cellfun(@(x) find(x>0,1,'first'),zscorevals);
+%             moleculeEndEdgeIdxs = cellfun(@(x) find(x>0,1,'last'),zscorevals);
+%             mainKymoMoleculeMask = false(size(kymo));
+            for i=1:size(kymo,1)
+                mainKymoMoleculeMask(i,max(1,round(moleculeStartEdgeIdxs(i))):min(size(kymo,2),round(moleculeEndEdgeIdxs(i)))) = 1;
+            end
+%             [fitsLeft, fitsRight,confLeft,confRight] = fit_sigmoid_on_kymo(kymo);  
+%             
+%             moleculeStartEdgeIdxs = fitsLeft(:,3);
+%             moleculeEndEdgeIdxs = fitsRight(:,3);
+%             
+%             mainKymoMoleculeMask = false(size(kymo));
+            
         case 'Otsu'
             otsuApproxSettings = edgeDetectionSettings.otsuApproxSettings;
             import OptMap.MoleculeDetection.EdgeDetection.basic_otsu_approx_main_kymo_molecule_edges;

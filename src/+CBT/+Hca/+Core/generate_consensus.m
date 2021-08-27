@@ -73,7 +73,9 @@ function [ consensusStruct ] = generate_consensus( barcodes, bitmasks, bgMeanApp
             % compute correlatiton coefficients
             xcorrs = masked_pcc_corr(barcodeA,barcodeB,bitmaskA,bitmaskB);
             %xcorrs = get_no_crop_lin_circ_xcorrs(barcodeA,barcodeB,bitmaskA,bitmaskB);
-
+            if isfield(sets.consensus,'islinear')
+                xcorrs(:,length(barcodeB)-length(barcodeA)+30:end-30) = -inf;
+            end
             % compute maximum, position and orientation for the best
             % position
             [f,s] = max(xcorrs);          
@@ -108,7 +110,10 @@ function [ consensusStruct ] = generate_consensus( barcodes, bitmasks, bgMeanApp
     % the barcodes) is computed, i.e. until we have the whole tree. 
     % Tree cutting is can be done here or left for post-processing.  
      for bb=1:numBarcodes-1
-         
+         max(maxcoef(:))
+         if max(maxcoef(:)) <= 0
+             break;
+         end
      
          % find which barcodes should be merged
          [consensusStruct.treeStruct.maxCorCoef(bb), I] = max(maxcoef(:));
@@ -200,6 +205,9 @@ function [ consensusStruct ] = generate_consensus( barcodes, bitmasks, bgMeanApp
             bitmaskB = rawBit2(rowToKeep,:);
 
             xcorrs = masked_pcc_corr(barcodeA,barcodeB,bitmaskA,bitmaskB);
+            if isfield(sets.consensus,'islinear')
+                xcorrs(:,length(barcodeB)-length(barcodeA)+30:end-30) = -inf;
+            end
             [f,s] = max(xcorrs);          
             [ b, ix ] = sort( f(:), 'descend' );
             indx = b(1) ;
@@ -217,6 +225,9 @@ function [ consensusStruct ] = generate_consensus( barcodes, bitmasks, bgMeanApp
             bitmaskB = rawBit2(barcodeIdxA,:);
 
             xcorrs = masked_pcc_corr(barcodeA,barcodeB,bitmaskA,bitmaskB);
+            if isfield(sets.consensus,'islinear')
+                xcorrs(:,length(barcodeB)-length(barcodeA)+30:end-30) = nan;
+            end
             [f,s] = max(xcorrs);          
             [ b, ix ] = sort( f(:), 'descend' );
             indx = b(1) ;

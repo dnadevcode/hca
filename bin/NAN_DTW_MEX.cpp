@@ -569,7 +569,9 @@ void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *
     // }
     // printf("%f\n",buffer[0]);
     // printf(" %3d \n", b[99]);
-
+    
+//     FILE *File3;
+//     File3 = fopen("out.txt", "w+");
     while(!done)
     {
         // printf("Iteration %d\n",it);
@@ -596,8 +598,15 @@ void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *
         ep=m-1; // create buffer.. since all data is already loaded, might not be necessary?
         while(ep<EPOCH && EPOCH*it+ep <= n )
         {
-            buffer[ep] = data[EPOCH*it+ep];
-            bufferb[ep] = b[EPOCH*it+ep];
+            if (it == 0){
+                buffer[ep] = data[ep];
+                bufferb[ep] = b[ep];
+            }
+            else
+            {
+                buffer[ep] = data[EPOCH*it-m+1+ep];
+                bufferb[ep] = b[EPOCH*it-m+1+ep];
+            }
             ep++;
         }
 
@@ -614,8 +623,9 @@ void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *
 
             /// Do main task here..
             ex=0; ex2=0;
-            for(i=0; i<ep; i++)
+            for(i=0; i<ep-1; i++) //ep-1 or ep?
             {
+
                 /// A bunch of data has been read and pick one of them at a time to use
                 d = buffer[i];
 
@@ -639,6 +649,7 @@ void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *
                 /// Start the task when there are more than m-1 points in the current chunk
                 if( i >= m-1 )
                 {
+//                     fprintf(File3,"%d ",i);
 
                     // here an extra if: check if we're on a nan (bitmasked) pixel
                     mean = ex/m; //mean
@@ -721,7 +732,15 @@ void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *
             // done=true;
         }
 
+        /// If the size of last chunk is less then EPOCH, then no more data and terminate.
+        if (ep<EPOCH)
+            done=true;
+        else
+            it++;
+
+
     }
+//     fclose(File3);
 
     i= (it)*(EPOCH-m+1) + ep;
 
@@ -730,16 +749,16 @@ void cpp_dtw(double *data, double *q, double *b, int n,int m, double R, double *
 
     t2 = clock();
     /// Note that loc and i are long long.
-    cout << "Location : " << loc << endl;
-    cout << "Distance : " << sqrt(bsf) << endl;
-    cout << "Data Scanned : " << i << endl;
-    cout << "Total Execution Time : " << (t2-t1)/CLOCKS_PER_SEC << " sec" << endl;
-    printf("\n");
-    printf("Pruned by bitmask    : %6.2f%%\n", ((double) bm / i)*100);
-    printf("Pruned by LB_Kim    : %6.2f%%\n", ((double) kim / i)*100);
-    printf("Pruned by LB_Keogh  : %6.2f%%\n", ((double) keogh / i)*100);
-    printf("Pruned by LB_Keogh2 : %6.2f%%\n", ((double) keogh2 / i)*100);
-    printf("DTW Calculation     : %6.2f%%\n", 100-(((double)kim+keogh+keogh2+bm)/i*100));
+    // cout << "Location : " << loc << endl;
+    // cout << "Distance : " << sqrt(bsf) << endl;
+    // cout << "Data Scanned : " << i << endl;
+    // cout << "Total Execution Time : " << (t2-t1)/CLOCKS_PER_SEC << " sec" << endl;
+    // printf("\n");
+    // printf("Pruned by bitmask    : %6.2f%%\n", ((double) bm / i)*100);
+    // printf("Pruned by LB_Kim    : %6.2f%%\n", ((double) kim / i)*100);
+    // printf("Pruned by LB_Keogh  : %6.2f%%\n", ((double) keogh / i)*100);
+    // printf("Pruned by LB_Keogh2 : %6.2f%%\n", ((double) keogh2 / i)*100);
+    // printf("DTW Calculation     : %6.2f%%\n", 100-(((double)kim+keogh+keogh2+bm)/i*100));
     // return
 
 /*
@@ -1188,22 +1207,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     // b = (int *) mxGetPr(prhs[2]);
 
     // print a single value
-    mexPrintf("%4.3f\n", b[99]);
-    mexPrintf("%4.3f\n", b[100]);
-    mexPrintf("%4.3f\n", b[101]);
+    // mexPrintf("%4.3f\n", b[99]);
+    // mexPrintf("%4.3f\n", b[100]);
+    // mexPrintf("%4.3f\n", b[101]);
 
     // mexPrintf("%f\n", d[0]);
 
     // q =  mxGetData(prhs[1]);
     // mexPrintf("%f\n", q[0]);
 //     /*
-    mexPrintf("Number of inputs:  %d\n", nrhs);
-    mexPrintf("Number of outputs: %d\n", nlhs);
-	mexPrintf("lenQ: %d\n", lenQ);
-    mexPrintf("lenD: %d\n", lenD);
-    mexPrintf("R: %4.3f\n", R);
-    // mexPrintf("Data_File: %s\n", input_buf0);
-    // mexPrintf("Query_File: %s\n", input_buf1);
+    // mexPrintf("Number of inputs:  %d\n", nrhs);
+    // mexPrintf("Number of outputs: %d\n", nlhs);
+	// mexPrintf("lenQ: %d\n", lenQ);
+    // mexPrintf("lenD: %d\n", lenD);
+    // mexPrintf("R: %4.3f\n", R);
 //     */
 
 	plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);

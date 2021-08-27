@@ -75,10 +75,15 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
     end
 
     tic
-    import CBT.Hca.Core.Analysis.convert_nm_ratio;
-    theoryStruct = convert_nm_ratio(sets.theory.nmbp, theoryStruct,sets );
+    if isfield(sets.theory,'psf')
+        import CBT.Hca.Core.Analysis.convert_nmpsf_ratio;
+        theoryStruct = convert_nmpsf_ratio(sets.theory.nmbp,sets.theory.psf, theoryStruct,sets );
+    else
+        import CBT.Hca.Core.Analysis.convert_nm_ratio;
+        theoryStruct = convert_nm_ratio(sets.theory.nmbp, theoryStruct,sets );
+    end
     toc
-    
+   
 	datetime=datestr(now);
     datetime=strrep(datetime,' ','');%Replace space with underscore
     datetime=strrep(datetime,':','_');%Replace space with underscore

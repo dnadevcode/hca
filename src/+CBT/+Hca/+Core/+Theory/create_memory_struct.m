@@ -30,7 +30,7 @@ function [chr1,header] = create_memory_struct(file)
             charData = charData(1:min(1,strPos(1)-1));
             % means there are more than two sequences in this file, but we
             % only want the first one.
-           charData = strrep(charData,newLine,'');
+            charData = strrep(charData,newLine,'');
             charData = erase(charData,char(13));
 
             % Convert to integers

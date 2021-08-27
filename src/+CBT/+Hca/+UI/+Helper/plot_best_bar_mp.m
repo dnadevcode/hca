@@ -7,6 +7,9 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
         onlydirectcomp = 0;
     end
     
+ 
+        %% OLD:
+    
     import CBT.Hca.UI.Helper.create_full_table;
 
 
@@ -18,11 +21,68 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
     % number and value of the best barcode
     [dd,ii] =max(maxcoef(:,1));
     
+    params = comparisonStruct{ii};
+    w = sets.w;
+    
     % load theory file
     fileID = fopen(theoryStruct{comparisonStruct{ii}.idx}.filename,'r');
     formatSpec = '%f';
     theorBar = fscanf(fileID,formatSpec);
     fclose(fileID);
+    
+    
+    %%
+% %        %% PLOT EXPERIMENTAL BARCODE VS THEORY BARCODE/ SIMPLE REDO - options - linear/circular
+% %     % two ways:
+% %     % 1) theory is fixed (from px=1 to px=N). 
+% %     figure,plot(theorBar)
+% %     
+% %     figure,plot(1:length(expBar),expBar)
+% %     hold on
+% %     plot(params.secondPos(1):params.secondPos(1)+length(theorBar)-1,theorBar)
+% %     
+% %     figure,plot(1:length(expBar),expBar)
+% %     hold on
+% %     plot(params.secondPos(1):params.secondPos(1)+length(theorBar)-1,flipud(theorBar))
+% %     
+% %     
+% %     expBar = barcodeGen{ii}.rawBarcode;
+% %     pq = length(expBar)+(params.secondPos(1)-params.pos(1)+1);
+% %     b1 = expBar(pq:pq+params.lengthMatch-1);
+% % 
+% %     % pq - position on expBar
+% % %     pq = abs(params.secondPos(1)-params.pos(1))+1;
+% % %     b1 = expBar(pq:pq+params.lengthMatch-1);
+% %     if params.or(1)==1
+% %         pd =  params.secondPos(1)-(w-length(expBar));
+% %     else
+% %         pd = params.secondPos(1);
+% %     end
+% %     b2 = theorBar(pd:pd+params.lengthMatch-1);
+% %     plot(pd:pd+params.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+% % 
+% %     if params.or(1)==1
+% %         pccV =  pcc(fliplr(b1),b2);
+% %     else
+% %         pccV =  pcc(b1,b2);
+% %     end
+% %         
+% %     % read off the position from mp, mpI:
+% %     import mp.mp_profile_stomp_nan_dna
+% %     [maxcoef,pos,or,idxpos,r, mp,mpI,mpPos,mpPIQ] = mp_profile_stomp_nan_dna(expBar', theorBar, ones(1,length(expBar)), ones(1,length(theorBar)), 100, 2^10,50);
+% %     
+% %     [a,b] = max(mp)
+% %     length(expBar)-w
+% %     
+% %     v1=expBar(b:b+w-1);
+% %     import Comparison.pcc;
+% %     pos2 = mpI(b);
+% %     v2 = theorBar(pos2+ length(expBar)-w:pos2+ length(expBar)-1);
+% %     pcc(fliplr(v1),v2)
+% %     
+% %      abs(params.secondPos(1)-params.pos(1))+1
+% %     
+     %% now normal
     
     niceName = theoryStruct{comparisonStruct{ii}.idx}.name;
     pl = [strfind(niceName,'NC') strfind(niceName,'NZ')];
@@ -68,11 +128,11 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
     
     % in this case we change method that we use for plotting
     resultStruct.bar1 = expBar; % this also needs to be rescaled in case there was scaling
-    resultStruct.bar2 = theorBar';
+    resultStruct.bar2 = [theorBar'];
     resultStruct.pass = 1;
     shift = find(expBit,1,'first');
 %     comparisonStruct{ii}.secondPos = comparisonStruct{ii}.secondPos - shift;
-    bar2=  [resultStruct.bar2  resultStruct.bar2];
+    bar2 =  [resultStruct.bar2  resultStruct.bar2];
 
     import CBT.Hca.Core.Comparison.pcc;
 % %     for i=5:-1:-5
@@ -100,37 +160,96 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 
     
     if onlydirectcomp
-
-        [tempTable,barfragq,barfragr] = create_full_table( resultStruct.matchTable,theorBar,expBar,1);
-
-        plot( resultStruct.matchTable(1):resultStruct.matchTable(2), (barfragq{1}-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'color','red')
-        hold on 
-        plot( resultStruct.matchTable(1):resultStruct.matchTable(2), (barfragr{1}-nanmean( barfragr{1}))/nanstd(barfragr{1},1),'black')
         
-        % we should also plot best position..
-        bpPerPx = 1;
-        labelstr = 'Position (px)';
-        str2 = 'px';
-        ticks = 1:50/bpPerPx:2*length(theorBar);
-        ticksx = resultStruct.matchTable(3)+floor(ticks*bpPerPx);
-        ax.XTick = [ticks];
-        ax.XTickLabel = [ticksx];   
-        xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')
-        title(strcat(['Experimental barcode vs theory ']),'Interpreter','latex');
-%     %
-   
-        [a,b] = max(comparisonStruct{ii}.dist);
-        pq = b;
-        b1 = resultStruct.bar1(pq:pq+comparisonStruct{ii}.lengthMatch-1);
-        pd = comparisonStruct{ii}.secondPos(1);
-        b2 = resultStruct.bar2(pd:pd+comparisonStruct{ii}.lengthMatch-1);
-        plot(pd:pd+comparisonStruct{ii}.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+        matchTableO = resultStruct.matchTable;
 
-        if comparisonStruct{ii}.or(1)==1
-            pccV =  pcc(fliplr(b1),b2');
-        else
-            pccV =  pcc(b1,b2');
+        % more complicated in case of circular
+        nansLeft = 0;
+        if resultStruct.matchTable(1) <= 0
+            nansLeft = -resultStruct.matchTable(1)+1;
+            resultStruct.matchTable(1) = [1];
+            if resultStruct.matchTable(5) == 1 
+                resultStruct.matchTable(3) = resultStruct.matchTable(3)+nansLeft;   
+            else
+                resultStruct.matchTable(3) = resultStruct.matchTable(3)-nansLeft;   
+
+        %             resultStruct.matchTable(4) = resultStruct.matchTable(3)+nansLeft;   
+
+            end
         end
+    
+
+        [tempTable,barfragq,barfragr] = create_full_table( resultStruct.matchTable,[theorBar; theorBar],expBar,1);
+
+        barfragq{1} = [nan(nansLeft,1); barfragq{1}];
+        barfragr{1} = [nan(1,nansLeft) barfragr{1}];
+        
+        plot( matchTableO(1):matchTableO(2), (barfragq{1}-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'color','red')
+        hold on 
+        plot( matchTableO(1):matchTableO(2), (barfragr{1}-nanmean( barfragr{1}))/nanstd(barfragr{1},1),'black')
+           
+        bpPerPx = theoryStruct{1}.pixelWidth_nm/params.bestBarStretch;
+
+        labelstr = 'Position (px)';
+%                 labelstr = 'Position (kbps)';
+%         str2 = 'kbps';
+%         ticks = 1:50:2*length(bar2);
+%         ticksx = floor(ticks*bpPerPx/1000);
+%         ax.XTick = [ticks];
+%         ax.XTickLabel = [ticksx];   
+        xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')
+    
+       title(strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
+%     %
+        % here we actually took position based on all the scores, but it
+        % should already be known from the data?
+        
+%         tmpPar = params.secondPos(1)-params.pos(1);
+%         if tmpPar <= 0
+%             tmpPar = tmpPar+length(expBar);
+%         end
+%         pq = tmpPar+1;
+        pq = abs(params.secondPos(1)-params.pos(1))+1;
+        b1 = expBar(pq:pq+params.lengthMatch-1);
+        if params.or(1)==1
+            pd =  params.secondPos(1)-(w-length(expBar));
+        else
+            pd = params.secondPos(1);
+        end
+        b2 = theorBar(pd:pd+params.lengthMatch-1);
+        plot(pd:pd+params.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+
+        if params.or(1)==1
+            pccV =  pcc(fliplr(b1),b2);
+        else
+            pccV =  pcc(b1,b2);
+        end
+%         isequal(params.maxcoef(1), pccV)
+%         
+%         % we should also plot best position..
+%         bpPerPx = 1;
+%         labelstr = 'Position (px)';
+%         str2 = 'px';
+%         ticks = 1:50/bpPerPx:2*length(theorBar);
+%         ticksx = resultStruct.matchTable(3)+floor(ticks*bpPerPx);
+%         ax.XTick = [ticks];
+%         ax.XTickLabel = [ticksx];   
+%         xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')
+%         title(strcat(['Experimental barcode vs theory ']),'Interpreter','latex');
+% %     %
+%    
+%         [a,b] = max(comparisonStruct{ii}.dist);
+%         pq = b;
+%         b1 = resultStruct.bar1(pq:pq+comparisonStruct{ii}.lengthMatch-1);
+%         pd = comparisonStruct{ii}.secondPos(1);
+%         b2 = resultStruct.bar2(pd:pd+comparisonStruct{ii}.lengthMatch-1);
+%         plot(pd:pd+comparisonStruct{ii}.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+% 
+%         if comparisonStruct{ii}.or(1)==1
+%             pccV =  pcc(fliplr(b1),b2');
+%         else
+%             pccV =  pcc(b1,b2');
+%         end
     
      
      
@@ -273,5 +392,8 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 %      %
 %     legend({strcat(['$\hat C_{\rm ' name '}=$' num2str(dd,'%0.2f')]), niceName},'Interpreter','latex')
 
+
+  
+    
 end
 

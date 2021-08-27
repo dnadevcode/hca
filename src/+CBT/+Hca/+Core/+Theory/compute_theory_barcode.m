@@ -21,6 +21,12 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     import CBT.Hca.Core.Theory.create_memory_struct;
     [chr1,header] = create_memory_struct(name);
     
+    % if to calculate only for specific subsequence of theory
+%     if isfield(sets,'subtheory')
+%         chr1.Data =  chr1.Data(subtheory(1):subtheory(2));
+%     end
+        
+    
     if length(chr1.Data) < sets.theoryGen.k
         disp(strcat(['Theory ' name ' skipped because length < theoryGen.k =' num2str(sets.theoryGen.k) ]));
         theory = [];

@@ -1,4 +1,4 @@
-function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, querybit, databit, w)
+function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, querybit, databit, R)
     %   ucr_dtw_score - computes dtw score based on "trillion" code from UCR
     %
     %
@@ -21,7 +21,7 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, q
     query = query(logical(querybit));
     locStart = find(query,1,'first');
     
-    R= 5;  % describes the Sakoe-Chiba band, so in this case we don't allow any local stretching
+%     R= 5;  % describes the Sakoe-Chiba band, so in this case we don't allow any local stretching
     % and instead increase this if we want better output
 %   
 % mex 'NAN_DTW_MEX.cpp';
@@ -42,7 +42,7 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, q
     %     
     % relation of R to MAXSAMP?
     %     seems ok!!
-    b1 = zscore(data(posD(1)+1:posD(1)+length(query)),1);
+    b1 = zscore(data(pos:pos+length(query)-1),1);
     b2 = zscore(query,1);
     if or==2
         b2=fliplr(b2);
@@ -51,6 +51,8 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, q
     [~,IX,IY] = dtw(b1,b2,'squared',R);
     
     dist=[IX IY];
+    
+    
     % DIST
 %     sqrt(DIST) % gives the same output!
 % 
@@ -177,3 +179,47 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = ucr_dtw_score(query, data, q
                     
 end
 
+%%
+% 
+%     % for query, only select the non-nan bit
+%     query = query(logical(querybit));
+%     locStart = find(query,1,'first');
+%     
+%     R= 5;  % describes the Sakoe-Chiba band, so in this case we don't allow any local stretching
+%     % and instead increase this if we want better output
+% %   
+%     lS=1;
+%     lD = 110000;
+%     dTemp = data(lS:lD);
+%     databitTem = databit(lS:lD);
+% % mex 'NAN_DTW_MEX.cpp';
+%     % check: what happens if bitmask is all ones?
+% %     tic
+%     [posD(1), score1] = NAN_DTW_MEX(dTemp,query,double(databitTem<50), length(dTemp), length(query), R);
+%     [posD(2), score2] = NAN_DTW_MEX(dTemp,fliplr(query),double(dTemp<50), length(dTemp), length(query), R);
+% %     toc
+%     
+%     % take the negative of minscore - then this will be max
+%     [mincoef,or] = min([score1,score2]);
+%     maxcoef = -mincoef;
+%     pos = posD(or)+1; % if we want location for the full query
+%     
+%     secondPos = locStart;
+%     lenM = length(query);
+% 
+%     %     
+%     % relation of R to MAXSAMP?
+%     %     seems ok!!
+%     b1 = zscore(dTemp(pos:pos+length(query)-1),1);
+%     b2 = zscore(query,1);
+%     if or==2
+%         b2=fliplr(b2);
+%     end
+% 
+%     [val,IX,IY] = dtw(b1,b2,'squared',R);
+%     
+%     dist=[IX IY];
+%     
+%     mincoef
+%     sqrt(val)
+%     

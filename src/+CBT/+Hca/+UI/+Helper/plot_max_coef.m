@@ -1,7 +1,7 @@
 function [fig1,maxcoef] = plot_max_coef( fig1,comparisonStruct, numBar, sets, markers )
     % plot_max_coef - pltos three maximum coefficients
     
-    maxcoef = cell2mat(cellfun(@(x) x.maxcoef,comparisonStruct,'UniformOutput',false)');
+    maxcoef = cell2mat(cellfun(@(x) x.maxcoef(1:min(3,end)),comparisonStruct,'UniformOutput',false)');
     
     p = plot(maxcoef,1:size(maxcoef,1),'ob');
     p(1).Marker = markers(1);
