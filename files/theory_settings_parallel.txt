@@ -32,7 +32,11 @@ deltaCut = 3;
 widthSigmasFromMean = 4;
 yoyo1BindingConstant = 26; % yoyo binding constant
 computeFreeConcentrations = 1;
+computeBitmask = 0; % whether to compute bitmask
 method = 'literature';      % method    
-k = 2^15;                   % k has to be k=m*2^d. k should be longer than smallest experiment size
-m = 2^13;                   % harcoded parameters for literature, can be changed here by the user
+k = 2^20;                   % k has to be k=m*2^d. k should be longer than smallest experiment size
+m = 2^15;                   % harcoded parameters for literature, can be changed here by the user
+
+[model]
+pattern = 'CB';
 

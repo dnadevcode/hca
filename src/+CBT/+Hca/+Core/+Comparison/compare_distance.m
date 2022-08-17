@@ -48,7 +48,7 @@ function [rezMax,bestBarStretch,bestLength,rezMaxAll] = compare_distance(barcode
             [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
         else
             import CBT.Hca.Core.Comparison.on_compare;
-            [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr}] = on_compare(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
+            [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr}] = on_compare(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask,[],sets.filterSettings);
         end
         % % 
 %         import CBT.Hca.Core.Comparison.on_compare_theory_to_exp;
