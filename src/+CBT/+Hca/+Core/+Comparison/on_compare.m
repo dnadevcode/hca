@@ -1,4 +1,4 @@
-function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStruct,comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask, positionsOnThry)
+function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStruct,comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask, positionsOnThry, sets)
     % on_compare_theory_to_exp
     % Compares experiments to single theory
     %     Args:
@@ -119,12 +119,16 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     
     % if we want to take a subtheory
     if nargin >=7
-        theorBar = theorBar(positionsOnThry(1):positionsOnThry(2));
-        theorBit = theorBit(positionsOnThry(1):positionsOnThry(2));
+        if ~isempty(positionsOnThry)
+            theorBar = theorBar(positionsOnThry(1):positionsOnThry(2));
+            theorBit = theorBit(positionsOnThry(1):positionsOnThry(2));
+        end
     end
 
    	import CBT.Hca.Core.filter_barcode; % in case we need to filter barcode
 
+    theorBar = filter_barcode(theorBar,sets);
+    
     rezMaxM = cell(1,length(barcodeGen));
     bestBarStretch = zeros(1,length(barcodeGen));
     bestLength = zeros(1,length(barcodeGen));
@@ -145,6 +149,8 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         barTested = barcodeGen{idx}.barcode;
         end
         
+        barTested = filter_barcode(barTested,sets);
+
         % in case barcode should be filtered
 %         barTested = filter_barcode(barTested, sets.filterSettings);
 
@@ -166,7 +172,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             try
                 [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or,rezMax{j}.secondPos,rezMax{j}.lengthMatch,~] = comparisonFun(barC, theorBar, barB,theorBit,w);
             catch
-                rezMax{j}.maxcoef = 0;rezMax{j}.pos=0;rezMax{j}.or=0;rezMax{j}.secondPos=0;rezMax{j}.lengthMatch=0;rezMax{j}.dist=0;
+                rezMax{j}.maxcoef = zeros(1,3);rezMax{j}.pos=zeros(1,3);rezMax{j}.or=zeros(1,3);rezMax{j}.secondPos=zeros(1,3);rezMax{j}.lengthMatch=0;rezMax{j}.dist=zeros(1,3);
             end
             xcorrMax(j) = rezMax{j}.maxcoef(1);
         end
@@ -182,6 +188,10 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             bestBarStretch(idx) = stretchFactors(b);
             bestLength(idx) = round(lenBarTested*stretchFactors(b));
 %             rezMaxM{idx}.bestBarStretch = bestBarStretch;
+        else
+%              rezMaxM{idx} =nan;
+%             bestBarStretch(idx) = nan;
+%             bestLength(idx) = nan;   
         end
     end 
 end

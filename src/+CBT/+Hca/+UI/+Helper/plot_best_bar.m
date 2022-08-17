@@ -100,9 +100,9 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     barfragr{1}(~isnan(barfragr{1})) = zscore(barfragr{1}(~isnan(barfragr{1})));
 
 %     figure,
-    plot(barfragq{1})
+    plot(min(temp_table(3:4)):max(temp_table(3:4)),barfragq{1})
     hold on
-    plot(barfragr{1})
+    plot(min(temp_table(3:4)):max(temp_table(3:4)),barfragr{1})
     
   
 

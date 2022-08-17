@@ -29,6 +29,9 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+# 4.4.1 
+small fixes from generating circular plot and filtering
+
 # 4.4
 Fixed some issues with MP, added unit tests to see if certain functions are working
 

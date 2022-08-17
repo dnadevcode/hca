@@ -1,3 +1,4 @@
+
 function [hcaStruct] = HCA_Gui(sets, hcaStruct)
     % HCA_Gui
     % Used for comparing fagments of human chromosome to chromosomes using CB (competitive binding) theory   
@@ -130,14 +131,16 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
         assignin('base','consensusStruct', consensusStruct)
 
         %
+        
+        import CBT.Hca.Core.additional_computations
+        additional_computations(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct,comparisonStructAll,sets );
+   
       %  sets.displayResults = 1;
         import CBT.Hca.UI.get_display_results;
         get_display_results(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, sets);
 
 
-        import CBT.Hca.Core.additional_computations
-        additional_computations(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct,comparisonStructAll,sets );
-        
+       
 
       
       %  sets.output.matDirpath = '/home/albyback/rawData/dnaData/humanData/output/';

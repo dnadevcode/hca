@@ -1,4 +1,4 @@
-function [resultStruct] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,theoryStruct, sets)
+function [resultStruct,fig1] = get_display_results(barcodeGen, consensusStruct,comparisonStruct,theoryStruct, sets)
     % get_display_results 
     % Display results from the comparison of experiments vs theory
     %     Args:
@@ -16,6 +16,7 @@ function [resultStruct] = get_display_results(barcodeGen, consensusStruct,compar
     else
         fig1 = figure;
     end
+    tiledlayout(2,2,'TileSpacing','tight','Padding','tight');
 
     % choose markers for everything
     markers = ['o';'s';'x';'+';'d';'v'];
@@ -32,23 +33,25 @@ function [resultStruct] = get_display_results(barcodeGen, consensusStruct,compar
     end
 
     % plot max corr coefs
-    subplot(2,2,1);hold on;
+%     subplot(2,2,1);hold on;
+    nexttile;hold on;
+
     import CBT.Hca.UI.Helper.plot_max_coef;
     [fig1,maxcoef] = plot_max_coef(fig1,comparisonStruct, numBar, sets, markers);
 
     % plot best positions
-    subplot(2,2,2);hold on;
+%     subplot(2,2,2);hold on;
+    nexttile;hold on;
+
     import CBT.Hca.UI.Helper.plot_best_pos;
     plot_best_pos(fig1,comparisonStruct, numBar, sets, markers,lengthBorders);
 
-    ax=subplot(2,2,3), hold on
-%     if isequal(sets.comparisonMethod,'dtw')
-%         
-%     else
+%     ax=subplot(2,2,3), hold on
+    ax=nexttile, hold on
+%     maxcoef(:,1) 
     if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpnan') || isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
         import CBT.Hca.UI.Helper.plot_best_bar_mp;
         resultStruct=plot_best_bar_mp(ax,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,1,sets);
-
 %         [resultStruct] = plot_bar(ax, comparisonStruct, theoryStruct{1}.filename, barcodeGen, 1, 1, w, sets)
     else
         %todo: improve this plot with more information
@@ -66,7 +69,9 @@ function [resultStruct] = get_display_results(barcodeGen, consensusStruct,compar
 %     import CBT.Hca.UI.Helper.plot_best_image;
 %     plot_best_image(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef);
 % %     fig1=figure;
-        hAxis = subplot(2,2,4); hold on
+%         hAxis = subplot(2,2,4); hold on
+    hAxis = nexttile; hold on
+
 	if isequal(sets.comparisonMethod,'mp') || isequal(sets.comparisonMethod,'mpnan')|| isequal(sets.comparisonMethod,'mpAll') || isequal(sets.comparisonMethod,'hmm')
         sets.A = 'b';
         sets.B = 'b';
@@ -76,8 +81,12 @@ function [resultStruct] = get_display_results(barcodeGen, consensusStruct,compar
         import CBT.Hca.UI.Helper.plot_concetric;
         plot_concetric(hAxis,resultStruct,sets);
     else
-        import CBT.Hca.UI.Helper.plot_best_concentric_image;
-        plot_best_concentric_image(hAxis,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets);
+        try
+            import CBT.Hca.UI.Helper.plot_best_concentric_image;
+            plot_best_concentric_image(hAxis,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,sets);
+        catch
+            % do nothing
+        end
     end
     
     % option: plot all possible matches, i.e. for all 
