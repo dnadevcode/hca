@@ -17,7 +17,7 @@ function [ barcode ] = filter_barcode( barcode, sets )
         end
         
        if sets.filterMethod == 0
-            barcode = imgaussfilt(barC, sets.filterSize);
+            barcode = imgaussfilt(barcode, sets.filterSize);
         end
     end
     

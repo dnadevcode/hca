@@ -58,6 +58,7 @@ function [ model ] = choose_cb_model(name,pattern)
             model.pattern = nt2int(pattern);
 
         otherwise
+            model.pattern = '';
     end
     
 end

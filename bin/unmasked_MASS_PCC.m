@@ -23,6 +23,7 @@ function [maxcoef, pos, or, secondPos, lenM,dist] = unmasked_MASS_PCC(longVec, s
         
     longVecBit = [longVecBit  longVecBit(1:min(end-1,sum(shortVecBit)-1))];
     
+    dist(isinf(dist)) = nan; % inf should be undefined.
     import CBT.Hca.UI.Helper.get_best_parameters;
     [maxcoef, pos, or] = get_best_parameters(dist, 3,length(shortVec),isLinearTF,numPixelsAroundBestTheoryMask,longVecBit);
     

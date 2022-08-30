@@ -189,9 +189,10 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             bestLength(idx) = round(lenBarTested*stretchFactors(b));
 %             rezMaxM{idx}.bestBarStretch = bestBarStretch;
         else
+            rezMaxM{idx} = rezMax{b};
 %              rezMaxM{idx} =nan;
-%             bestBarStretch(idx) = nan;
-%             bestLength(idx) = nan;   
+            bestBarStretch(idx) = nan;
+            bestLength(idx) = nan;   
         end
     end 
 end
