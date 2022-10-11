@@ -1,5 +1,7 @@
 function [fig1] = plot_best_pos( fig1, comparisonStruct, numBar, sets, markers,lengthBorders,scaleF)
     % plot_best_pos - pltos three maximum coefficients
+
+    % requires from comparisonStruct: idx, pos, lengthMatch
     
     if isempty(fig1) % if figure is not called.
         fig1 = figure;

@@ -1,4 +1,4 @@
-function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
+function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2, minLen )
     % masked_pcc_corr
     % Computes maskedPearson correlation coefficient using fft's
     %     Args:
@@ -30,8 +30,14 @@ function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
     %     w2(end)=0;
     %   [ xcorrs ] = compute_pcc( shortVec,longVec,w1,w2 )
 
+    if nargin <  5
+        minLen = 20;
+    end
 
     longLength = length(longVec);
+
+    numElts = zeros(2,longLength);
+
     
     % 0 where bitmask is 0
     shortVec(~w1) = 0;
@@ -41,7 +47,8 @@ function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
     w2fft = fft(w2);
     % Compute the number of nonzero elements in each comparison
     conVec = conj(fft(w1,longLength));
-    numForward =  (ifft(w2fft.*conVec));
+    numForward =  round(ifft(w2fft.*conVec));
+    numForward(numForward<(minLen)) = nan;
     % ybar
     ybar =  (ifft(fft(longVec).*conVec))./numForward;
     ySq =  (ifft(fft(longVec.^2).*conVec));
@@ -63,6 +70,7 @@ function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
     % now, compute mean of the second vector sq
     %ccF = numerator./denominator;
 
+    numElts(1,:) = numForward;
 
     % First part, just compute XY
     shortVecFlip = fliplr(shortVec);
@@ -70,7 +78,9 @@ function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
 
     % Compute the number of nonzero elements in each comparison
     conVec = conj(fft(w1Flip,longLength));
-    numForward =  (ifft(w2fft.*conVec));
+    numForward =  round(ifft(w2fft.*conVec));
+    numForward(numForward<minLen) = nan;
+
     % ybar
     ybar =  (ifft(fft(longVec).*conVec))./numForward;
     ySq =  (ifft(fft(longVec.^2).*conVec));
@@ -92,7 +102,9 @@ function [ xcorrs, numElts ] = masked_pcc_corr( shortVec,longVec,w1,w2 )
 
     xcorrs = [ccF;ccB];
     
-    numElts =[]; % number of non-nan elements.
+    numElts(2,:) = numForward;
+
+%     numElts =[]; % number of non-nan elements.
     
 %     linear=1;
 %     if linear
