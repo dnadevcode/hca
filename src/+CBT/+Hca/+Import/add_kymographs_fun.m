@@ -43,7 +43,10 @@ function [kymoStructs] = add_kymographs_fun(sets)
         % from the name
         % save unaligned kymograph
         kymoStructs{i}.unalignedKymo = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name));
-        
+        try
+        kymoStructs{i}.unalignedBitmask = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},strrep(kymoStructs{i}.name,'kymograph','bitmask')));
+        catch
+        end
         fd = fopen(matKymopathShort,'a'); fprintf(fd, '%s \n',fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name)); fclose(fd);
 
     end

@@ -38,8 +38,12 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
                 %                 kymoStructs{i}.rightEdgeIdxs = length(kymoStructs{i}.alignedKymo);
                 %             end
         case 1
-            parfor i=1:length(kymoStructs)
-                kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
+            for i=1:length(kymoStructs)
+                if isfield(kymoStructs{i},'unalignedBitmask')
+                    [kymoStructs{i}.alignedKymo,~,~,kymoStructs{i}.alignedMask] = nralign(double(kymoStructs{i}.unalignedKymo), [],  kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );
+                else
+                    kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
+                end
             end  
         case 0
             edgeDetectionSettings = sets.edgeDetectionSettings;
@@ -60,8 +64,13 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
     % edge detection // could be skipped if only one row.
     import OptMap.MoleculeDetection.EdgeDetection.approx_main_kymo_molecule_edges;
     for i=1:length(kymoStructs)
-        [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, edgeDetectionSettings);       
-    end
+         if isfield(kymoStructs{i},'alignedMask')
+                kymoStructs{i}.leftEdgeIdxs = arrayfun(@(frameNum) find(kymoStructs{i}.alignedMask(frameNum, :), 1, 'first'), 1:size(kymoStructs{i}.alignedMask,1));
+                kymoStructs{i}.rightEdgeIdxs = arrayfun(@(frameNum) find(kymoStructs{i}.alignedMask(frameNum, :), 1, 'last'), 1:size(kymoStructs{i}.alignedMask,1));
+         else
+            [ kymoStructs{i}.leftEdgeIdxs,kymoStructs{i}.rightEdgeIdxs,~] = approx_main_kymo_molecule_edges(kymoStructs{i}.alignedKymo, edgeDetectionSettings);       
+         end
+     end
 
     timePassed = toc;
     disp(strcat(['All kymos were aligned in ' num2str(timePassed) ' seconds']));
