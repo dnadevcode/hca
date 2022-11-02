@@ -13,9 +13,9 @@ timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 % % import settings
 % import CBT.Hca.Import.import_settings;
 % [sets] = import_settings(setsFile);
-if nargin < 1
-    sets.fastas = 'theories_parallel.txt';
-else
+if isempty(theory_names)
+%     sets.fastas = 'theories_parallel.txt';
+% else
     if nargin >= 5
         data = cellfun(@(x,y) fullfile(x,y),theoryfold,theoryfile,'UniformOutput',false);
         sets.theoryNames = theoryfile;
@@ -91,8 +91,10 @@ pixelWidth_nm = sets.theoryGen.pixelWidth_nm;
 psfSigmaWidth_nm = sets.theoryGen.psfSigmaWidth_nm;
 linear = sets.theoryGen.isLinearTF;
 resultsDir = sets.resultsDir;
+
+import Core.gen_om_theory;
 % loop over theory file folder
-for idx = 1:length(sets.theoryNames)
+parfor idx = 1:length(sets.theoryNames)
 
 %     addpath(genpath(theories{idx}))
     disp(strcat(['loaded theory sequence ' theorynames{idx}] ));
@@ -173,7 +175,7 @@ fprintf('Saved theory fasta names ''%s'' to ''%s''\n', matFastapathShort, matFil
 fprintf('Saved theory mat filename ''%s'' to ''%s''\n', matFilename, matTpathShort);
 t=toc;
 
-addpath(genpath(sets.resultsDir));
+% addpath(genpath(sets.resultsDir));
 
 sets.theories = matFilepathShort;
 sets.theory.askfortheory = 0;
