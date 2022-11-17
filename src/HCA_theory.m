@@ -104,15 +104,19 @@ end
 % save sets
 theoryGen.sets = sets.theoryGen;
 
-matFilename = strcat(['theoryStruct_' sprintf('%s_%s', timestamp) 'session.mat']);
+matFilename = strcat(['theoryGen_' sprintf('%s_%s', timestamp) 'session.mat']);
 matFilepath = fullfile(sets.resultsDir, matFilename);
 
 save(matFilepath, 'theoryGen');
 
+% matFilename = strcat(['theoryStruct_' sprintf('%s_%s', timestamp) 'session.mat']);
+% matFilepath = fullfile(sets.resultsDir, matFilename);
+% 
+% save(matFilepath, 'theoryStruct');
 
 matTpathShort = fullfile(sets.resultsDir, strcat(['theories_' sprintf('%s_%s', timestamp) '.txt']));
 fd = fopen(matTpathShort,'w');    
-fprintf(fd, '%s \n',matFilepath)
+fprintf(fd, '%s \n',matFilepath);
 fclose(fd);
 
 % print out the results

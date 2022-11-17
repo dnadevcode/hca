@@ -13,11 +13,11 @@ function [ sets ] = get_theory_sets( sets )
     prompt = {'Choose nm/bps','concNetropsin Mmolar',...
         'concYOYO1 Mmolar','conc DNA Mmolar', 'psfSigmaWidth nm',...
         'pixelWidth_nm','deltaCut','isLinearTF','widthSigmasFromMean',...
-        'compute free concentrations','model'};
+        'compute free concentrations','model','min len (power of 2)'};
     
     title = 'Parameter choice for barcode generation';
     dims = [1 35];
-    definput = {'0.3','6','0.02','0.2','300','130','3','0','4','1','literature'};
+    definput = {'0.3','6','0.02','0.2','300','130','3','0','4','1','literature','2^20'};
     answer = inputdlg(prompt,title,dims,definput);
 
     
@@ -33,6 +33,7 @@ function [ sets ] = get_theory_sets( sets )
         sets.widthSigmasFromMean = str2double(answer{9});
         sets.computeFreeConcentrations = str2double(answer{10});
         sets.model = answer{11};
+        sets.theoryGen.k = str2double(answer{12});
     else
         disp('Default theory settings are being used');
     end

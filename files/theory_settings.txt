@@ -10,7 +10,7 @@ savetxts = 1;
 resultsDir = 'theoryData';
 fastas = 'fastas_2020-03-13_13_46_06_.txt';
 % Theory generation
-skipBarcodeGenSettings = 1;  % whether to skip barcode generatoin settings   
+skipBarcodeGenSettings = 0;  % whether to skip barcode generatoin settings   
 skipChangeBpNmRatio = 0;
 
 % lambda folder

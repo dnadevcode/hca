@@ -167,9 +167,10 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         % run the loop for the stretch factors
         for j=1:length(stretchFactors)
             % here interpolate both barcode and bitmask 
-            barC = interp1(barTested, linspace(1,lenBarTested,lenBarTested*stretchFactors(j)));
-            barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
             try
+                barC = interp1(barTested, linspace(1,lenBarTested,lenBarTested*stretchFactors(j)));
+                barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
+
                 [rezMax{j}.maxcoef,rezMax{j}.pos,rezMax{j}.or,rezMax{j}.secondPos,rezMax{j}.lengthMatch,~] = comparisonFun(barC, theorBar, barB,theorBit,w);
             catch
                 rezMax{j}.maxcoef = zeros(1,3);rezMax{j}.pos=zeros(1,3);rezMax{j}.or=zeros(1,3);rezMax{j}.secondPos=zeros(1,3);rezMax{j}.lengthMatch=0;rezMax{j}.dist=zeros(1,3);
