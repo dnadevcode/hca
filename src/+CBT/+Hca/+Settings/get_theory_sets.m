@@ -33,7 +33,7 @@ function [ sets ] = get_theory_sets( sets )
         sets.widthSigmasFromMean = str2double(answer{9});
         sets.computeFreeConcentrations = str2double(answer{10});
         sets.model = answer{11};
-        sets.theoryGen.k = str2double(answer{12});
+        sets.k = eval(answer{12});
     else
         disp('Default theory settings are being used');
     end
