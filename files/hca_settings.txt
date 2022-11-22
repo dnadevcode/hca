@@ -2,6 +2,7 @@
 %
 %
 %
+minLen = 0; % minimum length of barcodes for comparison
 timeFramesNr = 0; % 0 - take all timeframes
 alignMethod = 1; % 1 - nralign, 2 - ssdalign, 3 - ssg
 genConsensus = 0; % generate consensus

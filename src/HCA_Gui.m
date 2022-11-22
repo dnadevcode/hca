@@ -48,6 +48,7 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
         import CBT.Hca.Core.gen_barcodes;
         barcodeGen =  CBT.Hca.Core.gen_barcodes(kymoStructs, sets);
  
+        
         % generate consensus
         import CBT.Hca.Core.gen_consensus;
         consensusStructs = CBT.Hca.Core.gen_consensus(barcodeGen,sets);

@@ -63,6 +63,11 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
         barcodeGen{i}.rawBarcode(isnan(barcodeGen{i}.rawBarcode)) = false;
     end
     
+        % filter out short barcodes
+    barLens = cellfun(@(x) sum(x.rawBitmask),barcodeGen);
+    barcodeGen = barcodeGen(barLens>=sets.minLen);
+    disp(strcat([num2str(length(barcodeGen)) ' passing length threshold: length >= ' num2str(sets.minLen)]));
+
 	%% Prestretch barcodes to the same length
     % convert to common length, if chosen
     if  sets.genConsensus == 1

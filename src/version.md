@@ -1,5 +1,9 @@
 v (future, see CHANGELOG)
 
+v4.5.0
+- Added option for minimum length of barcode
+- Fix an issue of wrong PCCs when theory barcode is completely flat
+
 v4.3.2
 - fix dtw scores generation
 

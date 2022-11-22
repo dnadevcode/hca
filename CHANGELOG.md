@@ -29,6 +29,11 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+#4.5.0
+- Added option for minimum length of barcode
+- Fix an issue of wrong PCCs when theory barcode is completely flat
+
+
 # 4.4.1 
 small fixes from generating circular plot and filtering
 

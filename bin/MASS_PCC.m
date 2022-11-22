@@ -28,7 +28,7 @@ function [dist] = MASS_PCC(x, y, k)
     %compute x stats -- O(n)
 %     meanx = movmean(x,[m-1 0]);
     sigmax = movstd(x,[m-1 0],1); % normalizes by m
-
+    sigmax(sigmax<eps) = nan; % remove issue with having constant theory
     %k = 4096; %assume k > m
     %k = pow2(nextpow2(sqrt(n)));
     y2 = y;

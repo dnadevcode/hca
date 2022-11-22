@@ -43,10 +43,10 @@ function [ sets ] = get_user_settings( sets )
     
     % add kymograph settings
 	if sets.kymosets.askforsets
-        prompt = {'Number of time frames (all time frames by default)','Alignment method (1 is nralign, 2 is ssdalign)', 'Filter the barcodes', 'Add consensus','Non-default bitmask settings', 'Non-defaut edge detection settings', 'Skip edge detection', 'Generate random fragments cut-outs','Generate independent subfragments for barcodes','Comparison Method'};
+        prompt = {'Number of time frames (all time frames by default)','Alignment method (1 is nralign, 2 is ssdalign)', 'Filter the barcodes', 'Add consensus','Non-default bitmask settings', 'Non-defaut edge detection settings', 'Skip edge detection', 'Generate random fragments cut-outs','Generate independent subfragments for barcodes','Comparison Method','Minimum length'};
         title = 'Kymograph settings';
         dims = [1 35];
-        definput = {'0','1','0','0','0','0','0','0','0','mass_pcc'};
+        definput = {'0','1','0','0','0','0','0','0','0','mass_pcc','0'};
         answer = inputdlg(prompt,title,dims,definput);
         
         sets.timeFramesNr = str2double(answer{1});
@@ -60,7 +60,8 @@ function [ sets ] = get_user_settings( sets )
         sets.random.generate = str2double(answer{8});
         sets.subfragment.generate = str2double(answer{9});
         sets.comparisonMethod = answer{10};
-    
+        sets.minLen = str2double(answer{11});
+
         if sets.edgeSettings == 0
             sets.skipDoubleTanhAdjustment = 1;
         end
