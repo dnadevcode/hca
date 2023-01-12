@@ -29,6 +29,10 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+#4.6.0 
+- Add possibility of importing multi-tif kymos (where frame 2 - kymo, frame 3 -bitmask
+- Added (still being updated) spalign algorithm (align method 3), should work better for kymos with parts of edge missing.
+
 #4.5.0
 - Added option for minimum length of barcode
 - Fix an issue of wrong PCCs when theory barcode is completely flat

@@ -13,6 +13,7 @@ edgeSettings = 1;
 skipDoubleTanhAdjustment = 1;
 comparisonMethod = 'mass_pcc'; % method for comparison of exp vs theory, alt 'unmasked_pcc_corr', 'mass_pcc'
 w = 200; % window width in case we use MP
+minLen = 150;
 
 displayResults = 0; % display result figure
 plotallmatches = 0; % plot matches to all barcodes as txt files

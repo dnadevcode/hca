@@ -1,4 +1,4 @@
-function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
+function [ barcodeGen ] = gen_barcodes( kymoStructs, sets,maxLen )
     % gen_barcodes
     % generates barcodes from aligned kymograph data
     %
@@ -9,6 +9,9 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
     %     Returns:
     %         barcodeGen: barcode data
     
+    if nargin < 3
+        maxLen = inf;
+    end
     % number of barcodes
     numBar = length(kymoStructs);
     
@@ -66,6 +69,9 @@ function [ barcodeGen ] = gen_barcodes( kymoStructs, sets )
         % filter out short barcodes
     barLens = cellfun(@(x) sum(x.rawBitmask),barcodeGen);
     barcodeGen = barcodeGen(barLens>=sets.minLen);
+    barLens = cellfun(@(x) sum(x.rawBitmask),barcodeGen);
+    barcodeGen = barcodeGen(barLens<=maxLen);
+
     disp(strcat([num2str(length(barcodeGen)) ' passing length threshold: length >= ' num2str(sets.minLen)]));
 
 	%% Prestretch barcodes to the same length

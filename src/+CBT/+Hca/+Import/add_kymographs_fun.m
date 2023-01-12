@@ -42,10 +42,17 @@ function [kymoStructs] = add_kymographs_fun(sets)
         % TODO: preferably extract position in the original movie as well
         % from the name
         % save unaligned kymograph
-        kymoStructs{i}.unalignedKymo = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name));
-        try
-        kymoStructs{i}.unalignedBitmask = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},strrep(kymoStructs{i}.name,'kymograph','bitmask')));
-        catch
+        if length(imfinfo(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name))) == 3
+            % 1 is enhanced, 2 is kymo, 3 is bitmask
+            kymoStructs{i}.unalignedKymo = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name),2);
+            kymoStructs{i}.unalignedBitmask = logical(imread(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name),3));
+            
+        else
+            kymoStructs{i}.unalignedKymo = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name));
+            try
+            kymoStructs{i}.unalignedBitmask = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},strrep(kymoStructs{i}.name,'kymograph','bitmask')));
+            catch
+            end
         end
         fd = fopen(matKymopathShort,'a'); fprintf(fd, '%s \n',fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name)); fclose(fd);
 

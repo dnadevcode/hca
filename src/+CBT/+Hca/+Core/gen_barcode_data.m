@@ -60,5 +60,6 @@ function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdge
         barcodeGenData.lE = leftEdgeIdx;
         barcodeGenData.rE = rightEdgeIdx;
         barcodeGenData.rawBg = rawBg;
+        barcodeGenData.alignedKymo = alignedKymo;
     end
 end
