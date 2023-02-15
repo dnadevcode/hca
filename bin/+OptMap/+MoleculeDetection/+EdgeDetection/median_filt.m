@@ -1,4 +1,4 @@
-function [bitmask, posY,mat] = median_filt(km, filterM)
+function [bitmask, posY,mat] = median_filt(km, filterM,bgSigma)
 
 % use median filter to detect edges
 %   Args:
@@ -11,6 +11,10 @@ function [bitmask, posY,mat] = median_filt(km, filterM)
 
     if nargin < 2
         filterM = [5 15];
+    end
+    
+    if nargin < 3
+        bgSigma = 1;
     end
 
     vecvals = cell(1,length(km));
@@ -41,7 +45,7 @@ function [bitmask, posY,mat] = median_filt(km, filterM)
     threshval = nanmean(medfilt2(bg,filterS,'symmetric'));
     threshstd = nanstd(medfilt2(bg,filterS,'symmetric'));
     % number of standard deviations to allow
-    bgSigma = 1;
+%     bgSigma = 1;
 
 posY = cell(1,length(km)); % put into function! medfilt based edge detection. Less accurate for single-frame stuff
 mat = cell(1,length(km));

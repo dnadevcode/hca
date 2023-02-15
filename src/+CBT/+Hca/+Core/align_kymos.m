@@ -42,7 +42,7 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
         case 1
             for i=1:length(kymoStructs)
                 if isfield(kymoStructs{i},'unalignedBitmask')
-                    [kymoStructs{i}.alignedKymo,kymoStructs{i}.alignedMask] = nralign(double(kymoStructs{i}.unalignedKymo),[], kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );
+                    [kymoStructs{i}.alignedKymo,~,~,kymoStructs{i}.alignedMask] = nralign(double(kymoStructs{i}.unalignedKymo),[], kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );
                 else
                     kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
                 end
@@ -61,21 +61,49 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
         case 5
             % consensus based alignment
         case 3
+            if ~isfield(kymoStructs{1},'unalignedBitmask')
+                % based on int setting
+                val = cellfun(@(x) strsplit(x.name,'int-'),kymoStructs,'un',false);
+                val2 = cellfun(@(x) strsplit(x{2},'_'),val,'un',false);
+                intVal = cellfun(@(x) str2num(x{1}),val2);
+                [a,b] = unique(intVal);
+                for ii=a
+                    import OptMap.MoleculeDetection.EdgeDetection.median_filt;
+                    toRun = find(intVal==ii);
+                    [bitmask, posY,mat] = median_filt(cellfun(@(x) x.unalignedKymo,kymoStructs(toRun),'un',false), [5 15]);
+                    for i=1:length(toRun)
+              
+                        kymoStructs{toRun(i)}.unalignedBitmask = bitmask{i};
+                    end
+                end
+                
+                % simplify:
+
+            end
            for i=1:length(kymoStructs)
-                if isfield(kymoStructs{i},'unalignedBitmask')
+%                 if isfield(kymoStructs{i},'unalignedBitmask')
                     [kymoStructs{i}.alignedKymo,kymoStructs{i}.alignedMask,~,~] = ...
-                        spalign(double(kymoStructs{i}.unalignedKymo),kymoStructs{i}.unalignedBitmask);
+                        spalign(double(kymoStructs{i}.unalignedKymo),kymoStructs{i}.unalignedBitmask,sets.minOverlap,sets.maxShift,sets.skipPreAlign, sets.detPeaks);
+           end  
+%            figure;
+%  imshowpair(imresize(kymoStructs{i}.unalignedBitmask,[200 500]),imresize(kymoStructs{i}.unalignedKymo,[200 500]), 'ColorChannels','red-cyan'  )
+
+
+%                     valsAlign = sum(kymoStructs{i}.unalignedBitmask)<size(kymoStructs{i}.unalignedBitmask,1);
+%                     st = find(valsAlign==0,1,'First');
+%                     stop = find(valsAlign==0,1,'Last');
+%                     % chop left and right
+%                     kymoStructs{i}.alignedMask(:,1:st-1) = 0;
+%                     kymoStructs{i}.alignedMask(:,stop+1:end) = 0;
+
 
 %                     [kymoStructs{i}.alignedKymo,~,~,kymoStructs{i}.alignedMask] = nralign(double(kymoStructs{i}.unalignedKymo), [],  kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );
-                else
-                    import OptMap.MoleculeDetection.EdgeDetection.median_filt;
-                    [bitmask, posY,mat] = median_filt({kymoStructs{i}.unalignedKymo}, [5 15]);
-                    kymoStructs{i}.unalignedBitmask = bitmask{1};
-%                     kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
-                    [kymoStructs{i}.alignedKymo,kymoStructs{i}.alignedMask] = ...
-                        spalign(double(kymoStructs{i}.unalignedKymo),kymoStructs{i}.unalignedBitmask);
-                end
-            end  
+%                 else
+%                       kymoStructs{i}.unalignedBitmask = bitmask{1};
+% %                     kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
+%                     [kymoStructs{i}.alignedKymo,kymoStructs{i}.alignedMask] = ...
+%                         spalign(double(kymoStructs{i}.unalignedKymo),kymoStructs{i}.unalignedBitmask);
+%                 end
 
         otherwise
     end

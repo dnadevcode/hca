@@ -10,4 +10,5 @@ testdtw/
 docs/
 test/
 output/
+outer/
 theories_parallel.txt

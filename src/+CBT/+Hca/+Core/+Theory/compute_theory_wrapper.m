@@ -24,6 +24,10 @@ function [x] = compute_theory_wrapper(ts, sets)
              x = run_literature_theory(ts',sets);
         case "GC"
             x = gc_rate(ts',4);
+        case "gcweighted"
+            import CBT.Hca.Core.Theory.gcweighted;
+
+            x = gcweighted(ts',4,sets.theoryGen.atPreference);
 %              x = run_literature_theory(ts',sets);
         case "enzyme"
              x = zeros(length(ts),1);

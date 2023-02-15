@@ -1,8 +1,10 @@
 % load default settings
-function run_barcode_generate(tiffname)
+function barcodeGen=run_barcode_generate(tiffname,minLen)
 
 if nargin < 1
-    tiffname = '';
+    tiffname = 'C:\Users\Lenovo\git\lldev\OutputFiles\RawKymos\yeast_Data\*.tif';
+    sets.minLen = 50; % miniimum length
+    sets.maxLen = 200;
 end
 
 
@@ -11,7 +13,6 @@ import CBT.Hca.Import.import_hca_settings;
 [sets] = import_hca_settings('hca_settings.txt');
 sets.kymosets.askforkymos = 0;
 sets.kymosets.askforsets = 0;
-sets.minLen = 50; % miniimum length
 
 
 % load tiff names // could be directly laoded to 
