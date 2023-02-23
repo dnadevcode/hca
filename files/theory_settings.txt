@@ -34,7 +34,7 @@ yoyo1BindingConstant = 26; % yoyo binding constant
 computeFreeConcentrations = 1;
 computeBitmask = 0; % whether to compute bitmask
 method = 'literature';      % method    
-k = 2^20;                   % k has to be k=m*2^d. k should be longer than smallest experiment size
+k = 2^16;                   % k has to be k=m*2^d. k should be longer than smallest experiment size
 m = 2^14;                   % harcoded parameters for literature, can be changed here by the user
 [model]
 pattern = 'CB';
