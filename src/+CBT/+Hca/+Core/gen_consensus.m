@@ -45,8 +45,8 @@ function [ consensusStructs] = gen_consensus(barcodeGen, sets )
         clusters = cellfun(@(x) x.lC,barcodeGen);
         for i=1:max(clusters)
              consensusStructs{i}  = generate_consensus( cellfun(@(x) x.stretchedBarcode,barcodeGen(clusters==i),'UniformOutput',false),...
-         cellfun(@(x) x.stretchedrawBitmask,barcodeGen(clusters==i),'UniformOutput',false),...
-         cellfun(@(x) x.bgMeanApprox, barcodeGen(clusters==i),'UniformOutput',false), sets );
+             cellfun(@(x) x.stretchedrawBitmask,barcodeGen(clusters==i),'UniformOutput',false),...
+             cellfun(@(x) x.bgMeanApprox, barcodeGen(clusters==i),'UniformOutput',false), sets );
         end
     else        
 
@@ -55,9 +55,9 @@ function [ consensusStructs] = gen_consensus(barcodeGen, sets )
              cellfun(@(x) x.bgMeanApprox,barcodeGen,'UniformOutput',false), sets );
     end
     
-    if length(consensusStructs)==1
-        consensusStructs = consensusStructs{1};
-    end
+%     if length(consensusStructs)==1
+%         consensusStructs = consensusStructs{1};
+%     end
 
 
     timePassed = toc;
