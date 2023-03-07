@@ -70,7 +70,7 @@ function [ theoryStruct ] = load_theory( sets )
             pixelWidth_nm = setsB.pixelWidth_nm;
             psfSigmaWidth_nm = setsB.psfSigmaWidth_nm;
             try  % try to see if setting of linear theory function is included
-               isLinearTF  =  setsB.psfSigmaWidth_nm;
+               isLinearTF  =  setsB.isLinearTF;
             catch
                isLinearTF  =  0;
             end
