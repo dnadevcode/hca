@@ -141,11 +141,6 @@ function [hcaStruct] = HCA_Gui(sets, hcaStruct)
         get_display_results(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, sets);
 
 
-       
-
-      
-      %  sets.output.matDirpath = '/home/albyback/rawData/dnaData/humanData/output/';
-  
     else
         % run load results function or something similar..
     end

@@ -105,18 +105,27 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     
     % load theory barcode txt file. For UCR DTW (c++ code), we only need the name of the
     % file so this can be skipped.
-    fileID = fopen(theoryStruct.filename,'r');
-    formatSpec = '%f';
-    theorBar = transpose(fscanf(fileID,formatSpec));
-    fclose(fileID);
-    try
-        fileID = fopen(strrep(theoryStruct.filename,'_barcode','_bitmask'),'r');
-        theorBit = transpose(fscanf(fileID,'%f'));
+    if ~isfield(theoryStruct,'theoryBarcode') % enable possibility
+        fileID = fopen(theoryStruct.filename,'r');
+        formatSpec = '%f';
+        theorBar = transpose(fscanf(fileID,formatSpec));
         fclose(fileID);
-    catch
-        theorBit = ones(1,length(theorBar));
+        try
+            fileID = fopen(strrep(theoryStruct.filename,'_barcode','_bitmask'),'r');
+            theorBit = transpose(fscanf(fileID,'%f'));
+            fclose(fileID);
+        catch
+            theorBit = ones(1,length(theorBar));
+        end
+    else
+        theorBar = theoryStruct.theoryBarcode;
+        if ~isempty(theoryStruct.theoryBitmask)
+            theorBit = theoryStruct.theoryBitmask;
+        else
+            theorBit = ones(1,length(theorBar));
+        end
     end
-    
+        
     % if we want to take a subtheory
     if nargin >=7
         if ~isempty(positionsOnThry)
@@ -134,7 +143,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     bestLength = zeros(1,length(barcodeGen));
     % for all the barcodes run
     % parfor
-    parfor idx=1:length(barcodeGen)
+    for idx=1:length(barcodeGen)
 %         idx
         % xcorrMax stores the  maximum coefficients
         xcorrMax = zeros(1,length(stretchFactors));

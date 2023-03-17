@@ -24,9 +24,9 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
             end
         catch
             sets.theory.askfortheory = 1;
-          end
-          
-     end
+          end   
+    end
+
     if sets.theory.askfortheory
         % loads figure window
         import Fancy.UI.Templates.create_figure_window;
@@ -50,7 +50,7 @@ function [ theoryStruct,sets ] = get_user_theory( sets )
         [t,matFilepathShort,theoryStruct, sets,theoryGen] = HCA_theory_parallel('',0.3,'theory_settings_parallel.txt',sets.theoryFile,sets.theoryFileFold);
          sets.output.matDirpath = outdirpath;
     else
-        % now load theory
+        % now load theory, either from .txts or .mat file
         import CBT.Hca.UI.Helper.load_theory;
         theoryStruct = load_theory(sets);
     end

@@ -70,6 +70,7 @@ askfornmbp = 1;
 nmbp = 0.225;
 skipStretch = 1;
 stretchFactors = [0.95 0.96 0.9700    0.9800    0.9900    1.0000    1.0100    1.0200    1.0300 1.04 1.05];
+theoryDontSaveTxts = 1;
 %    sets.theory.askfortheory = 1;
 % 	sets.theoryFileFold{1} = '/home/albyback/rawData/dnaData/humanData/';
 %     sets.theoryFile{1}= 'ncbi_chromosomes_181022_130nmPixel_0.3nmPERbp.mat';
