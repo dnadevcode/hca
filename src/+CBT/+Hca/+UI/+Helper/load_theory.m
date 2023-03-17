@@ -42,7 +42,7 @@ function [ theoryStruct ] = load_theory( sets )
             load_theory_mat(sets,idx);
 
             if ~sets.theory.theoryDontSaveTxts
-                [theoryStruct] = load_theory_into_txts(theoryStruct, bars,bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinearTF);
+                [theoryStruct] = load_theory_into_txts(theoryStruct, sets.theoryFileFold{idx}, bars,bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinearTF,sets.theory.precision);
             else
                 % add info about barcodes as struct
                 theoryStruct = cell2struct([bars;...

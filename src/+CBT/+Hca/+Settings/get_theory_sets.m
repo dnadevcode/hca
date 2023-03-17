@@ -16,8 +16,8 @@ function [ sets ] = get_theory_sets( sets )
         'compute free concentrations','model','min len (power of 2)'};
     
     title = 'Parameter choice for barcode generation';
-    dims = [1 35];
-    definput = {'0.3','6','0.02','0.2','300','130','3','0','4','1','literature','2^20'};
+    dims = [1 35]; % TODO: take from input
+    definput = {'0.3','6','0.02','0.2','300','130','3','0','4','1','literature','2^16'};
     answer = inputdlg(prompt,title,dims,definput);
 
     
