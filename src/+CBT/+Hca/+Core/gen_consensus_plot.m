@@ -1,4 +1,4 @@
-function [  ] = gen_consensus_plot( consensusStructs,consensusStruct,sets )
+function [  ] = gen_consensus_plot( consensusStructs,consensusStruct,barcodeGen, sets )
     %gen_consensus_plot
     
 %	load('consensus_struct.mat');
@@ -17,7 +17,8 @@ function [  ] = gen_consensus_plot( consensusStructs,consensusStruct,sets )
     ts = TabbedScreen(hPanel);
     
     import CBT.Hca.Export.plot_consensus_concentrically;
-    plot_consensus_concentrically(ts,consensusStructs,consensusStruct,barcodeGen)
+%     consensusStructs,barcodeGen, idx, ts
+    plot_consensus_concentrically(consensusStructs,barcodeGen,1,ts)
     
     %%
 %         import CBT.Consensus.UI.plot_clusters_linearly;

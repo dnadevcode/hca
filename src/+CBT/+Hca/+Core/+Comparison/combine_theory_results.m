@@ -18,7 +18,11 @@ function [ rezMaxC ] = combine_theory_results(theoryStruct, rezMax,bestBarStretc
             [~,indx(i)] = max(maxCoefs);
             rezMaxC{i} = rezMax{indx(i)}{i};
             rezMaxC{i}.idx = indx(i);
-            rezMaxC{i}.name = theoryStruct{indx(i)}.name;
+            if iscell(theoryStruct)
+                rezMaxC{i}.name = theoryStruct{indx(i)}.name;
+            else
+                rezMaxC{i}.name = theoryStruct(indx(i)).name;
+            end
             rezMaxC{i}.bestBarStretch = bestBarStretch{indx(i)}(i);
             rezMaxC{i}.bestLength = bestLength{indx(i)}(i);
         catch

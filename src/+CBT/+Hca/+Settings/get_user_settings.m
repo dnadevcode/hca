@@ -10,20 +10,38 @@ function [ sets ] = get_user_settings( sets )
     %     Returns:
     %         sets: Return structure
 
+    if isfield(sets,'no_user_gui') % disable asking for user options if sets.no_user_gui==1
+        if sets.no_user_gui == 1
+            sets.kymosets.askforkymos = 0;
+            sets.kymosets.askforsets = 0;
+            sets.output.askforoutputdir = 0;
+        end
+
+    end
+
     if ~sets.kymosets.askforkymos 
         try 
-            fid = fopen(sets.kymosets.kymoFile); 
-            fastaNames = textscan(fid,'%s','delimiter','\n'); fclose(fid);
-            for i=1:length(fastaNames{1})
-                [FILEPATH,NAME,EXT] = fileparts(fastaNames{1}{i});
-
-                sets.kymosets.filenames{i} = strcat(NAME,EXT);
-                sets.kymosets.kymofilefold{i} = FILEPATH;
+            [be,mid,en]= fileparts(sets.kymosets.kymoFile);
+            switch en % it's either kymos in a txt file, or folder with txts
+                case '.txt'
+                    fid = fopen(sets.kymosets.kymoFile); 
+                    fastaNames = textscan(fid,'%s','delimiter','\n'); fclose(fid);
+                    for i=1:length(fastaNames{1})
+                        [FILEPATH,NAME,EXT] = fileparts(fastaNames{1}{i});
+                        sets.kymosets.filenames{i} = strcat(NAME,EXT);
+                        sets.kymosets.kymofilefold{i} = FILEPATH;
+                    end
+                case '.tif'
+                    files = dir(sets.kymosets.kymoFile);
+                    sets.kymosets.kymofilefold = arrayfun(@(x) files(x).folder,1:length(files),'un',false);
+                    sets.kymosets.filenames = arrayfun(@(x) files(x).name,1:length(files),'un',false);
+                otherwise
+                    error('No supported file ending');
             end
         catch
+            disp('Failed to find kymos in file, will ask for kymos')
             sets.kymosets.askforkymos   = 1;
         end
-%         sets.kymosets.kymoFile = 'kymos_2020-03-13_14_06_31_.txt';
     end
     
     if sets.kymosets.askforkymos 

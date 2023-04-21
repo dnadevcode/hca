@@ -6,6 +6,7 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     if nargin < 7
         userDefinedSeqCushion = 0;
     end
+    
 
     len1=length(barcodeGen);
     % barcode orientations

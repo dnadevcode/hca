@@ -22,8 +22,11 @@ function [resultStruct,fig1] = get_display_results(barcodeGen, consensusStruct,c
     markers = ['o';'s';'x';'+';'d';'v'];
 
     % compute cummulative sum of lengths of barcodes
-    lengthBorders = cumsum(cellfun(@(x) x.length,theoryStruct));
-
+    if iscell(theoryStruct)
+        lengthBorders = cumsum(cellfun(@(x) x.length,theoryStruct));
+    else
+        lengthBorders = cumsum(arrayfun(@(x) theoryStruct(x).length,1:length(theoryStruct)));
+    end
     % how many barcodes were compared to
     numBar = length(comparisonStruct);
 

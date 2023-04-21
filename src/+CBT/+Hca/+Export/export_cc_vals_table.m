@@ -4,12 +4,21 @@ function [T] = export_cc_vals_table( theoryStruct,comparisonStructAll, barcodeGe
     
     fasta = cell(1,length(theoryStruct));
     for i =1:length(theoryStruct)
-        locs = strfind(theoryStruct{i}.filename,'/');
-        fasta{i} = theoryStruct{i}.name;
+        if iscell(theoryStruct)  
+            locs = strfind(theoryStruct{i}.filename,'/');
+            fasta{i} = theoryStruct{i}.name;
+        else
+%             locs = strfind(theoryStruct(i).filename,'/');
+            fasta{i} = theoryStruct(i).name;
+        end
     end
     %fasta = cellfun(@(x) strrep(x.filename,'.txt',''), theoryStruct,'UniformOutput',false);
-    thrLen = cellfun(@(x) x.length, theoryStruct);
-
+    if iscell(theoryStruct)  
+        thrLen = cellfun(@(x) x.length, theoryStruct);
+    else
+        thrLen = arrayfun(@(x) theoryStruct(x).length, 1:length(theoryStruct));
+    end
+    
     T = table(fasta');
 
     for i=1:length(barcodeGen)
