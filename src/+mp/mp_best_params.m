@@ -1,4 +1,4 @@
-function [ maxcoef,pos,or,idxpos ] = mp_best_params( mp,mpI,mpPIQ, mpD, numBestPar, mask)
+function [ maxcoef,pA,or,pB ] = mp_best_params( mp, mpI, mpD, numBestPar, mask)
     % get_best_parameters_mp
     %
     % todo: merge to get_best_parameters, so that all cases are in the same
@@ -24,11 +24,11 @@ function [ maxcoef,pos,or,idxpos ] = mp_best_params( mp,mpI,mpPIQ, mpD, numBestP
     % table instead - corresponds to structural variations better.
     maxcoef = zeros(1,numBestPar);
     or = zeros(1,numBestPar);
-    pos = zeros(1,numBestPar);
-    idxpos = zeros(1,numBestPar);
+    pA = zeros(1,numBestPar);
+    pB = zeros(1,numBestPar);
 
     for ii=1:numBestPar
-        [f,s] = max(mp);
+        [f, s] = max(mp);
 
         % sort the max scores, ix stores the original indices
         [ b, ix ] = sort( f(:), 'descend','MissingPlacement','last' );
@@ -38,12 +38,12 @@ function [ maxcoef,pos,or,idxpos ] = mp_best_params( mp,mpI,mpPIQ, mpD, numBestP
         % save the best max score and orientation
         maxcoef(ii) = indx;
         
-        pos(ii) = mpPIQ(s(ix(1)));
+        pA(ii) = s(ix(1));
     
         % now orientation is easy!
-        or(ii) = mpD(s(ix(1)));
+        or(ii) = mpD(s(ix(1)))+1;
         
-        idxpos(ii) = mpI(s(ix(1)));
+        pB(ii) = mpI(s(ix(1)));
 
         % finally, save the position. This can have two cases,
         % depending on the value of s

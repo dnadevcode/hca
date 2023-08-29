@@ -52,10 +52,10 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
                 multF=conj(fft(ker'));
         
                 % convolved with sequence ->
-                theoryStruct(i).theoryBarcode = ifft(fft(seq).*multF); 
+                theoryStruct(i).rawBarcode = ifft(fft(seq).*multF); 
                 
                 try
-                    theoryStruct(i).theoryBitmask = convert_bpRes_to_pxRes(theoryStruct(i).theoryBitmask, 1/pxSize);
+                    theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
                 catch
                 end
                 theoryStruct(i).meanBpExt_nm = newNmBp;
