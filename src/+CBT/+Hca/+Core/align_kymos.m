@@ -42,10 +42,14 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
         case 1
             for i=1:length(kymoStructs)
                 if isfield(kymoStructs{i},'unalignedBitmask')
-                    [kymoStructs{i}.alignedKymo,~,~,kymoStructs{i}.alignedMask] = nralign(double(kymoStructs{i}.unalignedKymo),[], kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );
+               % Luis: Now kymostructs include featuresIdxs and
+               % shiftalignedKymo
+               [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo), [],  kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );                                                                         
                 else
-                    kymoStructs{i}.alignedKymo = nralign(double(kymoStructs{i}.unalignedKymo));
+                    %Maybe delete aligned Mask from here
+                    [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo));
                 end
+  
             end  
         case 0
             edgeDetectionSettings = sets.edgeDetectionSettings;
