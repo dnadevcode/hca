@@ -105,7 +105,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     
     % load theory barcode txt file. For UCR DTW (c++ code), we only need the name of the
     % file so this can be skipped.
-    if ~isfield(theoryStruct,'theoryBarcode') % enable possibility
+    if ~isfield(theoryStruct,'rawBarcode') % enable possibility
         fileID = fopen(theoryStruct.filename,'r');
         formatSpec = '%f';
         theorBar = transpose(fscanf(fileID,formatSpec));
@@ -118,9 +118,9 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             theorBit = ones(1,length(theorBar));
         end
     else
-        theorBar = theoryStruct.theoryBarcode;
-        if ~isempty(theoryStruct.theoryBitmask)
-            theorBit = theoryStruct.theoryBitmask;
+        theorBar = theoryStruct.rawBarcode;
+        if ~isempty(theoryStruct.rawBitmask)
+            theorBit = theoryStruct.rawBitmask;
         else
             theorBit = ones(1,length(theorBar));
         end
@@ -177,6 +177,9 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         for j=1:length(stretchFactors)
             % here interpolate both barcode and bitmask 
             try
+                % simplify scaling: one function (but mask has to be
+                % continuous
+%                 barC = imresize(barTested(logical(barBitmask)),'Scale' ,[1 stretchFactors(j)]);
                 barC = interp1(barTested, linspace(1,lenBarTested,lenBarTested*stretchFactors(j)));
                 barB = barBitmask(round(linspace(1,lenBarTested,lenBarTested*stretchFactors(j))));
 

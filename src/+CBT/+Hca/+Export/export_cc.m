@@ -1,7 +1,10 @@
-function [matFilepath] = export_cc(T, matDirpath) 
+function [matFilepath] = export_cc(T, matDirpath, timestamp, writemode) 
     % Exports table as txt
 
-    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+    if nargin < 3
+        timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+        writemode = 'overwrite';
+    end
     matFilename = strcat([ 'table_' timestamp  '.txt']);
     matFilename2 = strcat([ 'table_' timestamp  '.dat']);
 
@@ -10,9 +13,9 @@ function [matFilepath] = export_cc(T, matDirpath)
         return;
     end
 	matFilepath = strcat([matDirpath, matFilename]);
-    writetable(T,matFilepath,'Delimiter','\t')  
+    writetable(T,matFilepath,'Delimiter','\t','WriteMode',writemode)  
     matFilepath = strcat([matDirpath, matFilename2]);
 
-    writetable(T,matFilepath,'WriteRowNames',true)  
+    writetable(T,matFilepath,'WriteRowNames',true,'WriteMode',writemode)  
     fprintf('Saved table to ''%s''\n', matFilepath);
 end

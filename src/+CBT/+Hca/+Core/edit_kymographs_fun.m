@@ -16,7 +16,11 @@ function [ kymoStructs,passingKymos ] = edit_kymographs_fun(kymoStructs, timeFra
     % If the setting for number of timeframes is non-zero, we have to
     % remove some rows from the kymographs, and remove the kymographs with
     % insuficient amount of rows altogether
-    timeframeTotal = cellfun(@(x) size(x.unalignedKymo, 1), kymoStructs)-timeFrameIdx+1;
+    try
+        timeframeTotal = cellfun(@(x) size(x.unalignedKymo, 1), kymoStructs)-timeFrameIdx+1;
+    catch
+        timeframeTotal = 0; % in case no kymos
+    end
 
     if timeFramesNr ~= 0
         % number of timegrames

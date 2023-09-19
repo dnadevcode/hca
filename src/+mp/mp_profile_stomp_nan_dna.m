@@ -4,47 +4,56 @@
 %     kk =128;
 % [mp,mpI] = mp_profile(aTS, bTS,r,kk);
 
-function [maxcoef,pos,or,idxpos,r, mp,mpI,mpPos,mpPIQ] = mp_profile_stomp_nan_dna(aTS, bTS, bitA, maskB, r, kk,numPixelsAroundBestTheoryMask)
+function [maxcoef, pB, or, pA, r, mp, mpI] = mp_profile_stomp_nan_dna(aTS, bTS, bitA, maskB, r, kk,numPixelsAroundBestTheoryMask)
 
     if nargin < 7
         numPixelsAroundBestTheoryMask = 50;
     end
     % mp profile stomp for DNA comparison (forward and reverse strand)
     % bitmasks should already included in aTS and bTS as NANs
-    mpLength = length(aTS)-r+1;
+    mpLength = length(aTS);%-r+1;
     
-    mp2 = zeros(mpLength,1); % instead of making twice the size, report a 
-    mpI2 = zeros(mpLength,1); % a negative number in mpI? Then all procedure simplifies.
+%     mp2 = zeros(mpLength,1); % instead of making twice the size, report a 
+%     mpI2 = zeros(mpLength,1); % a negative number in mpI? Then all procedure simplifies.
     
     % mask both aTS and bTS (bTS is masked if it includes at least 50
     % undefined base-pairs
-    nanValues = movmean(maskB,length(aTS),'Endpoints','discard');
+%     nanValues = movmean(maskB,length(aTS),'Endpoints','discard');
     bTS(maskB > 50) = nan;        % 50 is estimate.., mean approx 50 bp  (1/10th) in a pixel were nan's
     aTS(~bitA) = nan;
     
-    % forward, simple
-    [mp,mpI] = mp_profile_stomp(aTS, bTS, r, kk);
+    % forward and backward, together
+    [mp, mpI] = mp_profile_stomp([aTS; nan; aTS(end:-1:1)], bTS, r, kk);
+
+    [maxcoef,pos] = max(mp);
+    pB = mpI(pos);
+
+    pA = mod(pos, mpLength+1);
+    or = (pos > mpLength)+1; % now the output is simple. Shows position on barB (pB), barA (pA) and orientation of barA
+
+
+    % backward, simple
 
     % reverse, compare reversed aTS vs bTS, also save in reversed,
     % so mp2(1) maps flip[aTS(1:r)] to bTS, and we compare this to aTS(1:r)
     % vs bTS
-    [mp2(end:-1:1),mpI2(end:-1:1)] = mp_profile_stomp(aTS(end:-1:1), bTS,r,kk);
+    %[mp2(end:-1:1), mpI2(end:-1:1)] = mp_profile_stomp(aTS(end:-1:1), bTS,r,kk);
     
     % update mp positions where reverse has higher PCC than direct
-	mpPos(:,1) = mp(:) < mp2;
-    mp(mpPos) = mp2(mpPos);
-    mpI(mpPos) = mpI2(mpPos); % don't need to add anything, since we save updatePos also
+	% mpPos(:,1) = mp(:) < mp2;
+    % mp(mpPos) = mp2(mpPos);
+    % mpI(mpPos) = mpI2(mpPos); % don't need to add anything, since we save updatePos also
     
     % mpI is now position of the subfragment. But instead we might want to
     % compare the actual position // maybe not all, just best?
-    import mp.convert_subfragment_pos_to_query;
-    [mpPIQ,mpI] = convert_subfragment_pos_to_query(mpI,length(aTS),r,mpPos);
+    %     import mp.convert_subfragment_pos_to_query;
+    %     [mpPIQ,mpI] = convert_subfragment_pos_to_query(mpI,length(aTS),r,mpPos);
     
     % now get parameters for best positions: maxcoef, pos, or, idxpos
     % (which means position on second barcode)
     % consider how this would be extracted from SCAMP also.
-	import mp.mp_best_params; % idxpos should be best pos on second barcode
-    [ maxcoef,pos,or,idxpos ] = mp_best_params( mp, mpI, mpPIQ, mpPos, 5, numPixelsAroundBestTheoryMask);    
+% 	import mp.mp_best_params; % idxpos should be best pos on second barcode
+%     [ maxcoef, pB, or, pA ] = mp_best_params( mp, mpI, mpPos, 5, numPixelsAroundBestTheoryMask);    
 end
 
 function [mp,mpI] = mp_profile_stomp(aTS, bTS, r, kk)

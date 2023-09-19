@@ -36,7 +36,7 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
             if theoryStruct(i).length ~= 0
                 % first convert to the correct length
                 pxSize = theoryStruct(i).meanBpExt_nm/newNmBp;
-                seq = convert_bpRes_to_pxRes(theoryStruct(i).theoryBarcode, 1/pxSize);
+                seq = convert_bpRes_to_pxRes(theoryStruct(i).rawBarcode, 1/pxSize);
                          sigma1 = (1/pxSize)*theoryStruct(i).psfSigmaWidth_nm/theoryStruct(i).pixelWidth_nm;
                 sigma =  theoryStruct(i).psfSigmaWidth_nm/theoryStruct(i).pixelWidth_nm;
                 % size of final sigma
@@ -52,10 +52,10 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
                 multF=conj(fft(ker'));
         
                 % convolved with sequence ->
-                theoryStruct(i).theoryBarcode = ifft(fft(seq).*multF); 
+                theoryStruct(i).rawBarcode = ifft(fft(seq).*multF); 
                 
                 try
-                    theoryStruct(i).theoryBitmask = convert_bpRes_to_pxRes(theoryStruct(i).theoryBitmask, 1/pxSize);
+                    theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
                 catch
                 end
                 theoryStruct(i).meanBpExt_nm = newNmBp;
