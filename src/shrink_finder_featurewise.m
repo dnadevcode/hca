@@ -26,23 +26,20 @@ around_feat=0.10; %how many more features included in mean
 
 % The output of this script is three directories and 2 subdirectories:
 % --------Directories------------------------------------------------
-% EDGY KYMOS:Kymos that touch either edge or have been manually cropped
-% (sideways)
 % GOOD KYMOS:Kymos that are considered stable
 % FIXED KYMOS: Shrinking kymos which had the latest >10 frames stable part
 % extracted.
 % UNFIXABLE KYMOS: Kymos that were continuously shrinking and have no 
 % stable part
 % --------SubDirectories------------------------------------------------
-% MANUAL_CHECK: Inside Fixed and Unfixable Kymos, shows the stable section
+% MANUAL_CHECK: Inside all directories, shows the stable section
 % selection plot.
-
+% EDGE_CHECK: Shows the features used as left, right and mid edge.
 % This script uses HCA importing functions and kymograph processing
 % to measure each kymo and get the "size vs time" curve of each.
 % Then findchangepts() is used to find stable sections to classify
 % each kymograph.
 
-% To make it work with no-edge kymos is pending
 
 %% Import kymos
 % It is just a copy-paste from HCA_Gui
