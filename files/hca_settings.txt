@@ -21,6 +21,7 @@ skipPrechoice = 1;
 prestretchMethod = 0; % 0 - do not prestretch % 1 - prestretch to common length
 theories = 'theories_2020-03-13_15_17_22_.txt'; % theories either as mat or directly txts
 userDefinedSeqCushion = 20;
+useGUI = 1; % whether to use GUI
 [subfragment]
 askForSubfragmentSettings = 1; % whether to ask for subfragment settings (to be implemented)
 generate = 1; % whether to generate subfragments

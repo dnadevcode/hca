@@ -1,5 +1,5 @@
-v4.7
-
+v5.0.0
+- add updated gui
 
 v (future, see CHANGELOG)
 

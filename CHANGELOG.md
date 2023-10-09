@@ -1,4 +1,5 @@
 # Future (4.3):
+- Reduce dependence of lldev code (files in bin folder)
 implement small things from Wishlist for HCA 4.0 into HCA 4.1, in particular:
 - make a script for p-value generation visible, i.e. optional step after computing CC values, assuming that 
 p-value database matrix is pre-calculated (otherwise it would take too much time and wouldn't make sense)
@@ -29,6 +30,9 @@ to avoid memory issues.
 - check that consensus is calculated correctly (i.e. zscored!) maybe use matlab's linkage tools
 - also add consensus for different kind of maps?
 
+
+# 5.0.0
+- Updated GUI.
 #4.6.0 
 - Add possibility of importing multi-tif kymos (where frame 2 - kymo, frame 3 -bitmask
 - Added (still being updated) spalign algorithm (align method 3), should work better for kymos with parts of edge missing.

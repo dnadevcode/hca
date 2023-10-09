@@ -1,0 +1,18 @@
+0.3             |          Average nm/bp extension                                      | meanBpExt_nm
+6               |      Concentration Netropsin Mmolar                                     | concN
+0.02            |      Concentration YOYO Mmolar                                               | concY
+0.2             |      Concentration DNA  Mmolar                                                | concDNA
+300             |      PSF (nm)                                                             | psfSigmaWidth_nm
+110             |      Pixel width (nm/px)                                              | pixelWidth_nm
+ 3              |      Delta for barcode masks                                          | deltaCut
+ 4              |       Number of sigmas from mean                                      | widthSigmasFromMean
+ literature     |  Theory model                                                         | method
+16              |    Split data into exponents                                          | k 
+14              |   psf pixelization limimit                                                | m 
+CB              | Pattern                                                               | pattern
+                | lambda fold                                                           | fold
+sequence.fasta | lambda name                                                            | name                                               
+ 1              |  Whether to compute free conncetrations                               |     computeFreeConcentrations
+ 0              |       Whether DNA is linear                                           |   isLinearTF
+1               | Compute bitmask                                                       | computeBitmask
+
