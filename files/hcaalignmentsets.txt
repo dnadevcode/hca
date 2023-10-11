@@ -8,7 +8,7 @@
 0|random|random.generate
 0|subfragment|subfragment.generate
 mass_pcc|comparisonMethod|comparisonMethod
-0|minLen|minLen
+150|minLen|minLen
 0.23 | nmbp |nmbp
 10   | stretch factor max  %    |sF
 2.5   | stretchfactor step      |sFstep
