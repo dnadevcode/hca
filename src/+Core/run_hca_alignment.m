@@ -58,7 +58,7 @@ function [] = run_hca_alignment(hcaSets)
 
 
 % load(thryFile);
-[hcaSets.theoryFile{1},hcaSets.theoryFileFold{1}] = uigetfile(pwd);
+[hcaSets.theoryFile{1},hcaSets.theoryFileFold{1}] = uigetfile(pwd,strcat(['Select theory .mat file to process']));
 % hcaSets.theoryFileFold{1} = '';
 hcaSets.theory.precision = 5;
 hcaSets.theory.theoryDontSaveTxts = 1;

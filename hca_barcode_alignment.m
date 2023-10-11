@@ -275,6 +275,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         hcaSets.comparisonMethod  = textListA{10}.String{1};
         hcaSets.minLen  = str2double(textListA{11}.String{1});
         hcaSets.nmbp = str2double(textListA{12}.String{1});
+        hcaSets.theory.stretchFactors = 1-str2double(textListA{13}.String{1})/100:str2double(textListA{14}.String{1})/100:1+str2double(textListA{13}.String{1})/100;
     end
     
 end
