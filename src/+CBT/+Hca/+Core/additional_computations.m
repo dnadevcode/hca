@@ -8,9 +8,9 @@ function [] = additional_computations( barcodeGenC, consensusStruct, comparisonS
     end
             
     try
-        mkdir(sets.output.matDirpath);
+        [~,~] = mkdir(sets.output.matDirpath);
     catch
-        disp('Output falder already exists, continuing');
+        disp('Output folder already exists, continuing');
     end
     
     if ispc

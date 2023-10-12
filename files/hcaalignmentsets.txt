@@ -1,14 +1,14 @@
-0 | num timeframes |timeFramesNr
-1|alignMethod|alignMethod
-0|filter|filter
-0|genConsensus|genConsensus
-0|bitmaskSettings|bitmaskSettings
-0|edgeSettings|edgeSettings
-0|skipEdgeDetection|skipEdgeDetection
-0|random|random.generate
-0|subfragment|subfragment.generate
-mass_pcc|comparisonMethod|comparisonMethod
-150|minLen|minLen
-0.23 | nmbp |nmbp
+0 | Number of timeframes (0=all) |timeFramesNr
+1| Alignment method (1 - nralign) |alignMethod
+0| Filter the barcodes |filter
+0|Add consensus|genConsensus
+0|Non-default bitmask settings|bitmaskSettings
+0|Non-default edge detection settings|edgeSettings
+0|Skip edge detection|skipEdgeDetection
+0|Generate random fragment cut-outs|random.generate
+0|Generate independent subfragments |subfragment.generate
+1| Global alignment|comparisonMethod
+150| Minimum length|minLen
+0.23 | nm/bp extension |nmbp
 10   | stretch factor max  %    |sF
 2.5   | stretchfactor step      |sFstep

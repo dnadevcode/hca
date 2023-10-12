@@ -44,7 +44,7 @@ function [] = run_hca_theory(hcaSets)
     % loop over theory file folder
     parfor idx = 1:length(theories)
     
-        addpath(genpath(theories{idx}))
+        addpath(genpath(fileparts(theories{idx})))
         disp(strcat(['loaded theory sequence ' theories{idx}] ));
     
         % new way to generate theory, check theory_test.m to check how it works

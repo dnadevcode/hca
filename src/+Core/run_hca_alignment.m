@@ -24,6 +24,11 @@ function [] = run_hca_alignment(hcaSets)
     import CBT.Hca.Core.gen_barcodes;
     barcodeGen =  CBT.Hca.Core.gen_barcodes(kymoStructs, hcaSets);
 
+    % shrink find
+%     import Core.shrink_finder_fun;
+%     shrink_finder_fun(kymoStructs, hcaSets)
+
+
     
     % generate consensus
     import CBT.Hca.Core.gen_consensus;
