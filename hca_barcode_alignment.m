@@ -2,7 +2,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
     %   Replicates HCA_Gui, nicer graphical user interface
     %   Written by Albertas Dvirnas
 
-    import Core.hpfl_extract;
+%     import Core.hpfl_extract;
 
     dotImport = [];
     textList = [];
