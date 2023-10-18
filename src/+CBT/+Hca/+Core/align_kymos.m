@@ -21,7 +21,15 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
 
     tic %
     
+    if ~isfield(sets,'edgeDetectionSettings') % default edge detection
+        sets.edgeDetectionSettings.method = 'Otsu';
+    end
+
     edgeDetectionSettings = sets.edgeDetectionSettings;
+
+    if ~isfield(sets,'alignMethod')
+        sets.alignMethod = 1; %nralign default
+    end
 
     switch sets.alignMethod
         case 2
@@ -44,7 +52,7 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
                 if isfield(kymoStructs{i},'unalignedBitmask')
                % Luis: Now kymostructs include featuresIdxs and
                % shiftalignedKymo
-               [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo), [],  kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );                                                                         
+               [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo), false,  kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );                                                                         
                 else
                     %Maybe delete aligned Mask from here
                     [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo));

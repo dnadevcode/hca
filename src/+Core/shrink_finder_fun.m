@@ -1,56 +1,54 @@
-function [] = shrink_finder_fun( hcaSets)
+function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs, saveOutput)
     %% shrink_finder_fun
     % by Luis Mario Leal Garza
     % refactored by AD
     %
-   hcaSets.kymosets.filenames = hcaSets.kymofolder;
-    hcaSets.kymosets.kymofilefold = cell(1,length(   hcaSets.kymosets.filenames));
-
+    %   Args:
+    %       hcaSets
+    %       kymoStructs
+ 
+    kymoStructsUpdated = kymoStructs;
 
     shrink_threshold=hcaSets.shrink_threshold; % low=strict, high=loose, good=25-40 Minimum improvement in total residual error for each changepoint 
-% consecutive_bgthreshold=hcaSets.consecutive_bgthreshold; %consecutivepx over background to consider contrast as ok
-% consecutive_edge_threshold=hcaSets.consecutive_edge_threshold; %1st number is consecutive px in a window of size (2nd number) to consider the start/end of a molecule
-restrict=hcaSets.restrict; % 0-1 value, fraction of time elapsed to find stable region
-% 0=stable region can be anywhere
-% 0.6=stable region must be until the last 40% of time
-% 0.9=stable region must be until the last 10% of time
-gd=hcaSets.gd; %slope below this is considered as "shrinking"
-p_feat=hcaSets.p_feat; %percentile for the first/last feature
-% Can be 0 if "phantom features" are ignored
-around_feat=hcaSets.around_feat; %how many more features included in mean
+    restrict=hcaSets.restrict; % 0-1 value, fraction of time elapsed to find stable region
+    gd=hcaSets.gd; %slope below this is considered as "shrinking"
+    p_feat=hcaSets.p_feat; %percentile for the first/last feature, can be 0 if "phantom features" are ignored
+    around_feat=hcaSets.around_feat; %how many more features included in mean
+    minStableRegion = 10; % move to sets
 
+    import CBT.Hca.Import.add_kymographs_fun;
+    import CBT.Hca.Core.align_kymos;
+    import Featuretrack.path_track;
 
-
+    if nargin < 2
+        hcaSets.kymosets.filenames = hcaSets.kymofolder;
+        hcaSets.kymosets.kymofilefold = cell(1,length(   hcaSets.kymosets.filenames));
+ 
        % add kymographs
-        import CBT.Hca.Import.add_kymographs_fun;
         [kymoStructs] = add_kymographs_fun(hcaSets);
+    end
 
-        %  put the kymographs into the structure
-        import CBT.Hca.Core.edit_kymographs_fun;
-        kymoStructs = edit_kymographs_fun(kymoStructs,hcaSets.timeFramesNr);
+    if nargin < 3
+        saveOutput = 1;
+    end
 
-        % align kymos
-        import CBT.Hca.Core.align_kymos;
-        [kymoStructs] = align_kymos(hcaSets,kymoStructs);
-  
-%         %Include this after everything to be compatible with pipeline
-%         % generate barcodes
-%          import CBT.Hca.Core.gen_barcodes;
-%          barcodeGen =  CBT.Hca.Core.gen_barcodes(kymoStructs, hcaSets);
+%         %  put the kymographs into the structure
+%         import CBT.Hca.Core.edit_kymographs_fun;
+%         kymoStructs = edit_kymographs_fun(kymoStructs,hcaSets.timeFramesNr);
 
-         %% Set Paths and Make Directories
+    % align kymos
+    [kymoStructs] = align_kymos(hcaSets,kymoStructs);
+
+    if saveOutput
+        %% Set Paths and Make Directories
         hcaSets.output.matDirpath = fileparts(hcaSets.kymofolder{1});
         mkdir(fullfile(hcaSets.output.matDirpath,'goodKymos')); 
         mkdir(fullfile(hcaSets.output.matDirpath,'unfixableKymos')); 
         mkdir(fullfile(hcaSets.output.matDirpath,'fixedKymos'));
-%         mkdir([hcaSets.output.matDirpath,'fixedKymos/Manual_check']);
-%         mkdir([hcaSets.output.matDirpath,'unfixableKymos/Manual_check']);
-%         mkdir([hcaSets.output.matDirpath,'unfixableKymos/Edge_check']);
-%         mkdir([hcaSets.output.matDirpath,'fixedKymos/Edge_check']);
-%         mkdir([hcaSets.output.matDirpath,'goodKymos/Edge_check']);
-%         mkdir([hcaSets.output.matDirpath,'goodKymos/Manual_check']);
+        % maybe: can also save folders for "check" things, removed for
+        % now
+    end
 
-        import Featuretrack.path_track;
         %% Edge Track / for shift alignet kymo
 %         f=1;
 %         fn=1;
@@ -84,6 +82,7 @@ around_feat=hcaSets.around_feat; %how many more features included in mean
     goodkymos=string();
     background_thres=2:-0.1:-1; % ?? 
 
+    kymoKeep = nan(nKymos,2); % which rows to keep
 % loop through all kymos
     for i = 1:nKymos
         [~,name1,name2] = fileparts(kymoStructs{1,i}.name);
@@ -102,7 +101,7 @@ around_feat=hcaSets.around_feat; %how many more features included in mean
         [r_edge ] = find_slopes(rightFeatures);
          
         % Now for mid edge
-        centerFeatures=kymoStructs{1,i}.featuresIdxs(:,round(nfeat*(0.5-around_feat/2)):round(nfeat*(0.5+around_feat/2)));
+        centerFeatures=kymoStructs{1,i}.featuresIdxs(:,max(1,round(nfeat*(0.5-around_feat/2))):round(nfeat*(0.5+around_feat/2)));
         [m_edge] = find_slopes(centerFeatures);
         
         feature_paths=[l_edge,m_edge,r_edge];
@@ -137,7 +136,7 @@ around_feat=hcaSets.around_feat; %how many more features included in mean
         if size(ipt,1)>0 && going_down<gd  % After change analysis, if there more than one "segment" then it is already not that good
             ipt=[1,transpose(ipt),size(used,1)];
             diffs=diff(ipt);
-            result=diffs(diffs>=10); % This looks for the latest stable (>10 frames) section
+            result=diffs(diffs>=minStableRegion); % This looks for the latest stable (>10 frames) section
             if (size(result,2) > 0) %if there was any stable (>10 section) it checks if its within the restricted limits (towards the end)
                 stablemin=find(diffs==result(size(result,2))); % This is the index were the stable region starts
                 stablemin=stablemin(size(stablemin,2));
@@ -152,42 +151,68 @@ around_feat=hcaSets.around_feat; %how many more features included in mean
             if (end_check && slope_check) % if stable region within the restricted end and slope check passed, extract them
                 fixedkymo_counter=fixedkymo_counter+1;
                 fixed(fixedkymo_counter)=kymoStructs{1,i}.name;
+                kymoKeep(i,:) = [(ipt(stablemin)+1) ipt(stablemax)];
                 unalignedKymo =double(kymoStructs{1,i}.unalignedKymo((ipt(stablemin)+1):ipt(stablemax),:));
                 unalignedBitmask =kymoStructs{1,i}.unalignedBitmask((ipt(stablemin)+1):ipt(stablemax),:);
                 enhanced  =  imadjust(unalignedKymo/max(unalignedKymo(:)),[0.1 1]);
-                folder='fixedKymos';
-                save_path=fullfile(hcaSets.output.matDirpath, folder,strcat(name1,name2));
-                imwrite(uint16(round(double(enhanced)./max(enhanced(:))*2^16)),save_path,'tiff') % Enhanced
-                imwrite(uint16(unalignedKymo),save_path,'tiff', 'writemode', 'append') % raw
-                imwrite(uint16(unalignedBitmask),save_path,'tiff', 'writemode', 'append') % raw        
+                if saveOutput % todo: move this outside
+                    folder='fixedKymos';
+                    save_path=fullfile(hcaSets.output.matDirpath, folder,strcat(name1,name2));
+                    imwrite(uint16(round(double(enhanced)./max(enhanced(:))*2^16)),save_path,'tiff') % Enhanced
+                    imwrite(uint16(unalignedKymo),save_path,'tiff', 'writemode', 'append') % raw
+                    imwrite(uint16(unalignedBitmask),save_path,'tiff', 'writemode', 'append') % raw  
+                end
              else
                 unfix_counter=unfix_counter+1;
                 unfixables(unfix_counter)=kymoStructs{1,i}.name;
-
-                folder='unfixableKymos/';
-                save_path=fullfile(hcaSets.output.matDirpath,folder,strcat(name1,name2));
-                copyfile(kymoStructs{1,i}.name,save_path);      
+                if saveOutput
+                    folder='unfixableKymos/';
+                    save_path=fullfile(hcaSets.output.matDirpath,folder,strcat(name1,name2));
+                    copyfile(kymoStructs{1,i}.name,save_path);   
+                end
             end
     else  %Allocate good kymos somewhere else, also with QC
-    good_counter=good_counter+1;
-    goodkymos(good_counter)=kymoStructs{1,i}.name;
-    folder='goodKymos';
-    save_path=fullfile(hcaSets.output.matDirpath,folder,strcat(name1,name2));
-    copyfile(kymoStructs{1,i}.name,save_path);
+        good_counter=good_counter+1;
+        goodkymos(good_counter)=kymoStructs{1,i}.name;
+        kymoKeep(i,:)  = [1 size(kymoStructs{1,i}.unalignedKymo,1)];
+        if saveOutput
+            folder='goodKymos';
+            save_path=fullfile(hcaSets.output.matDirpath,folder,strcat(name1,name2));
+            copyfile(kymoStructs{1,i}.name,save_path);
+        end
+    end
+
+    if ~isnan(kymoKeep(i,1))
+    kymoStructsUpdated{i}.unalignedKymo = kymoStructsUpdated{i}.unalignedKymo(kymoKeep(i,1):kymoKeep(i,2),:);
+    kymoStructsUpdated{i}.unalignedBitmask = kymoStructsUpdated{i}.unalignedBitmask(kymoKeep(i,1):kymoKeep(i,2),:);
+    kymoStructsUpdated{i}.leftEdgeIdxs = kymoStructsUpdated{i}.leftEdgeIdxs(kymoKeep(i,1):kymoKeep(i,2));
+    kymoStructsUpdated{i}.rightEdgeIdxs = kymoStructsUpdated{i}.rightEdgeIdxs(kymoKeep(i,1):kymoKeep(i,2));
+    else
+    kymoStructsUpdated{i}.unalignedKymo = [];
+    kymoStructsUpdated{i}.unalignedBitmask = [];
+    kymoStructsUpdated{i}.leftEdgeIdxs =[];
+    kymoStructsUpdated{i}.rightEdgeIdxs = [];
 
     end
+    
+
+
 %% Save for QC
 % Put after analysis so folder gets sorted by criteria
 %  save_path=[sets.output.matDirpath,folder,'Edge_check/',"Featurewise_edges_",kymoStructs{1,i}.name];
 %  path_track(uint16(kymoStructs{1,i}.unalignedKymo),feature_paths);
 %  imwrite(getframe(gcf).cdata,strjoin(save_path,""))
 %  close
+    end
 
+    
 display(['Fixed ', num2str(fixedkymo_counter), ' kymos'])
 display(['Total ', num2str(good_counter), ' good kymos'])
 display(['Total ', num2str(unfix_counter), ' unfixable kymos'])
 
-    end
+
+
+    
 
 
     function [l_edge ] = find_slopes(group_of_kymos)

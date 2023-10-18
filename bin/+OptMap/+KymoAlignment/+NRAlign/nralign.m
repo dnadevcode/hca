@@ -36,10 +36,10 @@ function [alignedKymo, stretchFactorsMat, shiftAlignedKymo, alignedMask, shiftAl
     %	Henrik Nordanger
     %   Saair Quaderi
 
-    if nargin < 2
+    if nargin < 2 || isempty(skipPrealignTF)
         skipPrealignTF = false;
     end
-    if nargin < 3
+    if nargin < 3 || isempty(kymoMask)
         kymoMask = true(size(unalignedKymo));
     end
     
@@ -166,19 +166,11 @@ function [alignedKymo, stretchFactorsMat, shiftAlignedKymo, alignedMask, shiftAl
     % % kymograph.
     % 
     % 
-    % 
-    % szImg = size(unalignedKymo);
-    % pathLabelsMat = zeroes(szImg);
-    % numPaths = size(pathsColIdxs, 2);
-    % pathRowIdxs = 1:szImg(1);
-    % for pathNum = 1:numPaths
-    %     pathColIdxs = pathsColIdxs(:, pathNum);
-    %     pathLabelsMat(sub2ind(pathLinIdxs, pathRowIdxs, pathColIdxs)) = pathNum;
-    % end
-    % 
-    % hFig = figure();
-    % hPanel = uipanel('Parent', hFig);
-    % hAxis = axes('Parent', hPanel);
-    % import OptMap.KymoAlignment.UI.plot_features_overlay;
-    % plot_features_overlay(hAxis, unalignedKymo, pathLabelsMat);
+%     
+%         figure
+%         imagesc(shiftAlignedKymo);
+%         hold on
+%         arrayfun(@(x) plot( pathsColIdxs(:,x),1:size(shiftAlignedKymo,1)),1:length(pathsColIdxs))
+
+
 end
