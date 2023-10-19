@@ -55,7 +55,7 @@ function [ kymoStructs ] = align_kymos( sets, kymoStructs )
                [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo), false,  kymoStructs{i}.unalignedBitmask(1:size(kymoStructs{i}.unalignedKymo,1),:) );                                                                         
                 else
                     %Maybe delete aligned Mask from here
-                    [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,kymoStructs{i}.alignedMask,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo));
+                    [kymoStructs{i}.alignedKymo,~,kymoStructs{i}.shiftalignedKymo,~,~,~,~,kymoStructs{i}.featuresIdxs] = nralign(double(kymoStructs{i}.unalignedKymo));
                 end
   
             end  
