@@ -12,3 +12,4 @@
 0.23 | nm/bp extension |nmbp
 10   | stretch factor max  %    |sF
 2.5   | stretchfactor step      |sFstep
+0   | Identify Disc  | identifyDisc

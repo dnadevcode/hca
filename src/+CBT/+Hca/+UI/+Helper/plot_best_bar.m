@@ -17,12 +17,19 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     [dd,ii] =max(maxcoef(:,1));
     
     % load theory file
-    fileID = fopen(theoryStruct{comparisonStruct{ii}.idx}.filename,'r');
-    formatSpec = '%f';
-    theorBar = fscanf(fileID,formatSpec);
-    fclose(fileID);
-    
-    niceName = theoryStruct{comparisonStruct{ii}.idx}.name;
+    try
+        theorBar = theoryStruct(comparisonStruct{ii}.idx).rawBarcode;
+        niceName = theoryStruct(comparisonStruct{ii}.idx).name;
+    catch
+
+        
+        fileID = fopen(theoryStruct{comparisonStruct{ii}.idx}.filename,'r');
+        formatSpec = '%f';
+        theorBar = fscanf(fileID,formatSpec);
+        fclose(fileID);
+        
+        niceName = theoryStruct{comparisonStruct{ii}.idx}.name;
+    end
     pl = [strfind(niceName,'NC') strfind(niceName,'NZ')];
     niceName = niceName(pl:end);
     pl = [strfind(niceName,'|') strfind(niceName,' ')];
@@ -33,8 +40,11 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
         
     
     % theory length
-    thrLen = theoryStruct{comparisonStruct{ii}.idx}.length;
-    
+    try
+        thrLen = theoryStruct{comparisonStruct{ii}.idx}.length;
+    catch
+        thrLen = theoryStruct(comparisonStruct{ii}.idx).length;
+    end
     % bitmask. In case of linear barcode, would like to modify this
     theorBit = ones(1,thrLen);
     

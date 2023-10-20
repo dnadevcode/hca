@@ -17,6 +17,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
     itemsListS =[];
     textListS = [];
     
+    tsAlignmentVisual =[];
     if nargin < 2
         import CBT.Hca.Import.import_hca_settings;
         [hcaSets] = import_hca_settings('hca_settings.txt');
@@ -160,7 +161,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
                 tsAlignment = uitabgroup('Parent',t1);
                 tsAlignmentSettings = uitab(tsAlignment, 'title', 'Alignment settings');
-
+                tsAlignmentVisual = uitab(tsAlignment, 'title', 'Visual results');
 
                 dotImport = uicontrol('Parent', tsAlignmentSettings, 'Style', 'edit','String',{fullfile(fileparts(mfilename('fullpath')),'files','kymo_example.tif')},'Units', 'normal', 'Position', [0 0.9 0.5 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
                 set(dotImport, 'Min', 0, 'Max', 25)% limit to 10 files via gui;
@@ -183,7 +184,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 values = setsTable.Var1;
 
                 textItemSets = ones(1,length(textItems));
-                textItemSets([3:10]) = 0;
+                textItemSets([3:10 15]) = 0;
 
                 checkListIdx = find(~textItemSets);
                 itemListIdx = find(textItemSets);
@@ -283,8 +284,10 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             save_settings_align();
             
             import Core.run_hca_alignment;
-            run_hca_alignment(hcaSets)
+            [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaSets);
 
+            import Core.run_visual_fun;
+            run_visual_fun(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets, tsAlignmentVisual);
 
     end
 
@@ -366,7 +369,8 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         hcaSets.skipEdgeDetection  = itemsListA{5}.Value;
         hcaSets.random.generate  = itemsListA{6}.Value;
         hcaSets.subfragment.generate  =itemsListA{7}.Value;
-   
+        hcaSets.identifyDisc  =itemsListA{8}.Value;
+
         if itemsListA{8}.Value==1
             hcaSets.comparisonMethod  = 'mass_pcc';
         else
