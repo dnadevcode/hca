@@ -1,4 +1,4 @@
-function [] = identify_discriminative(hcaSets,barcodeGenC, rezMax,thryNames)
+function [is_distinct] = identify_discriminative(hcaSets,barcodeGenC, rezMax,thryNames)
 
 % speciesName = {'Streptococcus pyogenes'};
 
@@ -17,7 +17,7 @@ import Core.Discriminative.disc_true;
 
 
 import Core.Discriminative.save_disc;
-  save_disc(barcodeGenC,thryNames,refNums,rezMax,bestCoefs,is_distinct, refNumBad,bestCoefsBad,hcaSets)
+save_disc(barcodeGenC,thryNames,refNums,rezMax,bestCoefs,is_distinct, refNumBad,bestCoefsBad,hcaSets)
 
 
 end

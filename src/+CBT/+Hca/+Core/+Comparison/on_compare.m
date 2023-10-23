@@ -197,6 +197,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
         % them. If there were no values computed for this barcode, we don't
         % save anything.
         if ~isnan(value)
+            rezMax{b}.bestBarStretch = stretchFactors(b);
             rezMaxM{idx} = rezMax{b};
             bestBarStretch(idx) = stretchFactors(b);
             bestLength(idx) = round(lenBarTested*stretchFactors(b));

@@ -9,6 +9,7 @@ function [ rezMaxC ] = combine_theory_results(theoryStruct, rezMax,bestBarStretc
 %     Returns:
 %         combinedStruct: Return structure
 
+
     indx = zeros(1,length(rezMax{1}));
     rezMaxC = cell(1, length(rezMax{1}));
 
