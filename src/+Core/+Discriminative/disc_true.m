@@ -23,14 +23,14 @@ function [is_distinct,numMatchingSpecies,uniqueMatchSequences] = disc_true(refNu
 
 numMatchingSpecies = zeros(1,length(refNums));
 uniqueMatchSequences = cell(1,length(refNums));
-
+is_distinct = zeros(1,length(refNums));
 for i = 1:length(refNums)
     idxSpecies = idSpecies(refNums{1});
     uniqueMatchSequences{i} = unique(idxSpecies);
 
     numMatchingSpecies(i) = length(uniqueMatchSequences{i});
     if numMatchingSpecies(i)==1
-        is_distinct = 1;
+        is_distinct(i) = 1;
     end
 
 end
