@@ -26,7 +26,7 @@ outFold = fullfile(fileparts(fileparts(hcaSets.kymofolder{1})),['distinct',hcaSe
       end
   end
   fclose(fid);
-
+    display(['Saved output of discriminatory analysis to ',outFold]);
 
 
 end
