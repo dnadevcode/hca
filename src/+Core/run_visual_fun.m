@@ -37,7 +37,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
     plot_best_pos(h,comparisonStruct, numBar, hcaSets, markers,lengthBorders);
 
 %     ax=subplot(2,2,3), hold on
-    ax=nexttile(h), hold on
+    ax=nexttile(h); hold on
 %     maxcoef(:,1) 
     if isequal(hcaSets.comparisonMethod,'mp') || isequal(hcaSets.comparisonMethod,'mpnan') || isequal(hcaSets.comparisonMethod,'mpAll') || isequal(hcaSets.comparisonMethod,'hmm')
         import CBT.Hca.UI.Helper.plot_best_bar_mp;
@@ -92,7 +92,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
         
     % todo: make more user friendly..
     try
-        mkdir(hcaSets.output.matDirpath,hcaSets.timestamp);
+       [~,~] = mkdir(hcaSets.output.matDirpath,hcaSets.timestamp);
     end
     
     try

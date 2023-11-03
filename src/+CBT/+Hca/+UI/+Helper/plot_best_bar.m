@@ -20,6 +20,9 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     try
         theorBar = theoryStruct(comparisonStruct{ii}.idx).rawBarcode;
         niceName = theoryStruct(comparisonStruct{ii}.idx).name;
+        if size(theorBar,2) > size(theorBar,1);
+            theorBar = theorBar';
+        end
     catch
 
         
@@ -35,7 +38,11 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     pl = [strfind(niceName,'|') strfind(niceName,' ')];
     niceName = strrep(niceName(1:(min(pl)-1)),'_','\_');
     if isempty(niceName)
+        try
         niceName = strrep(theoryStruct{comparisonStruct{ii}.idx}.name,'_','\_');
+        catch
+        niceName = strrep(theoryStruct(comparisonStruct{ii}.idx).name,'_','\_');
+        end
     end
         
     
@@ -89,7 +96,11 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     
 
     if theoryEnd > thrLen % now split this into linear and nonlinear case..
+        if theoryEnd-thrLen > thrLen
+            theorBar = [ theorBar; theorBar; theorBar(1:theoryEnd-2*thrLen)];
+        else
         theorBar = [ theorBar; theorBar(1:theoryEnd-thrLen)];
+        end
     end
     
 
@@ -127,8 +138,8 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
 
     title(strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
     %
-    legend({strcat(['$\hat C_{\rm ' name '}=$' num2str(dd,'%0.2f') ', rf=' num2str(comparisonStruct{ii}.bestBarStretch) ', dr='  num2str(comparisonStruct{ii}.or(1)-1)]), niceName},'Interpreter','latex')
-
+    lgd = legend({strcat(['$\hat C_{\rm ' name '}=$' num2str(dd,'%0.2f') ', rf=' num2str(comparisonStruct{ii}.bestBarStretch) ', dr='  num2str(comparisonStruct{ii}.or(1)-1)]), niceName},'Interpreter','latex');
+    lgd.Location = 'southoutside';
 %     legend({strcat(['$$bar_{' num2str(ts2) '}$$ '  num2str(rescaleFactor) ' '  num2str(comparisonStruct{ii}.or(1)-1) ]),num2str(bar1Name)},'location','eastoutside','Interpreter','latex')
 
 

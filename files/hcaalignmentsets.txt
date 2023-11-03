@@ -13,3 +13,4 @@
 10   | stretch factor max  %    |sF
 2.5   | stretchfactor step      |sFstep
 0   | Identify Disc  | identifyDisc
+1 | Show all output in workspace | saveOutput

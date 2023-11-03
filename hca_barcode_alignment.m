@@ -184,7 +184,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 values = setsTable.Var1;
 
                 textItemSets = ones(1,length(textItems));
-                textItemSets([3:10 15]) = 0;
+                textItemSets([3:10 15:16]) = 0;
 
                 checkListIdx = find(~textItemSets);
                 itemListIdx = find(textItemSets);
@@ -287,7 +287,10 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaSets);
 
             import Core.run_visual_fun;
-            run_visual_fun(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets, tsAlignmentVisual);
+            if ~isempty(comparisonStruct)
+                run_visual_fun(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets, tsAlignmentVisual);
+            end
+            
 
     end
 
@@ -369,7 +372,8 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         hcaSets.skipEdgeDetection  = itemsListA{5}.Value;
         hcaSets.random.generate  = itemsListA{6}.Value;
         hcaSets.subfragment.generate  =itemsListA{7}.Value;
-        hcaSets.identifyDisc  =itemsListA{8}.Value;
+        hcaSets.identifyDisc  =itemsListA{9}.Value;
+        hcaSets.saveOutput  =itemsListA{10}.Value;
 
         if itemsListA{8}.Value==1
             hcaSets.comparisonMethod  = 'mass_pcc';

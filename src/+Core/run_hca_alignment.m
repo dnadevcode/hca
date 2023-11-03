@@ -10,6 +10,7 @@ function [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] 
 %     [,hcaSets.kymosets.filenames,hcaSets.kymosets.fileext] = cellfun(@(x) fileparts(x),hcaSets.kymofolder,'un',false);
     hcaSets.kymosets.filenames = hcaSets.kymofolder;
     hcaSets.kymosets.kymofilefold = cell(1,length(   hcaSets.kymosets.filenames));
+    hcaSets.output.matDirpath = hcaSets.kymofolder{1};
     % timestamp for the results
     hcaSets.timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
@@ -99,19 +100,20 @@ function [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] 
     end
     import CBT.Hca.Core.Comparison.combine_theory_results;
     [comparisonStruct] = combine_theory_results(theoryStruct, rezMax,bestBarStretch,bestLength);
-% 
-% 
-% 
-%    % assign all to base
-%         assignin('base','barcodeGenC', barcodeGenC)
-%         assignin('base','theoryStruct', theoryStruct)
-%         assignin('base','comparisonStructAll', comparisonStructAll)
-%         assignin('base','sets', sets)
-%         assignin('base','comparisonStruct', comparisonStruct)
-%         assignin('base','consensusStruct', consensusStruct)
-% 
-%         %
+    % 
+    % 
+    % 
+    %    % assign all to base
+    if hcaSets.saveOutput
+            assignin('base','barcodeGenC', barcodeGenC)
+            assignin('base','theoryStruct', theoryStruct)
+            assignin('base','hcaSets', hcaSets)
+            assignin('base','rezMax', rezMax)
+    end
         
+%             import CBT.Hca.UI.Helper.plot_any_bar;
+%             plot_any_bar(1,barcodeGenC,rezMax,theoryStruct,1);
+
         import CBT.Hca.Core.additional_computations
         additional_computations(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct,comparisonStructAll,hcaSets );
 

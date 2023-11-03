@@ -25,7 +25,7 @@ numMatchingSpecies = zeros(1,length(refNums));
 uniqueMatchSequences = cell(1,length(refNums));
 is_distinct = zeros(1,length(refNums));
 for i = 1:length(refNums)
-    idxSpecies = idSpecies(refNums{1});
+    idxSpecies = idSpecies(refNums{i});
     uniqueMatchSequences{i} = unique(idxSpecies);
 
     numMatchingSpecies(i) = length(uniqueMatchSequences{i});

@@ -33,7 +33,12 @@ function [fig1,maxcoef] = plot_max_coef( fig1,comparisonStruct, numBar, sets, ma
     if size(maxcoef,2) == 1
         legend({'$\hat C$','Theories separator'},'Location','southoutside','Interpreter','latex')
     else
-        legend({'$\hat C$','$C_2$','$C_3$','Consensus line'},'Location','southoutside','Interpreter','latex')
+        if size(maxcoef,2)==3
+            legend({'$\hat C$','$C_2$','$C_3$'},'Location','southoutside','Interpreter','latex')
+        else
+            legend({'$\hat C$','$C_2$','$C_3$','Consensus line'},'Location','southoutside','Interpreter','latex')
+
+        end
     end
 end
 

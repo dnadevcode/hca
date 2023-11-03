@@ -18,7 +18,7 @@ function [kymoStructs] = add_kymographs_fun(sets)
 %     
     timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
-    matKymopathShort = fullfile(sets.output.matDirpath, strcat(['kymos_' sprintf('%s_%s', timestamp) '.txt']));
+    matKymopathShort = fullfile(fileparts(sets.kymosets.filenames{1}), strcat(['kymos_' sprintf('%s_%s', timestamp) '.txt']));
     fd = fopen(matKymopathShort,'w');    fclose(fd);
         
         
@@ -56,5 +56,6 @@ function [kymoStructs] = add_kymographs_fun(sets)
             fd = fopen(matKymopathShort,'a'); fprintf(fd, '%s \n',fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name)); fclose(fd);
         end
     end
+    delete(matKymopathShort);
 end
 
