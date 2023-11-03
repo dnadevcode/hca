@@ -89,7 +89,7 @@ xlabel('location x (pixels)')
 hold off
 % legend({'B(x) 95% CI','B(x)','T(x)'},'location','southoutside')
 [~,st,~] =fileparts(bars{idx}.name)
-legend({'B(x) +-3sigma',['B(x) ',urlencode(st)] ,['T(x)',urlencode(theoryStruct(thryIdx).name)]},'FontSize',5,'location','southoutside')
+legend({'B(x) +-3sigma',['B(x) ',strrep(st,'_','\_')] ,['T(x)',theoryStruct(thryIdx).name]},'FontSize',7,'location','southoutside')
 
 
 end
