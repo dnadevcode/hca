@@ -1,4 +1,4 @@
-function [kymoStructs] = add_kymographs_fun(sets)
+function [kymoStructs] = add_kymographs_fun(sets,filefold,filename)
     % add_kymographs_fun
     % Used for reading kymographs from input structure   
     %
@@ -15,6 +15,11 @@ function [kymoStructs] = add_kymographs_fun(sets)
 %     if nargin< 2
 %         matKymopathShort ='kymos.txt';
 %     end
+
+    if nargin >=3
+        sets.kymosets.kymofilefold = filefold;
+        sets.kymosets.filenames = filename;
+    end
 %     
     timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 

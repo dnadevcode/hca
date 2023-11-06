@@ -1,4 +1,4 @@
-function [is_distinct,numMatchingSpecies,uniqueMatchSequences] = identify_discriminative(hcaSets,barcodeGenC, rezMax,thryNames)
+function [is_distinct,numMatchingSpecies,uniqueMatchSequences,refNums,refNumBad] = identify_discriminative(hcaSets,barcodeGenC, rezMax,thryNames)
 
 % speciesName = {'Streptococcus pyogenes'};
 
