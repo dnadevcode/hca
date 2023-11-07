@@ -186,12 +186,14 @@ function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs
     end
 
     if ~isnan(kymoKeep(i,1))
-    kymoStructsUpdated{i}.unalignedKymo = kymoStructsUpdated{i}.unalignedKymo(kymoKeep(i,1):kymoKeep(i,2),:);
+        kymoStructsUpdated{i}.unalignedKymo = kymoStructsUpdated{i}.unalignedKymo(kymoKeep(i,1):kymoKeep(i,2),:);
         if isfield(kymoStructsUpdated{i},'unalignedBitmask')
             kymoStructsUpdated{i}.unalignedBitmask = kymoStructsUpdated{i}.unalignedBitmask(kymoKeep(i,1):kymoKeep(i,2),:);
         end
-        kymoStructsUpdated{i}.leftEdgeIdxs = kymoStructsUpdated{i}.leftEdgeIdxs(kymoKeep(i,1):kymoKeep(i,2));
-        kymoStructsUpdated{i}.rightEdgeIdxs = kymoStructsUpdated{i}.rightEdgeIdxs(kymoKeep(i,1):kymoKeep(i,2));
+        if isfield(kymoStructsUpdated{i},'leftEdgeIdxs')
+            kymoStructsUpdated{i}.leftEdgeIdxs = kymoStructsUpdated{i}.leftEdgeIdxs(kymoKeep(i,1):kymoKeep(i,2));
+            kymoStructsUpdated{i}.rightEdgeIdxs = kymoStructsUpdated{i}.rightEdgeIdxs(kymoKeep(i,1):kymoKeep(i,2));
+        end
     else
     kymoStructsUpdated{i}.unalignedKymo = [];
     kymoStructsUpdated{i}.unalignedBitmask = [];
