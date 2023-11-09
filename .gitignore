@@ -12,3 +12,4 @@ output/
 outer/
 theories_parallel.txt
 *.nfs*
+*.asv
