@@ -1,4 +1,4 @@
-function [] = duplicatessorter(hcaSets)
+function [duplicateInfo,oS] = duplicatessorter(hcaSets)
     %   
     %   Args:
     %       hcaSets - settings
