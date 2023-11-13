@@ -24,7 +24,7 @@ function [myStruct] = read_default_sets(setstxt)
     
     cellNames = {};
     for i = 1:size(setsTable,1)
-        validFieldName = split(matlab.lang.makeValidName(setsTable.Var3{i}),'_');
+        validFieldName = split(matlab.lang.makeValidName(setsTable.Var3{i}),'.');
         number = str2num(setsTable.Var1{i});
         if ~isnan(number)
             val = number;
