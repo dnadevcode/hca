@@ -1,16 +1,33 @@
-function [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaSets)
+function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaSets)
     %   run_hca_theory - calculates HCA theory
 
-    %   Args: hcaSets
+    %   Args: hcaSets - hca settings, either passed through
+    %   hca_barcode_alignment or loaded as paramenter                
 
     %   Returns:
-    %
-    %
-    %
+    %       barcodeGenC - barcode structure
+    %       comparisonStruct - comparison structure
+    %       theoryStruct - theory structure
+
+    %   Exmple:
+    %   [hcaSets,hcaaligner.names] = Core.Default.read_default_sets('hcaalignmentsets.txt');
+    %   hcaSets.default.kymosets.filenames = 'kymofolder';
+    %  [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaaligner.sets.default)
+
+
+    % change names to support previous hca
+    hcaSets.filterSettings.filter = hcaSets.filterSettingsFilter;
+    hcaSets.random.generate = hcaSets.randomGenerate;
+    hcaSets.subfragment.generate = hcaSets.subfragmentGenerate;
+
+    import CBT.Hca.Settings.non_default_settings;
+    hcaSets = non_default_settings(hcaSets);
+
+
 %     [,hcaSets.kymosets.filenames,hcaSets.kymosets.fileext] = cellfun(@(x) fileparts(x),hcaSets.kymofolder,'un',false);
     hcaSets.kymosets.filenames = hcaSets.kymofolder;
     hcaSets.kymosets.kymofilefold = cell(1,length(   hcaSets.kymosets.filenames));
-    hcaSets.output.matDirpath = hcaSets.kymofolder{1};
+    hcaSets.output.matDirpath = fileparts(hcaSets.kymofolder{1});
     % timestamp for the results
     hcaSets.timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
@@ -119,9 +136,18 @@ function [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] 
 
         if hcaSets.identifyDisc
             import Core.identify_discriminative;
-            identify_discriminative(hcaSets,barcodeGenC,rezMax, {theoryStruct.name});
-
+            [is_distinct,numMatchingSpecies,uniqueMatchSequences,refNums,refNumBad] = identify_discriminative(hcaSets,barcodeGenC,rezMax, {theoryStruct.name});
+            
+            for i=1:length(comparisonStruct)
+                comparisonStruct{i}.discriminative.is_distinct = is_distinct(i);
+                comparisonStruct{i}.discriminative.numMatchingSpecies = numMatchingSpecies(i);
+                comparisonStruct{i}.discriminative.uniqueMatchSequences = uniqueMatchSequences(i);
+            end
+            if hcaSets.saveOutput
+                    assignin('base','is_distinct', is_distinct);
+            end
         end
+
 
 %               import CBT.Hca.UI.get_display_results;
 %         get_display_results(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, sets);

@@ -96,10 +96,10 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     
 
     if theoryEnd > thrLen % now split this into linear and nonlinear case..
-        if theoryEnd-thrLen > thrLen
-            theorBar = [ theorBar; theorBar; theorBar(1:theoryEnd-2*thrLen)];
+        if theoryEnd-thrLen > thrLen % check this..
+            theorBar = [ theorBar; theorBar;theorBar(1:theoryEnd-2*thrLen)]; %
         else
-        theorBar = [ theorBar; theorBar(1:theoryEnd-thrLen)];
+            theorBar = [ theorBar; theorBar(1:theoryEnd-thrLen)];
         end
     end
     

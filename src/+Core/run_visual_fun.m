@@ -83,48 +83,38 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
     disp( strcat(['Number of timeframes for the unfiltered barcodes were = ' num2str(hcaSets.timeFramesNr)]));
     
     
-    
-    %% additional things/options, added in HCA 4.1
+    if hcaSets.plotallmatches == 1 
+        if hcaSets.plotalldiscrim && isfield(comparisonStruct{1},'discriminative')
+            idxToPlot = find(cellfun(@(x) x.discriminative.is_distinct,comparisonStruct));
+        else
+            idxToPlot = 1:size(maxcoef,1);
+        end
 
-    % take a simple example for concentric plot
-%     idx = 87;
-  
-        
-    % todo: make more user friendly..
-    try
-       [~,~] = mkdir(hcaSets.output.matDirpath,hcaSets.timestamp);
-    end
+        [~,~] = mkdir(hcaSets.output.matDirpath,'all_molecules');
+        [~,~]= mkdir(fullfile(hcaSets.output.matDirpath,'all_molecules',[hcaSets.timestamp,'Plots']));
+
+        saveas(h,fullfile(hcaSets.output.matDirpath,'all_molecules',[hcaSets.timestamp,'Plots'],'result_plot.fig'));
     
-    try
-        saveas(fig1,fullfile(hcaSets.output.matDirpath,hcaSets.timestamp,'result_plot.eps'),'epsc');
-    end
-       
-    try
-        if hcaSets.plotallmatches == 1
-             mkdir(fullfile(hcaSets.output.matDirpath,hcaSets.timestamp),'Plots');
-            for i=1:size(maxcoef,1)
+        for i=idxToPlot
                 max2 = nan(size(maxcoef));      max2(i,1) = maxcoef(i,1);
                 fig1 = figure('Visible', 'off');
-%                 fig1 = figure;
+%                 fig1 = figure('Visible', 'on');
+
                 if isequal(hcaSets.comparisonMethod,'mp') || isequal(hcaSets.comparisonMethod,'mpnan')  || isequal(hcaSets.comparisonMethod,'mpAll') || isequal(hcaSets.comparisonMethod,'hmm')
-                    ax1 = subplot(1,1,1);
+                    ax1 = subplot(fig1,1,1,1);
                     if max2~=0
-                        plot_best_bar_mp(ax1,barcodeGen,[],comparisonStruct, theoryStruct, max2,1,hcaSets);
+                        plot_best_bar_mp(ax1,barcodeGenC,[],comparisonStruct, theoryStruct, max2,1,hcaSets);
                     end
                 else
-                    plot_best_bar(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, max2);
+                    plot_best_bar(fig1,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, max2);
                 end
                 % mp_based_on_output_pcc_test
-                saveas(fig1,fullfile(hcaSets.output.matDirpath,hcaSets.timestamp,'Plots',strcat([num2str(i) '_plot.jpg'])));
+                saveas(fig1,fullfile(hcaSets.output.matDirpath,'all_molecules',[hcaSets.timestamp,'Plots'],strcat([num2str(i) '_plot.jpg'])));
 
 %                 saveas(fig1,fullfile(hcaSets.output.matDirpath,hcaSets.timestamp,'Plots',strcat([hcaSets.timestamp '_' num2str(i) '_plot.eps'])),'epsc');
 
-            end
         end
     end
-    %    assignin('base','hcaSessionStruct',hcaSessionStruct)
-    
-  %  cache('hcaSessionStruct') = hcaSessionStruct ;
-%     end
+
 end
 

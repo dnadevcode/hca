@@ -7,14 +7,12 @@ function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs
     %       hcaSets
     %       kymoStructs
  
-    kymoStructsUpdated = kymoStructs;
-
-    shrink_threshold=hcaSets.shrink_threshold; % low=strict, high=loose, good=25-40 Minimum improvement in total residual error for each changepoint 
-    restrict=hcaSets.restrict; % 0-1 value, fraction of time elapsed to find stable region
-    gd=hcaSets.gd; %slope below this is considered as "shrinking"
-    p_feat=hcaSets.p_feat; %percentile for the first/last feature, can be 0 if "phantom features" are ignored
-    around_feat=hcaSets.around_feat; %how many more features included in mean
-    minStableRegion = 10; % move to sets
+    shrink_threshold = hcaSets.default.shrinkThreshold; % low=strict, high=loose, good=25-40 Minimum improvement in total residual error for each changepoint 
+    restrict = hcaSets.default.restrict; % 0-1 value, fraction of time elapsed to find stable region
+    gd = hcaSets.default.gd; %slope below this is considered as "shrinking"
+    p_feat = hcaSets.default.pFeat; %percentile for the first/last feature, can be 0 if "phantom features" are ignored
+    around_feat = hcaSets.default.aroundFeat; %how many more features included in mean
+    minStableRegion = hcaSets.default.minStableRegion; % minimum length in timeframes of stable region
 
     import CBT.Hca.Import.add_kymographs_fun;
     import CBT.Hca.Core.align_kymos;
@@ -32,6 +30,10 @@ function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs
         saveOutput = 1;
     end
 
+    kymoStructsUpdated = kymoStructs;
+
+
+
 %         %  put the kymographs into the structure
 %         import CBT.Hca.Core.edit_kymographs_fun;
 %         kymoStructs = edit_kymographs_fun(kymoStructs,hcaSets.timeFramesNr);
@@ -42,9 +44,9 @@ function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs
     if saveOutput
         %% Set Paths and Make Directories
         hcaSets.output.matDirpath = fileparts(hcaSets.kymofolder{1});
-        mkdir(fullfile(hcaSets.output.matDirpath,'goodKymos')); 
-        mkdir(fullfile(hcaSets.output.matDirpath,'unfixableKymos')); 
-        mkdir(fullfile(hcaSets.output.matDirpath,'fixedKymos'));
+        [~,~] = mkdir(fullfile(hcaSets.output.matDirpath,'goodKymos')); 
+        [~,~] = mkdir(fullfile(hcaSets.output.matDirpath,'unfixableKymos')); 
+        [~,~] = mkdir(fullfile(hcaSets.output.matDirpath,'fixedKymos'));
         % maybe: can also save folders for "check" things, removed for
         % now
     end

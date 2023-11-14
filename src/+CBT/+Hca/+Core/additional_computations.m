@@ -2,9 +2,9 @@ function [] = additional_computations( barcodeGenC, consensusStruct, comparisonS
     % additional_computations
 
     if sets.random.generate
-        sets.output.matDirpath = strcat([sets.output.matDirpath num2str(sets.random.cutoutSize)]);
+        sets.output.matDirpath = fullfile(sets.output.matDirpath, num2str(sets.random.cutoutSize));
     else
-        sets.output.matDirpath = strcat([sets.output.matDirpath 'all_molecules']);
+        sets.output.matDirpath = fullfile(sets.output.matDirpath, 'all_molecules');
     end
             
     try
@@ -13,13 +13,13 @@ function [] = additional_computations( barcodeGenC, consensusStruct, comparisonS
         disp('Output folder already exists, continuing');
     end
     
-    if ispc
+%     if ispc
         sampleName = 'sample1_';
-    else
-        sampleName = '/sample1_';
-    end
+%     else
+%         sampleName = '/sample1_';
+%     end
     
-    matDirpath = strcat([sets.output.matDirpath sampleName]);
+    matDirpath = fullfile(sets.output.matDirpath,sampleName);
 
     % export_cc_results
     import CBT.Hca.Export.export_cc_vals_table;

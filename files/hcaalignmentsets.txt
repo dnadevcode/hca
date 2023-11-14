@@ -1,16 +1,20 @@
-0 | Number of timeframes (0=all) |timeFramesNr
-1| Alignment method (1 - nralign) |alignMethod
-0| Filter the barcodes |filter
-0|Add consensus|genConsensus
-0|Non-default bitmask settings|bitmaskSettings
-0|Non-default edge detection settings|edgeSettings
-0|Skip edge detection|skipEdgeDetection
-0|Generate random fragment cut-outs|random.generate
-0|Generate independent subfragments |subfragment.generate
-1| Global alignment|comparisonMethod
-150| Minimum length|minLen
-0.23 | nm/bp extension |nmbp
-10   | stretch factor max  %    |sF
-2.5   | stretchfactor step      |sFstep
-0   | Identify Disc  | identifyDisc
-1 | Show all output in workspace | saveOutput
+0 | Number of timeframes (0=all) | default.timeFramesNr
+1| Alignment method (1 - nralign) | default.alignMethod
+0| Filter the barcodes | default.filterSettingsFilter
+0|Add consensus| default.genConsensus
+0|Non-default bitmask settings| default.bitmaskSettings
+0|Non-default edge detection settings| default.edgeSettings
+0|Skip edge detection| default.skipEdgeDetection
+0|Generate random fragment cut-outs| default.randomGenerate
+0|Generate independent subfragments | default.subfragmentGenerate
+1| Global alignment| default.comparisonMethod
+150| Minimum length| default.minLen
+0.23 | nm/bp extension | default.nmbp
+10   | stretch factor max  %    | default.sF
+2.5   | stretchfactor step      | default.sFstep
+0   | Identify Disc  | default.identifyDisc
+1 | Show all output in workspace | default.saveOutput
+0 | Save  best-match figures |           default.plotallmatches
+0 | Save only discriminative barcode figures |           default.plotalldiscrim
+*.tif         |   file extension                                                      | fileext
+[3:10 15:18]  | Checklist items | clIdx 

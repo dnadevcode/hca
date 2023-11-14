@@ -2,7 +2,23 @@ function [] = run_hca_theory(hcaSets)
     %   run_hca_theory - calculates HCA theory
 
     %   Args: hcaSets
-    
+
+    % make sets compatible with prev structure
+    hcaSets.theoryGen.method = hcaSets.method;
+    hcaSets.theoryGen.computeFreeConcentrations =  hcaSets.computeFreeConcentrations;
+    hcaSets.theoryGen.concN = hcaSets.concN;
+    hcaSets.theoryGen.concY = hcaSets.concY;
+    hcaSets.theoryGen.concDNA = hcaSets.concDNA;
+    hcaSets.theoryGen.psfSigmaWidth_nm = hcaSets.psfSigmaWidthNm;
+    hcaSets.theoryGen.pixelWidth_nm = hcaSets.pixelWidthNm;
+    hcaSets.theoryGen.meanBpExt_nm = hcaSets.meanBpExtNm;
+    hcaSets.theoryGen.isLinearTF = hcaSets.isLinearTF;
+
+    hcaSets.lambda.fold  =  hcaSets.fold ;
+    hcaSets.lambda.name  =  hcaSets.name ;
+    hcaSets.theoryGen.k =  max(2.^15,2.^(hcaSets.k));
+    hcaSets.theoryGen.m  = min(2.^15,2.^(hcaSets.m));
+    hcaSets.theoryGen.computeBitmask = hcaSets.computeBitmask;
     % timestamp to add to theories name
     timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
@@ -27,11 +43,10 @@ function [] = run_hca_theory(hcaSets)
 
     % save sets
     theoryGen.sets = hcaSets.theoryGen;
-    % sets.theoryGen.meanBpExt_nm = meanBpExt_nm;
-    meanBpExt_nm = hcaSets.theoryGen.meanBpExt_nm;
-    pixelWidth_nm = hcaSets.theoryGen.pixelWidth_nm;
-    psfSigmaWidth_nm = hcaSets.theoryGen.psfSigmaWidth_nm;
-    linear = hcaSets.theoryGen.isLinearTF;
+    meanBpExt_nm = hcaSets.meanBpExtNm;
+    pixelWidth_nm = hcaSets.pixelWidthNm;
+    psfSigmaWidth_nm = hcaSets.psfSigmaWidthNm;
+    linear = hcaSets.isLinearTF;
 
     theoryBarcodes = cell(1,length(theories));
     theoryBitmasks = cell(1,length(theories));
