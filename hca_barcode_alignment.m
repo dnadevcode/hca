@@ -8,18 +8,10 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
     hcaaligner = [];
     hcatheory = [];
 
-
     % Other globals:
-    dotImport = [];
-    textList = [];
-    itemsList = [];
-    itemsListA = [];
     versionHCA = [];
-    textListA = [];
     iL = [];
     t1 =[]; t2 = []; t3 = []; t4 = [];
-    itemsListS =[];
-    textListS = [];
     tsAlignmentVisual =[];
 
     if nargin < 2
@@ -39,12 +31,9 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         [hFig,hPanel,h] = generate_gui();     
     else
 
-
     end
  
-
     function [hFig,hPanel,h] = generate_gui()
-
 
             mFilePath = mfilename('fullpath');
             mfolders = split(mFilePath, {'\', '/'});
@@ -68,7 +57,6 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
             mSubTheory{1}.MenuSelectedFcn = @SelectedHCAtheory;
 
-
             cellsAlignment = {'Run Alignment','Shrink sorter','Duplicates sorter'};
             mSubALignment  = cellfun(@(x) uimenu(mSub{3},'Text',x),cellsAlignment,'un',false);
             mSubALignment{1}.MenuSelectedFcn = @SelectedHCAAlignment;
@@ -77,18 +65,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
             hPanel = uipanel('Parent', hFig);
             h = uitabgroup('Parent',hPanel);
-
-%             tsHCC = uitabgroup('Parent',t1);
-%             hPanelImport = uitab(tsHCC, 'title', 'DBM settings');
-%             
-%             hHomeScreen= uitab(tsHCC, 'title',strcat('HomeScreen'));
-%             hPanelRawKymos= uitab(tsHCC, 'title',strcat('unaligned Kymos'));
-       
-
-
     end
-
-
 
     function [structFiles] = get_files_function(tsSet,structFiles,run_handle)
         % get_files_function, create a basic UI element with inport,
@@ -123,7 +100,6 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         structFiles.dotButtonUI = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'uigetfiles'},'Callback',@(src, event) selection_uipickfiles(structFiles.dotImport,event),'Units', 'normal', 'Position', [0.8 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
         structFiles.runButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Run'},'Callback',run_handle,'Units', 'normal', 'Position', [0.7 0.2 0.2 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
 
-
         checkListIdx = find(~tISets);
         itemListIdx = find(tISets);
 
@@ -150,58 +126,9 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         % save in duplicates
         structFiles.Item = iL;
         structFiles.Text = tL;
-
-
     end
 
-    % to remove (in favor of get_files_function, which is more general)
-    function [dotImport,iL,tL] = get_files_fun(tsSet,setstxt,clI,run_handle)
-                dotImport = uicontrol('Parent', tsSet, 'Style', 'edit','String',{fullfile(fileparts(mfilename('fullpath')),'files','kymo_example.tif')},'Units', 'normal', 'Position', [0 0.9 0.5 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                set(dotImport, 'Min', 0, 'Max', 25);% limit to 10 files via gui;
-                dotButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Browse folder'},'Callback',@selection,'Units', 'normal', 'Position', [0.6 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                dotButtonFile = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Browse file'},'Callback',@selection2,'Units', 'normal', 'Position', [0.7 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                dotButtonUI = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'uigetfiles'},'Callback',@selection3,'Units', 'normal', 'Position', [0.8 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                runButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Run'},'Callback',run_handle,'Units', 'normal', 'Position', [0.7 0.2 0.2 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-
-                mFilePath = mfilename('fullpath');
-%                 mfolders = split(mFilePath, {'\', '/'});
-                [fd, fe] = fileparts(mFilePath);
-                % read settings txt
-                setsTable  = readtable(fullfile(fd,'files',setstxt),'Format','%s%s%s');
-
-                % Checklist as a loop
-                tI = setsTable.Var2;
-                val = setsTable.Var1;
-
-                tISets = ones(1,length(tI));
-                tISets(clI) = 0;
-
-                checkListIdx = find(~tISets);
-                itemListIdx = find(tISets);
-
-                iL = cell(1,length(checkListIdx));
-                for i = 1:length(checkListIdx)
-                    iL{i} = uicontrol('Parent', tsSet, 'Style', 'checkbox','Value', str2double(val{checkListIdx(i)}),'String',tI(checkListIdx(i)),'Units', 'normal', 'Position', [0.45 .83-0.05*i 0.3 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                end
-                
-                positionsText = cell(1,length(itemListIdx));
-                positionsBox = cell(1,length(itemListIdx));
-
-                for i=1:length(itemListIdx) % these will be in two columns
-                    positionsText{i} =   [0.2-0.2*mod(i,2) .88-0.1*ceil(i/2) 0.2 0.03];
-                    positionsBox{i} =   [0.2-0.2*mod(i,2) .83-0.1*ceil(i/2) 0.15 0.05];
-                end
-                
-                tL = cell(1,length(checkListIdx));
-
-                for i=1:length(itemListIdx)
-                    tL{i} = uicontrol('Parent', tsSet, 'Style', 'text','String',tI(itemListIdx(i)),'Units', 'normal', 'Position', positionsText{i},'HorizontalAlignment','Left');%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                    tL{i} = uicontrol('Parent', tsSet, 'Style', 'edit','String',{strip(val{itemListIdx(i)})},'Units', 'normal', 'Position', positionsBox{i});%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-                end
-
-
-    end
-
+    %% Selected functions
     function SelectedOldHCA(~,~)
             disp('Running HCA_Gui v. 4.7.0')
             delete(hFig);
@@ -275,13 +202,10 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 [hcatheory.sets,hcatheory.names] = Core.Default.read_default_sets('hcasets.txt');
                 [hcatheory] = get_files_function(tsTheorySettings,hcatheory, @run_theory);
             end
-
-%             delete(hFig);
-%             HCA_theory;
     end
 
-
-    function run_duplicatessorter(src,event)
+%% run functions
+    function run_duplicatessorter(~,~)
             display(['Started shrink sorter hca_alignment v',versionHCA{1}]);
 
             duplicatesSets = save_settings_hca(duplicates.sets, duplicates.Item,duplicates.Text);
@@ -294,7 +218,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
     end
 
 
-    function run_shrinksorter(src,event)
+    function run_shrinksorter(~,~)
             display(['Started shrink sorter hca_alignment v',versionHCA{1}]);
 
             sorterSets = save_settings_hca(shrinksorter.sets, shrinksorter.Item,shrinksorter.Text);
@@ -306,13 +230,10 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
     end
 
-    function run_alignment(src, event)
+    function run_alignment(~,~)
             
             display(['Started analysis hca_alignment v',versionHCA{1}])
             
- 
-
-
             hcaSetsDefault.default = hcaSets;
 
             hcaSetsDefault = save_settings_hca(hcaaligner.sets, hcaaligner.Item,hcaaligner.Text,hcaSetsDefault);
@@ -333,12 +254,10 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             import Core.run_visual_fun;
             if ~isempty(comparisonStruct)
                 run_visual_fun(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets, tsAlignmentVisual);
-            end
-            
-
+            end           
     end
 
-        function run_theory(src, event)
+        function run_theory(~,~)
             
             display(['Started analysis hca_theory v',versionHCA{1}])
 
@@ -347,7 +266,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
             hcatheorySets.folder = hcatheory.dotImport.String;
 
-            display(['N = ',num2str(length(  hcatheorySets.folder )), ' sequences to run'])
+            disp(['N = ',num2str(length(  hcatheorySets.folder )), ' sequences to run'])
 
             import Core.run_hca_theory;
             run_hca_theory(hcatheorySets);
@@ -356,14 +275,14 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         end
 
     % select tifs in folder
-    function selection_folder(src, event, fileext)
+    function selection_folder(src, ~, fileext)
         [rawNames] = uigetdir(pwd,strcat('Select folder with file(s) to process'));
         rawFiles = [dir(fullfile(rawNames,fileext))];
         rawNames = arrayfun(@(x) fullfile(rawFiles(x).folder,rawFiles(x).name),1:length(rawFiles),'UniformOutput',false);
         set(src, 'String', rawNames);
     end   
 
-    function selection_file(src, event) % {'*.tif';'*.mat';}
+    function selection_file(src, ~) % {'*.tif';'*.mat';}
         [FILENAME, PATHNAME] = uigetfile(fullfile(pwd,'*.*'),strcat(['Select file(s) to process']),'MultiSelect','on');
         name = fullfile(PATHNAME,FILENAME);
         if ~iscell(name)
@@ -372,7 +291,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         set(src, 'String', name);
     end  
 
-    function selection_uipickfiles(src, event)
+    function selection_uipickfiles(src, ~)
         [FILENAME] = uipickfiles;
         name = FILENAME';
         if ~iscell(name)
