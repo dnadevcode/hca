@@ -28,9 +28,10 @@ function [duplicateInfo,oS] = duplicatessorter(hcaSets)
         barcodeGen{i}.rawBitmask = logical(kymoStructs{i}.alignedMask);
     end
     % pairwise comparison using full overlap PCC
+    tic
     import  CBT.Hca.Core.Comparison.compare_pairwise_distance;
     oS = compare_pairwise_distance(barcodeGen,1, hcaSets.default.minLen);
-
+    timeUsed = toc;
 
     localScore = [oS(:).sc]; % local
 
@@ -60,14 +61,20 @@ function [duplicateInfo,oS] = duplicatessorter(hcaSets)
         names{i} = {kymoStructs{bar1(i)}.name; kymoStructs{bar2(i)}.name};
    end
 
-   duplicateInfo.locsDuplicates = locsDuplicates;
-   duplicateInfo.bar1 = bar1;
+    duplicateInfo.locsDuplicates = locsDuplicates;
+    duplicateInfo.bar1 = bar1;
     duplicateInfo.bar2 = bar2;
     duplicateInfo.names = names;
 
-    display(['Found [', num2str(duplicateInfo.locsDuplicates ), '] duplicates'])
+    disp(['Found [', num2str(duplicateInfo.locsDuplicates ), '] duplicates'])
 
 %     partialScore(idx(idx~=0)) = nan;
+
+    % plot duplicates:
+    %     ix = 1;
+    %     import Core.plot_match_pcc;
+    %     [f] = plot_match_pcc(barcodeGen, oS,bar1(ix),bar2(ix));
+
 
 
 end

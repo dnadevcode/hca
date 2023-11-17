@@ -213,7 +213,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             duplicatesSets.kymofolder = duplicates.dotImport.String;
 
             import Core.duplicatessorter;
-            duplicatessorter(duplicatesSets);
+            [duplicateInfo,oS] = duplicatessorter(duplicatesSets);
 
     end
 

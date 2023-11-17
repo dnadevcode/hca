@@ -109,7 +109,7 @@ function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs
         feature_paths=[l_edge,m_edge,r_edge];
         % This helps you visualize detected edges
         % path_track(uint8(kymoStructs{1,i}.shiftalignedKymo),feature_paths);
-        
+
 
         left = m_edge - l_edge; % left side
         right = r_edge - m_edge; % right side
@@ -201,9 +201,14 @@ function [kymoStructsUpdated,kymoKeep] = shrink_finder_fun( hcaSets, kymoStructs
     kymoStructsUpdated{i}.unalignedBitmask = [];
     kymoStructsUpdated{i}.leftEdgeIdxs =[];
     kymoStructsUpdated{i}.rightEdgeIdxs = [];
-
+   
     end
     
+    kymoStructsUpdated{i}.feature_paths = feature_paths;
+    kymoStructsUpdated{i}.featuresIdxs = kymoStructs{1,i}.featuresIdxs;
+    kymoStructsUpdated{i}.shiftalignedKymo = kymoStructs{1,i}.shiftalignedKymo;
+    kymoStructsUpdated{i}.left_slope = left_slope;
+    kymoStructsUpdated{i}.right_slope = right_slope;
 
 
 %% Save for QC

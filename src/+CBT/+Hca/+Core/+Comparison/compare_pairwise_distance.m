@@ -6,33 +6,40 @@ function [oS] = compare_pairwise_distance(barcodeGen, sF,minOverlap,printUpdateT
     end
     % version that sorts based on individual p-values.
     
-import SignalRegistration.masked_pcc_corr;
-barcodeGen2 = barcodeGen;
+    import SignalRegistration.masked_pcc_corr;
+    barcodeGen2 = barcodeGen;
+    
+    % minOverlap = 300;
+    % overlapStruct = [];%cell(1,length(mp1));
+    overlapStruct = cell(length(barcodeGen),length(barcodeGen));%cell(1,length(mp1));
+    
+    psfPar = 0.03; % depends on psf. so possibly adjust for the re-scale factor too
+    f = @(x,sigma) 1/2.*(1+erf(x./(sqrt(2).*sigma))); % described in len_based_null
 
-% minOverlap = 300;
-% overlapStruct = [];%cell(1,length(mp1));
-overlapStruct = cell(length(barcodeGen),length(barcodeGen));%cell(1,length(mp1));
+    % temp variables to be used in parloop
+%     scoreTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     pBTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     pATemp = nan(length(barcodeGen),length(barcodeGen2));
+%     orTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     bestBarStretchTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     overlaplenTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     hTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     lenATemp = nan(length(barcodeGen),length(barcodeGen2));
+%     lenBTemp = nan(length(barcodeGen),length(barcodeGen2));
+%     scTemp = nan(length(barcodeGen),length(barcodeGen2));
 
-psfPar = 0.03; % depends on psf. so possibly adjust for the re-scale factor too
-f = @(x,sigma) 1/2.*(1+erf(x./(sqrt(2).*sigma))); % described in len_based_null
+
 
 for i=1:length(barcodeGen)
       % Init progress bar
-
-
-    if mod(i,10)==0
-       disp(strcat( num2str(i)))
+    if mod(i,10)==0 && printUpdateToScreen
+       disp(['Progress = '  num2str((i-1)/length(barcodeGen)*100), '%'])
     end
     A = arrayfun(@(y) imresize(barcodeGen{i}.rawBarcode,'Scale' ,[1 y]),sF,'un',false);
     B = arrayfun(@(y) imresize(barcodeGen{i}.rawBitmask,'Scale' ,[1 y]),sF,'un',false);
-%     i
-    parfor j=1:length(barcodeGen2)
-%         j
 
+    parfor j=1:length(barcodeGen2) % parfor loop over second barcode
         if i~=j
-%             scores = nan(1,ceil(max(cellfun(@(x) sum(x.rawBitmask),barcodeGen))*sF(end)));
-%             nE = zeros(1,ceil(max(cellfun(@(x) sum(x.rawBitmask),barcodeGen))*sF(end)));
-
             barB = barcodeGen2{j}.rawBarcode;
             wB = barcodeGen2{j}.rawBitmask;
             scoreCur = zeros(1,length(A));
@@ -46,9 +53,7 @@ for i=1:length(barcodeGen)
                 barB2 = [zeros(1,extraL) barB];
                 wB2 = [zeros(1,extraL) wB];
                 
-%                 tic
                 [ xcorrs, numElts{s} ] = masked_pcc_corr( A{s},barB2,B{s},wB2,minOverlap ); %todo: include division to k to reduce mem
-%                 toc
 %                 xcorrs(numElts{s}>4)=nan;
 %                 tic % es
 %                 f = @(x,n) (1-x.^2).^((n-4)/2)./beta(1/2,1/2*(n-2));
@@ -56,8 +61,6 @@ for i=1:length(barcodeGen)
 %                 f = @(x,n) 1-1/2*(1+erf(x/(sqrt(2)*n)));
                 scaledXcorrs = f(xcorrs,1./sqrt(psfPar*numElts{s}-2) );
 
-%                 toc
-                
                 % number of elements and maximum for each overlap length
 %                 tic
 %                 allelts = xcorrs(:);
@@ -89,6 +92,21 @@ for i=1:length(barcodeGen)
     
             end
             [maxS,posMax] = max(scoreCur);
+            
+
+
+%             scoreTemp{i,j} = maxS;
+% %             fullscore{i,j} = maxS; % why same ? 
+%             pBTemp{i,j} =  posCur(posMax);
+%             pATemp{i,j} = 1;
+%             orTemp{i,j} = orCur(posMax);
+%             bestBarStretchTemp{i,j} = posMax;
+%             overlaplenTemp{i,j} = numElts{posMax}(orCur(posMax),pos(posMax));
+%             hTemp{i,j} = numElts{posMax}(orCur(posMax),pos(posMax));
+%             lenATemp{i,j} = posMax;
+%             lenBTemp{i,j} = sum(wB);
+%             scTemp{i,j} = pccCur(posMax);
+        
             overlapStruct{i,j}.score = maxS;
             overlapStruct{i,j}.fullscore = maxS;
 
@@ -96,13 +114,12 @@ for i=1:length(barcodeGen)
             overlapStruct{i,j}.pA = 1; % position on root (un-rescaled barcode)
 
             overlapStruct{i,j}.or = orCur(posMax); %pos on rescaled bar
+
             overlapStruct{i,j}.bestBarStretch = sF(posMax); %orientation
             overlapStruct{i,j}.overlaplen = numElts{posMax}(orCur(posMax),pos(posMax));
             overlapStruct{i,j}.h = numElts{posMax}(orCur(posMax),pos(posMax));
             overlapStruct{i,j}.lenA  = sum(B{posMax});
             overlapStruct{i,j}.lenB  = sum(wB);
-%             overlapStruct{i,j}.xcorrs = xcorrs;
-%             overlapStruct{i,j}.numElts = numElts;
             overlapStruct{i,j}.sc = pccCur(posMax);
         else
             overlapStruct{i,j}.score  = nan;
@@ -111,13 +128,10 @@ for i=1:length(barcodeGen)
             overlapStruct{i,j}.pA  = nan;
             overlapStruct{i,j}.or  = nan;
             overlapStruct{i,j}.pB  = nan;
-%             overlapStruct{i,j}.score  = nan;
             overlapStruct{i,j}.lenA  = nan;
             overlapStruct{i,j}.lenB  = nan;
             overlapStruct{i,j}.bestBarStretch = nan;
-%               overlapStruct{i,j}.xcorrs = nan;
-%             overlapStruct{i,j}.numElts = nan;
-              overlapStruct{i,j}.sc = nan;
+             overlapStruct{i,j}.sc = nan;
         end
 
     end
