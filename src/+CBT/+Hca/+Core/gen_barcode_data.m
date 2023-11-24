@@ -42,8 +42,8 @@ function [barcodeGenData] = gen_barcode_data(alignedKymo,leftEdgeIdxs, rightEdge
 
         nonBarcodeVals = alignedKymo(:, bgIndices);
         nonBarcodeVals = nonBarcodeVals(:);
-        
-        if isempty(nonBarcodeVals) ||sum(~isnan(nonBarcodeVals))==0
+
+        if length(nonBarcodeVals)<=1 ||sum(~isnan(nonBarcodeVals))<=1
             barcodeGenData.bgMeanApprox =  nan;
             barcodeGenData.bgStdApprox = nan;
         else
