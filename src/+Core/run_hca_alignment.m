@@ -31,21 +31,34 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
     % timestamp for the results
     hcaSets.timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
-    % add kymographs
-    import CBT.Hca.Import.add_kymographs_fun;
-    [kymoStructs] = add_kymographs_fun(hcaSets);
-
-    %  put the kymographs into the structure
-    import CBT.Hca.Core.edit_kymographs_fun;
-    kymoStructs = edit_kymographs_fun(kymoStructs,hcaSets.timeFramesNr);
-
-    % align kymos
-    import CBT.Hca.Core.align_kymos;
-    [kymoStructs] = align_kymos(hcaSets,kymoStructs);
-    
-    % generate barcodes
-    import CBT.Hca.Core.gen_barcodes;
-    barcodeGen =  CBT.Hca.Core.gen_barcodes(kymoStructs, hcaSets);
+    %% Add a choice to load barcodeGen directly
+    [~,~,en] = fileparts(hcaSets.kymofolder{1});
+    switch en
+        case '.tif'
+            % add kymographs
+            import CBT.Hca.Import.add_kymographs_fun;
+            [kymoStructs] = add_kymographs_fun(hcaSets);
+        
+            %  put the kymographs into the structure
+            import CBT.Hca.Core.edit_kymographs_fun;
+            kymoStructs = edit_kymographs_fun(kymoStructs,hcaSets.timeFramesNr);
+        
+            % align kymos
+            import CBT.Hca.Core.align_kymos;
+            [kymoStructs] = align_kymos(hcaSets,kymoStructs);
+            
+            % generate barcodes
+            import CBT.Hca.Core.gen_barcodes;
+            barcodeGen =  CBT.Hca.Core.gen_barcodes(kymoStructs, hcaSets);
+        case '.mat'
+            bgSessionData = load(hcaSets.kymofolder{1});
+            if isfield(bgSessionData,'barGenMerged')
+                barcodeGen = bgSessionData.barGenMerged;
+            else
+                barcodeGen = bgSessionData.barcodeGen;
+            end
+        otherwise
+    end
 
     % shrink find
 %     import Core.shrink_finder_fun;
