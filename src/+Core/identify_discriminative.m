@@ -15,9 +15,8 @@ import Core.Discriminative.disc_locations;
 import Core.Discriminative.disc_true;
 [is_distinct,numMatchingSpecies,uniqueMatchSequences] = disc_true(refNums, idSpecies);
 
-
+import Core.Discriminative.save_disc;
 if ~isempty(barcodeGenC)
-    import Core.Discriminative.save_disc;
     save_disc(barcodeGenC,thryNames,refNums,rezMax,bestCoefs,is_distinct, refNumBad,bestCoefsBad,hcaSets)
 end
 
