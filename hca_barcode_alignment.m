@@ -93,27 +93,27 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             fileext = '*.tif';
         end
 
-        structFiles.dotImport = uicontrol('Parent', tsSet, 'Style', 'edit','String',{fullfile(fileparts(mfilename('fullpath')),'files',testName)},'Units', 'normal', 'Position', [0 0.9 0.5 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-        set(structFiles.dotImport, 'Min', 0, 'Max', 25);% limit to 10 files via gui;
-        structFiles.dotButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Browse folder'},'Callback',@(src, event) selection_folder(structFiles.dotImport,event,fileext),'Units', 'normal', 'Position', [0.6 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-        structFiles.dotButtonFile = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Browse file'},'Callback',@(src, event) selection_file(structFiles.dotImport,event),'Units', 'normal', 'Position', [0.7 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-        structFiles.dotButtonUI = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'uigetfiles'},'Callback',@(src, event) selection_uipickfiles(structFiles.dotImport,event),'Units', 'normal', 'Position', [0.8 0.9 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
-        structFiles.runButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Run'},'Callback',run_handle,'Units', 'normal', 'Position', [0.7 0.2 0.2 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+        structFiles = CreateSelectWindow(structFiles,tsSet, testName,fileext,0.95);
+        structFiles.runButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Run'},'Callback',run_handle,'Units', 'normal', 'Position', [0.7 0.1 0.2 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+
+        if isfield(structSets, 'showtheoryimport')
+            structFiles.theory = CreateSelectWindow(structFiles,tsSet, '','.mat',0.85, 'Theories to compare against (.mat/.txt)');
+        end
 
         checkListIdx = find(~tISets);
         itemListIdx = find(tISets);
 
         iL = cell(1,length(checkListIdx));
         for i = 1:length(checkListIdx)
-            iL{i} = uicontrol('Parent', tsSet, 'Style', 'checkbox','Value', structSets.default.(fnames{checkListIdx(i)}),'String',structNames{checkListIdx(i)},'Units', 'normal', 'Position', [0.45 .83-0.05*i 0.3 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+            iL{i} = uicontrol('Parent', tsSet, 'Style', 'checkbox','Value', structSets.default.(fnames{checkListIdx(i)}),'String',structNames{checkListIdx(i)},'Units', 'normal', 'Position', [0.45 .78-0.05*i 0.2 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
         end
                 
         positionsText = cell(1,length(itemListIdx));
         positionsBox = cell(1,length(itemListIdx));
 
         for i=1:length(itemListIdx) % these will be in two columns
-            positionsText{i} =   [0.2-0.2*mod(i,2) .88-0.1*ceil(i/2) 0.2 0.03];
-            positionsBox{i} =   [0.2-0.2*mod(i,2) .83-0.1*ceil(i/2) 0.15 0.05];
+            positionsText{i} =   [0.2-0.2*mod(i,2) .83-0.1*ceil(i/2) 0.2 0.03];
+            positionsBox{i} =   [0.2-0.2*mod(i,2) .78-0.1*ceil(i/2) 0.15 0.05];
         end
 
         tL = cell(1,length(itemListIdx));
@@ -126,6 +126,23 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         % save in duplicates
         structFiles.Item = iL;
         structFiles.Text = tL;
+    end
+
+    function structFiles = CreateSelectWindow(structFiles,tsSet, testName, fileext, posY, txt)
+        if nargin < 6
+           % KYMO
+            txt = 'Kymos to import (.tif/.mat)';
+        end
+        structFiles.dotText = uicontrol('Parent', tsSet, 'Style', 'text','String',{txt},'Units', 'normal', 'Position', [0.2 posY 0.2 0.03],'HorizontalAlignment','Left');
+        if ~isempty(testName)
+            testName = fullfile(fileparts(mfilename('fullpath')),'files',testName);
+        end
+        structFiles.dotImport = uicontrol('Parent', tsSet, 'Style', 'edit','String',{testName},'Units', 'normal', 'Position', [0 posY-0.05 0.5 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+        set(structFiles.dotImport, 'Min', 0, 'Max', 25);% limit to 10 files via gui;
+        structFiles.dotButton = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Browse folder'},'Callback',@(src, event) selection_folder(structFiles.dotImport,event,fileext),'Units', 'normal', 'Position', [0.6 posY-0.05 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+        structFiles.dotButtonFile = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'Browse file'},'Callback',@(src, event) selection_file(structFiles.dotImport,event),'Units', 'normal', 'Position', [0.7 posY-0.05 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+        structFiles.dotButtonUI = uicontrol('Parent', tsSet, 'Style', 'pushbutton','String',{'uigetfiles'},'Callback',@(src, event) selection_uipickfiles(structFiles.dotImport,event),'Units', 'normal', 'Position', [0.8 posY-0.05 0.1 0.05]);%, 'Max', Inf, 'Min', 0);  [left bottom width height]
+
     end
 
     %% Selected functions
@@ -247,13 +264,17 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             hcaSets = hcaSetsDefault.default;
             hcaSets.kymofolder = hcaaligner.dotImport.String;
 
+            hcaSets.theoryfolder = hcaaligner.theory.dotImport.String;
+
             % run alignment            
             import Core.run_hca_alignment;
             [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaSets);
 
             import Core.run_visual_fun;
             if ~isempty(comparisonStruct)
+
                 run_visual_fun(barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets, tsAlignmentVisual);
+
             end           
     end
 

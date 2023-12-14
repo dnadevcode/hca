@@ -18,3 +18,4 @@
 0 | Save only discriminative barcode figures |           default.plotalldiscrim
 *.tif         |   file extension                                                      | fileext
 [3:10 15:18]  | Checklist items | clIdx 
+1   | showtheoryimport | showtheoryimport

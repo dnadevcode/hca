@@ -57,6 +57,11 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
             else
                 barcodeGen = bgSessionData.barcodeGen;
             end
+            if ~isfield(barcodeGen{1}, 'name')
+                for i=1:length(barcodeGen)
+                    barcodeGen{i}.name = [num2str(i), 'renamed_bar'];
+                end
+            end
         otherwise
     end
 
@@ -97,10 +102,15 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
     end
 
 
-    
-    % load(thryFile);
-    [hcaSets.theoryFile{1},hcaSets.theoryFileFold{1}] = uigetfile(pwd,strcat(['Select theory .mat file to process']));
-    % hcaSets.theoryFileFold{1} = '';
+    if  isempty(hcaSets.theoryfolder{1})
+        % load(thryFile);
+        [hcaSets.theoryFile{1},hcaSets.theoryFileFold{1}] = uigetfile(pwd,strcat(['Select single theory .mat file to process']));
+    else
+        for i=1:length(hcaSets.theoryfolder)
+            [hcaSets.theoryFileFold{i},mid,en] = fileparts(hcaSets.theoryfolder{i});
+            hcaSets.theoryFile{i} = [mid,en];
+        end
+    end
     hcaSets.theory.precision = 5;
     hcaSets.theory.theoryDontSaveTxts = 1;
     import CBT.Hca.UI.Helper.load_theory;
