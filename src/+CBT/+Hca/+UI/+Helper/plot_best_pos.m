@@ -31,7 +31,7 @@ function [fig1] = plot_best_pos( fig1, comparisonStruct, numBar, sets, markers,l
     % position along the theory
     pos = cell2mat(cellfun(@(x) x.pos(1:min(end,3)),comparisonStruct,'UniformOutput',0)');
 
-    p3 = plot((pos+posShift)/scaleF,1:size(pos,1),'ob');
+    p3 = plot(fig1, (pos+posShift)/scaleF,1:size(pos,1),'ob');
     p3(1).Marker = markers(1);
     try
         p3(2).Marker = markers(2);
@@ -39,7 +39,7 @@ function [fig1] = plot_best_pos( fig1, comparisonStruct, numBar, sets, markers,l
     try
         p3(3).Marker = markers(3);
     end
-    hold on
+%     hold on
     
 
 %     p4.Marker = markers(1);
@@ -47,31 +47,31 @@ function [fig1] = plot_best_pos( fig1, comparisonStruct, numBar, sets, markers,l
 
   
     if  sets.genConsensus == 1
-        plot((0:100:sum(lengthBorders))/scaleF, 0.5+repmat(numBar,length(0:100:sum(lengthBorders)),1))
+        plot(fig1,(0:100:sum(lengthBorders))/scaleF, 0.5+repmat(numBar,length(0:100:sum(lengthBorders)),1))
     end
     
-    plot(lengthBorders/scaleF,zeros(1,length(lengthBorders)),'redx')
+    plot(fig1,lengthBorders/scaleF,zeros(1,length(lengthBorders)),'redx')
     
     % add lines for barcode lengths
     posEnd = cell2mat(cellfun(@(x) x.pos(1)+x.lengthMatch,comparisonStruct,'UniformOutput',0)');
     for i=1:size(pos,1)
-        plot(([pos(i,1) posEnd(i)]+posShift(i))/scaleF,[i i],'ob-');     
+        plot(fig1,([pos(i,1) posEnd(i)]+posShift(i))/scaleF,[i i],'ob-');     
     end
     
     if scaleF == 1
-        xlabel('Best position (px)','Interpreter','latex')  
+        xlabel(fig1,'Best position (px)','Interpreter','latex')  
     else
-        xlabel('Best position (Mbp)','Interpreter','latex')  
+        xlabel(fig1,'Best position (Mbp)','Interpreter','latex')  
     end
     
-    ylabel('Barcode nr.','Interpreter','latex')
+    ylabel(fig1,'Barcode nr.','Interpreter','latex')
     if size(pos,2) == 1
-        legend({'$\hat C$','Theoretical barcodes seperator'},'Location','southoutside','Interpreter','latex')
+        legend(fig1,{'$\hat C$','Theoretical barcodes seperator'},'Location','southoutside','Interpreter','latex')
     else
-        legend({'$\hat C$','$C_2$','$C_3$','Theoretical barcodes seperator'},'Location','southoutside','Interpreter','latex')
+        legend(fig1,{'$\hat C$','$C_2$','$C_3$','Theoretical barcodes seperator'},'Location','southoutside','Interpreter','latex')
     end
     
-    ylim([0,size(pos,1)+2])
+    ylim(fig1,[0,size(pos,1)+2])
     
 end
 

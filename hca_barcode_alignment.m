@@ -39,14 +39,13 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             mfolders = split(mFilePath, {'\', '/'});
             versionHCA = importdata(fullfile(mfolders{1:end-1},'VERSION'));
 
-            hFig = figure('Name', ['HCA Barcode Alignment v' versionHCA{1}], ...
+            hFig = uifigure('Name', ['HCA Barcode Alignment v' versionHCA{1}], ...
                 'Units', 'normalized', ...
-                'OuterPosition', [0.05 0.1 0.8 0.8], ...
-                'NumberTitle', 'off', ...     
-                'MenuBar', 'none',...
-                'ToolBar', 'none' ...
+                'InnerPosition', [0.05 0.1 0.8 0.8], ...
+                'NumberTitle', 'off',...
+                'HandleVisibility', 'on' ...
             );
-            m = uimenu('Text','HCA');
+            m = uimenu(hFig,'Text','HCA');
             cells1 = {'HCA v4.7','Theory','Alignment'};
             mSub = cellfun(@(x) uimenu(m,'Text',x),cells1,'un',false);
             mSub{1}.MenuSelectedFcn = @SelectedOldHCA;
@@ -63,8 +62,8 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             mSubALignment{2}.MenuSelectedFcn = @SelectedShrinkSorter;
             mSubALignment{3}.MenuSelectedFcn = @SelectedDuplicatesSorter;
 
-            hPanel = uipanel('Parent', hFig);
-            h = uitabgroup('Parent',hPanel);
+            hPanel = uipanel('Parent', hFig,  'Units', 'normalized','Position', [0 0 1 1]);
+            h = uitabgroup('Parent',hPanel, 'Units', 'normalized', 'Position',   [0 0 1 1]);
     end
 
     function [structFiles] = get_files_function(tsSet,structFiles,run_handle)
@@ -160,7 +159,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             end
             h.SelectedTab = t4; 
         end
-        tsDuplicates = uitabgroup('Parent',t4);
+        tsDuplicates = uitabgroup('Parent',t4, 'Units', 'normalized','Position', [0.01 0.01 0.99 0.99]);
         tsDuplicatesSettings = uitab(tsDuplicates, 'title', 'Duplicate sorter settings');
         [duplicates.sets,duplicates.names] = Core.Default.read_default_sets('duplicatessets.txt');
 
@@ -176,7 +175,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             end
             h.SelectedTab = t3; 
         end
-        tsShrink = uitabgroup('Parent',t3);
+        tsShrink = uitabgroup('Parent',t3, 'Units', 'normalized','Position', [0.01 0.01 0.99 0.99]);
         tsShrinkSettings = uitab(tsShrink, 'title', 'Shrink sorter settings');
         % get default settings
         [shrinksorter.sets,shrinksorter.names] = Core.Default.read_default_sets('shrinksortersets.txt');
@@ -193,7 +192,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 end
                 h.SelectedTab = t1; 
 
-                tsAlignment = uitabgroup('Parent',t1);
+                tsAlignment = uitabgroup('Parent',t1, 'Units', 'normalized','Position', [0.01 0.01 0.99 0.99]);
                 tsAlignmentSettings = uitab(tsAlignment, 'title', 'Alignment settings');
                 tsAlignmentVisual = uitab(tsAlignment, 'title', 'Visual results');
 
@@ -212,7 +211,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 end
                 h.SelectedTab = t2; 
 
-                tsTheory = uitabgroup('Parent',t2);
+                tsTheory = uitabgroup('Parent',t2, 'Units', 'normalized','Position', [0.01 0.01 0.99 0.99]);
                 tsTheorySettings = uitab(tsTheory, 'title', 'Theory settings');
 
                 [hcatheory.sets,hcatheory.names] = Core.Default.read_default_sets('hcasets.txt');

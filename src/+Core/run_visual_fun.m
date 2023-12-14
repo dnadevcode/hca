@@ -3,7 +3,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 %     tsAlignmentVisual = uitab(tsAlignment, 'title', 'Visual results');
 
 
-    h= tiledlayout(tsAlignmentVisual, 2,2,'TileSpacing','tight','Padding','tight');
+    h = tiledlayout(tsAlignmentVisual, 2,2,'TileSpacing','tight','Padding','tight');
 
     % choose markers for everything
     markers = ['o';'s';'x';'+';'d';'v'];
@@ -24,21 +24,21 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 
     % plot max corr coefs
 %     subplot(2,2,1);hold on;
-     nexttile(h);hold on;
+     ax = nexttile(h);hold(ax, 'on');grid(ax, 'on');
 
     import CBT.Hca.UI.Helper.plot_max_coef;
-    [h,maxcoef] = plot_max_coef(h,comparisonStruct, numBar, hcaSets, markers);
+    [ax,maxcoef] = plot_max_coef(ax,comparisonStruct, numBar, hcaSets, markers);
 
 
     % plot best positions
 %     subplot(2,2,2);hold on;
-    nexttile;hold on;
+    ax2 = nexttile(h);hold(ax2, 'on');grid(ax2, 'on');
 
     import CBT.Hca.UI.Helper.plot_best_pos;
-    plot_best_pos(h,comparisonStruct, numBar, hcaSets, markers,lengthBorders);
+    plot_best_pos(ax2,comparisonStruct, numBar, hcaSets, markers,lengthBorders);
 
 %     ax=subplot(2,2,3), hold on
-    ax=nexttile(h); hold on
+    ax=nexttile(h); hold(ax, 'on');grid(ax, 'on');
 %     maxcoef(:,1) 
     if isequal(hcaSets.comparisonMethod,'mp') || isequal(hcaSets.comparisonMethod,'mpnan') || isequal(hcaSets.comparisonMethod,'mpAll') || isequal(hcaSets.comparisonMethod,'hmm')
         import CBT.Hca.UI.Helper.plot_best_bar_mp;
@@ -47,43 +47,12 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
     else
         %todo: improve this plot with more information
         import CBT.Hca.UI.Helper.plot_best_bar;
-        plot_best_bar(h,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, maxcoef,hcaSets.userDefinedSeqCushion);
+        plot_best_bar(ax,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, maxcoef,hcaSets.userDefinedSeqCushion);
     end
-%     end
 
-
-
-            
-%     subplot(2,2,4), hold on
-% %     option: alternatively plot concentirc plot of the two here, based on
-%     % user input
-%     import CBT.Hca.UI.Helper.plot_best_image;
-%     plot_best_image(fig1,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef);
-% %     fig1=figure;
-%         hAxis = subplot(2,2,4); hold on
-    hAxis = nexttile; hold on
+    hAxis = nexttile(h); hold(ax, 'on');grid(ax, 'on');
     import CBT.Hca.UI.Helper.plot_length_vs_intensity;
     plot_length_vs_intensity(hAxis,barcodeGenC)
-
-% 	if isequal(hcaSets.comparisonMethod,'mp') || isequal(hcaSets.comparisonMethod,'mpnan')|| isequal(hcaSets.comparisonMethod,'mpAll') || isequal(hcaSets.comparisonMethod,'hmm')
-%         hcaSets.A = 'b';
-%         hcaSets.B = 'b';
-%         hcaSets.theory.isLinearTF = 1;
-%         resultStruct.bar1 = (resultStruct.bar1-nanmean(resultStruct.bar1))/nanstd(resultStruct.bar1);
-%         resultStruct.bar2 = (resultStruct.bar2-nanmean(resultStruct.bar2))/nanstd(resultStruct.bar2);
-%         import CBT.Hca.UI.Helper.plot_concetric;
-%         plot_concetric(hAxis,resultStruct,hcaSets);
-%     else
-%         try
-%             import CBT.Hca.UI.Helper.plot_best_concentric_image;
-%             plot_best_concentric_image(hAxis,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, maxcoef,hcaSets);
-%         catch
-%             % do nothing
-%         end
-%     end
-%     
-
-
 
     % option: plot all possible matches, i.e. for all 
     disp( strcat(['Number of timeframes for the unfiltered barcodes were = ' num2str(hcaSets.timeFramesNr)]));

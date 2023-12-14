@@ -122,23 +122,23 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     barfragr{1}(~isnan(barfragr{1})) = zscore(barfragr{1}(~isnan(barfragr{1})));
 
 %     figure,
-    plot(min(temp_table(3:4)):max(temp_table(3:4)),barfragq{1})
-    hold on
-    plot(min(temp_table(3:4)):max(temp_table(3:4)),barfragr{1})
+    plot(fig1,min(temp_table(3:4)):max(temp_table(3:4)),barfragq{1})
+%     hold on
+    plot(fig1,min(temp_table(3:4)):max(temp_table(3:4)),barfragr{1})
     
   
 
-    xlabel('Position along the sequence cushion (px)','Interpreter','latex')
-    ylabel('Z-scored','Interpreter','latex')
+    xlabel(fig1,'Position along the sequence cushion (px)','Interpreter','latex')
+    ylabel(fig1,'Z-scored','Interpreter','latex')
     if ii <= len1
         name = num2str(ii);
     else
         name = 'consensus';
     end
 
-    title(strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
+    title(fig1,strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
     %
-    lgd = legend({strcat(['$\hat C_{\rm ' name '}=$' num2str(dd,'%0.2f') ', rf=' num2str(comparisonStruct{ii}.bestBarStretch) ', dr='  num2str(comparisonStruct{ii}.or(1)-1)]), niceName},'Interpreter','latex');
+    lgd = legend(fig1,{strcat(['$\hat C_{\rm ' name '}=$' num2str(dd,'%0.2f') ', rf=' num2str(comparisonStruct{ii}.bestBarStretch) ', dr='  num2str(comparisonStruct{ii}.or(1)-1)]), niceName},'Interpreter','latex');
     lgd.Location = 'southoutside';
 %     legend({strcat(['$$bar_{' num2str(ts2) '}$$ '  num2str(rescaleFactor) ' '  num2str(comparisonStruct{ii}.or(1)-1) ]),num2str(bar1Name)},'location','eastoutside','Interpreter','latex')
 

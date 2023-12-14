@@ -33,9 +33,9 @@ s = scatter(ax,DNAExtensions,intensities,sz(1),...
 % s.MarkerFaceColor = 'none';
 
 % legend(ax,'lambda','non-lambda','location','southoutside');
-xlabel('Extension (px)')
-ylabel('Intensity')
-title('Length vs intensity plot')
+xlabel(ax,'Extension (px)')
+ylabel(ax,'Intensity')
+title(ax,'Length vs intensity plot')
 
 end
 
