@@ -22,6 +22,11 @@ try % also define stdbar
     stdbar = stdbar(bars{idx}.lE:bars{idx}.rE);
     stdbar = interp1(stdbar, linspace(1,lenBarTested,lenBarTested*rezMax{thryIdx}{idx}.bestBarStretch));
     stdbar = stdbar(curBit);
+catch
+    stdbar = nanstd(bars{idx}.data.alignedKymo);
+    stdbar = stdbar(bars{idx}.data.lE:bars{idx}.data.rE);
+    stdbar = interp1(stdbar, linspace(1,lenBarTested,lenBarTested*rezMax{thryIdx}{idx}.bestBarStretch));
+    stdbar = stdbar(curBit);
 end
 
 if rezMax{thryIdx}{idx}.or(1)~=1

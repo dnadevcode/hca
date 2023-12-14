@@ -197,7 +197,6 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 tsAlignmentSettings = uitab(tsAlignment, 'title', 'Alignment settings');
                 tsAlignmentVisual = uitab(tsAlignment, 'title', 'Visual results');
 
-
                 [hcaaligner.sets,hcaaligner.names] = Core.Default.read_default_sets('hcaalignmentsets.txt');
                 [hcaaligner] = get_files_function(tsAlignmentSettings,hcaaligner, @run_alignment);
             end

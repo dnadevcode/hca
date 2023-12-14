@@ -2,6 +2,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 
 %     tsAlignmentVisual = uitab(tsAlignment, 'title', 'Visual results');
 
+
     h= tiledlayout(tsAlignmentVisual, 2,2,'TileSpacing','tight','Padding','tight');
 
     % choose markers for everything
@@ -23,7 +24,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 
     % plot max corr coefs
 %     subplot(2,2,1);hold on;
-    nexttile(h);hold on;
+     nexttile(h);hold on;
 
     import CBT.Hca.UI.Helper.plot_max_coef;
     [h,maxcoef] = plot_max_coef(h,comparisonStruct, numBar, hcaSets, markers);
@@ -50,7 +51,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
     end
 %     end
 
-    
+
 
             
 %     subplot(2,2,4), hold on
