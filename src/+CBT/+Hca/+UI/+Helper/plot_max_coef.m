@@ -40,5 +40,6 @@ function [fig1,maxcoef] = plot_max_coef( fig1,comparisonStruct, numBar, sets, ma
 
         end
     end
+    title(fig1,'Max score','Interpreter','latex');
 end
 

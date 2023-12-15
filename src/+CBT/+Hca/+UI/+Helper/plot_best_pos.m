@@ -72,6 +72,8 @@ function [fig1] = plot_best_pos( fig1, comparisonStruct, numBar, sets, markers,l
     end
     
     ylim(fig1,[0,size(pos,1)+2])
+
+    title(fig1,'Best position');
     
 end
 

@@ -56,11 +56,14 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
             mSubTheory{1}.MenuSelectedFcn = @SelectedHCAtheory;
 
-            cellsAlignment = {'Run Alignment','Shrink sorter','Duplicates sorter'};
+            cellsAlignment = {'Run Alignment','Shrink sorter','Duplicates sorter','Save Alignment Result','Load session'};
             mSubALignment  = cellfun(@(x) uimenu(mSub{3},'Text',x),cellsAlignment,'un',false);
             mSubALignment{1}.MenuSelectedFcn = @SelectedHCAAlignment;
             mSubALignment{2}.MenuSelectedFcn = @SelectedShrinkSorter;
             mSubALignment{3}.MenuSelectedFcn = @SelectedDuplicatesSorter;
+            mSubALignment{4}.MenuSelectedFcn = @SelectedSaveAlignmentSession;
+            mSubALignment{5}.MenuSelectedFcn = @SelectedLoadAlignmentSession;
+
 
             hPanel = uipanel('Parent', hFig,  'Units', 'normalized','Position', [0 0 1 1]);
             h = uitabgroup('Parent',hPanel, 'Units', 'normalized', 'Position',   [0 0 1 1]);
@@ -181,6 +184,46 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         [shrinksorter.sets,shrinksorter.names] = Core.Default.read_default_sets('shrinksortersets.txt');
         % use get_files_funcion
         [shrinksorter] = get_files_function(tsShrinkSettings, shrinksorter, @run_shrinksorter);
+    end
+
+    function SelectedLoadAlignmentSession(~,~)
+       [sessionfile,path] = uigetfile('*.mat','Select session result file to open');
+       load(fullfile(path,sessionfile),'theoryStruct','rezMax','hcaSets','barcodeGenC');
+
+        if isempty(t1)
+            t1 = uitab(h, 'title', 'HCA alignment');
+        end
+        h.SelectedTab = t1; 
+        
+        tsAlignment = uitabgroup('Parent',t1, 'Units', 'normalized','Position', [0.01 0.01 0.99 0.99]);
+        tsAlignmentVisual = uitab(tsAlignment, 'title', 'Visual results');
+        
+
+        import CBT.Hca.Core.Comparison.combine_theory_results;
+        [comparisonStruct] = combine_theory_results(theoryStruct, rezMax);
+   
+
+        import Core.run_visual_fun;
+        if ~isempty(comparisonStruct)
+            run_visual_fun(barcodeGenC,[], comparisonStruct, theoryStruct, hcaSets, tsAlignmentVisual);  
+        end    
+
+    end
+    function SelectedSaveAlignmentSession(~,~)
+        disp('Saving HCA_alignment session')
+
+        timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+
+        saveFold = fileparts(hcaSets.kymofolder{1});
+
+
+        saveName = [saveFold,'session_',timestamp,'.mat'];
+        if exist('rezMax','var')
+            save(saveName,'barcodeGenC','hcaSets','rezMax','theoryStruct');
+            disp(['Session saved at ', saveName])
+        else
+            disp('Results are not saved. They need to be in the workspace in order to be saved')
+        end
     end
 
     function SelectedHCAAlignment(~,~)

@@ -24,8 +24,11 @@ function [ rezMaxC ] = combine_theory_results(theoryStruct, rezMax,bestBarStretc
             else
                 rezMaxC{i}.name = theoryStruct(indx(i)).name;
             end
-            rezMaxC{i}.bestBarStretch = bestBarStretch{indx(i)}(i);
-            rezMaxC{i}.bestLength = bestLength{indx(i)}(i);
+            if nargin >2
+                 % previously beststretch and length was not in rezMax struct
+                rezMaxC{i}.bestBarStretch = bestBarStretch{indx(i)}(i);
+                rezMaxC{i}.bestLength = bestLength{indx(i)}(i);
+            end
         catch
             disp(strcat(['No placement found for barcode ' num2str(i)]));
         end
