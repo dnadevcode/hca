@@ -4,6 +4,8 @@ function [duplicateInfo,oS] = duplicatessorter(hcaSets)
     %       hcaSets - settings
     %
     %   Returns:
+    %       duplicateInfo - info about duplicates
+    %       oS - resulting oS information
 
 
     import CBT.Hca.Import.add_kymographs_fun;
@@ -16,6 +18,8 @@ function [duplicateInfo,oS] = duplicatessorter(hcaSets)
         [kymoStructs] = add_kymographs_fun(hcaSets);
     end
 
+    sF = 1; % length re-scaling factors. Define via sets
+
     % keep single timeframe
     import CBT.Hca.Core.edit_kymographs_fun;
     kymoStructs = edit_kymographs_fun(kymoStructs,1);
@@ -27,16 +31,24 @@ function [duplicateInfo,oS] = duplicatessorter(hcaSets)
         barcodeGen{i}.rawBarcode = kymoStructs{i}.alignedKymo;
         barcodeGen{i}.rawBitmask = logical(kymoStructs{i}.alignedMask);
     end
+
+    disp(['Running all-to-all pairwise comparison for ', num2str(length(kymoStructs) ), ' barcodes'])
+
     % pairwise comparison using full overlap PCC
     tic
     import  CBT.Hca.Core.Comparison.compare_pairwise_distance;
-    oS = compare_pairwise_distance(barcodeGen,1, hcaSets.default.minLen);
+    oS = compare_pairwise_distance(barcodeGen,sF, hcaSets.default.minLen);
     timeUsed = toc;
 
-    localScore = [oS(:).sc]; % local
+    localScore = [oS(:).sc]; % local overlap score
+
+    %
+
+
+    %
 
     lenA = [oS(:).lenA]; % lenA
-    lenB = [oS(:).lenB]; % lenB\
+    lenB = [oS(:).lenB]; % lenB
     overlaplen = [oS(:).overlaplen];
 
 
@@ -67,6 +79,9 @@ function [duplicateInfo,oS] = duplicatessorter(hcaSets)
     duplicateInfo.names = names;
 
     disp(['Found [', num2str(duplicateInfo.locsDuplicates ), '] duplicates'])
+
+    save('duplicate.mat',duplicateInfo)
+
 
 %     partialScore(idx(idx~=0)) = nan;
 

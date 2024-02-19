@@ -149,7 +149,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
     %% Selected functions
     function SelectedOldHCA(~,~)
-            disp('Running HCA_Gui v. 4.7.0')
+            disp('Running HCA_Gui v. < 5.5.0')
             delete(hFig);
             HCA_Gui;
     end
@@ -272,6 +272,8 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
 
             import Core.duplicatessorter;
             [duplicateInfo,oS] = duplicatessorter(duplicatesSets);
+
+            % save duplicate results info
 
     end
 

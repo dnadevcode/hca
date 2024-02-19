@@ -18,12 +18,18 @@ function [] = additional_computations( barcodeGenC, consensusStruct, comparisonS
 %     else
 %         sampleName = '/sample1_';
 %     end
+
+    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+
     
     matDirpath = fullfile(sets.output.matDirpath,sampleName);
 
     % export_cc_results
     import CBT.Hca.Export.export_cc_vals_table;
-    [T] = export_cc_vals_table( theoryStruct, comparisonStructAll, barcodeGenC,matDirpath);
+    [T,timestamp] = export_cc_vals_table( theoryStruct, comparisonStructAll, barcodeGenC,matDirpath);
+
+    % export settings
+    save(fullfile(sets.output.matDirpath,['run_settings',timestamp, '.mat']),'sets');
 
     try
     if sets.saveinfoscores

@@ -39,7 +39,7 @@ for i=1:length(barcodeGen)
     B = arrayfun(@(y) imresize(barcodeGen{i}.rawBitmask,'Scale' ,[1 y]),sF,'un',false);
 
     parfor j=1:length(barcodeGen2) % parfor loop over second barcode
-        if i~=j
+        if i<j
             barB = barcodeGen2{j}.rawBarcode;
             wB = barcodeGen2{j}.rawBitmask;
             scoreCur = zeros(1,length(A));

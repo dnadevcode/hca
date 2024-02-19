@@ -1,4 +1,4 @@
-function [T] = export_cc_vals_table( theoryStruct,comparisonStructAll, barcodeGen,matDirpath )
+function [T, timestamp] = export_cc_vals_table( theoryStruct,comparisonStructAll, barcodeGen,matDirpath )
     % export_cc_vals_table
     % only for single barcodes, dont include the consensus here
     
@@ -42,7 +42,7 @@ function [T] = export_cc_vals_table( theoryStruct,comparisonStructAll, barcodeGe
     end
     disp('Saving ccvals table');
     import CBT.Hca.Export.export_cc;
-    export_cc(T, matDirpath);      
+    [matFilepath,timestamp] = export_cc(T, matDirpath);      
 
 
 end

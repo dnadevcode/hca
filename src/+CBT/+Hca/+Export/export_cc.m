@@ -1,4 +1,4 @@
-function [matFilepath] = export_cc(T, matDirpath, timestamp, writemode) 
+function [matFilepath,timestamp] = export_cc(T, matDirpath, timestamp, writemode) 
     % Exports table as txt
 
     if nargin < 3
