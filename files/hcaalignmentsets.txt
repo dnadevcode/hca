@@ -16,6 +16,7 @@
 1 | Show all output in workspace | default.saveOutput
 0 | Save  best-match figures |           default.plotallmatches
 0 | Save only discriminative barcode figures |           default.plotalldiscrim
+0 | Save infoscores |           default.saveinfoscores
 *.tif         |   file extension                                                      | fileext
-[3:10 15:18]  | Checklist items | clIdx 
+[3:10 15:19]  | Checklist items | clIdx 
 1   | showtheoryimport | showtheoryimport

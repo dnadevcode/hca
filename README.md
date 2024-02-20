@@ -15,7 +15,10 @@ Separate project folder for the HCA (Human Chromosome Analysis) and Bacterial ch
 matlab
 addpath(genpath(pwd));
 
-# GUI'S:
+# GUI (NEW)
+hca_barcode_alignment
+
+# GUI'S (OLD):
 Hca_theory - theory
 Hca_gui - experiments
 Hca_run - same as gui but allows adding consensus and p-val calc
