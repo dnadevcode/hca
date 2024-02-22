@@ -15,6 +15,8 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
     %  [barcodeGenC,consensusStruct, comparisonStruct, theoryStruct, hcaSets] = run_hca_alignment(hcaaligner.sets.default)
 
 
+
+
     % change names to support previous hca
     hcaSets.filterSettings.filter = hcaSets.filterSettingsFilter;
     hcaSets.random.generate = hcaSets.randomGenerate;
@@ -119,7 +121,8 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
     
     % extract from name
     hcaSets.theory.nmbp = hcaSets.nmbp;
-    
+    hcaSets.theory.stretchFactors = 1-hcaSets.sF/100:hcaSets.sFstep/100:1+hcaSets.sF/100; % length re-scaling factor
+
     import CBT.Hca.Core.Analysis.convert_nm_ratio;
     theoryStruct = convert_nm_ratio(hcaSets.theory.nmbp, theoryStruct,hcaSets );
     
