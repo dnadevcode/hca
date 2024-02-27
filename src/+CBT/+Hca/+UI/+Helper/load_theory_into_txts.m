@@ -1,6 +1,6 @@
 function [theoryStruct] = load_theory_into_txts(theoryStruct,theoryFold, bars,bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinearTF, precision)
 
-    parfor i=1:length(bars)
+    for i=1:length(bars)
         fname = fullfile(theoryFold, strcat(num2str(i),'_barcode.txt'));
         fileID = fopen(fname,'w');
         % choose the precision from settings

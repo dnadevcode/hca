@@ -8,15 +8,15 @@ function [ maxcoef,pos,or ] = get_best_parameters( xcorrs, numBestPar, lenQ, isL
     if nargin < 2
         numBestPar = 3; % default is 3
     end
-    
+
     if nargin < 3
-       lenQ = 1;
+        lenQ = 1;
     end
-    
-	if nargin < 4
-       isLinearTF = 0;
+
+    if nargin < 4
+        isLinearTF = 0;
     end
-    
+
     if nargin < 5
         mask = 0; % default to previous if no mask
     end
