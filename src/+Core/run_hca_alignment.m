@@ -57,7 +57,15 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
             if isfield(bgSessionData,'barGenMerged')
                 barcodeGen = bgSessionData.barGenMerged;
             else
+                if isfield(bgSessionData,'theoryGen')
+                    barcodeGen = cell(1,length(bgSessionData.theoryGen.theoryBarcodes));
+                    for i=1:length(bgSessionData.theoryGen.theoryBarcodes)
+                        barcodeGen{i}.rawBarcode = bgSessionData.theoryGen.theoryBarcodes{i};
+                        barcodeGen{i}.rawBitmask = ones(1,length( barcodeGen{i}.rawBarcode));
+                    end
+                else
                 barcodeGen = bgSessionData.barcodeGen;
+                end
             end
             if ~isfield(barcodeGen{1}, 'name')
                 for i=1:length(barcodeGen)
