@@ -1,4 +1,4 @@
-function [ rezMaxM ] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numPixelsAroundBestTheoryMask)
+function [ rezMaxM,cc ] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numPixelsAroundBestTheoryMask)
     % on_compare_theory_to_exp
     % Compares experiments to single theory
     %     Args:
@@ -34,12 +34,14 @@ function [ rezMaxM ] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numP
 %     theorBar = filter_barcode(theorBar,sets);
     
     rezMaxM = cell(1,length(barGen));
+    cc = zeros(length(barGen{1}.rescaled),length(barGen));
     % for all the barcodes run
     % parfor
     for idx=1:length(barGen)
         for idy=1:length(barGen{idx}.rescaled) % loop over stretch factors
             [rezMaxM{idx}{idy}.maxcoef,rezMaxM{idx}{idy}.pos,rezMaxM{idx}{idy}.or,rezMaxM{idx}{idy}.secondPos,rezMaxM{idx}{idy}.lengthMatch,~] =...
                 comparisonFun(barGen{idx}.rescaled{idy}.rawBarcode, theorBar, barGen{idx}.rescaled{idy}.rawBitmask,theorBit,w);
+            cc(idy,idx) = rezMaxM{idx}{idy}.maxcoef(1);
         end
     end
 

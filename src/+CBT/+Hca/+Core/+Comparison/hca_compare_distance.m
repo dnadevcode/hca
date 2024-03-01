@@ -1,4 +1,4 @@
-function [rezMax] = hca_compare_distance(barcodeGen,theoryStruct, sets )
+function [rezMax, allCoefs] = hca_compare_distance(barcodeGen,theoryStruct, sets )
     % hca_compare_distance
     % Compares experiments to theory. Helping function with the parfor
     %     Args:
@@ -17,6 +17,13 @@ function [rezMax] = hca_compare_distance(barcodeGen,theoryStruct, sets )
     numPixelsAroundBestTheoryMask = 20;% hardcoded
             
     rezMax = cell(1,length(theoryStruct));
+    allCoefs = zeros(length(barcodeGen{1}.rescaled),length(barcodeGen),length(theoryStruct));
+    % for the rest of full details without rezMax:
+    % allOrs = zeros(length(barcodeGen{1}.rescaled),length(barcodeGen),length(theoryStruct));
+    % allLen = zeros(length(barcodeGen{1}.rescaled),length(barcodeGen),length(theoryStruct));
+    % allSF = zeros(length(barcodeGen{1}.rescaled),length(barcodeGen),length(theoryStruct));
+    % allPos = zeros(length(barcodeGen{1}.rescaled),length(barcodeGen),length(theoryStruct));
+    % allPos2 = zeros(length(barcodeGen{1}.rescaled),length(barcodeGen),length(theoryStruct));
 
     import CBT.Hca.Core.Comparison.on_compare_sf;
 
@@ -25,11 +32,13 @@ function [rezMax] = hca_compare_distance(barcodeGen,theoryStruct, sets )
    	parfor barNr = 1:length(theoryStruct)
 %         barNr
         try
-            [rezMax{barNr}] = ...
+            [rezMax{barNr}, allCoefs(:,:,barNr)] = ...
                 on_compare_sf(barcodeGen,theoryStruct(barNr),comparisonMethod,w,numPixelsAroundBestTheoryMask);
         catch
             disp(['error with ',num2str(barNr)]);
         end
+
+
     end
 
     timePassed = toc;
