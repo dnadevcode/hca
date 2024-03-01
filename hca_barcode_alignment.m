@@ -60,11 +60,12 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             mSub = cellfun(@(x) uimenu(m,'Text',x),cells1,'un',false);
             mSub{1}.MenuSelectedFcn = @SelectedOldHCA;
 
-            cellsTheory = {'Generate theory'};
+            cellsTheory = {'Generate theory','Concatenate theories'};
 
             mSubTheory  = cellfun(@(x) uimenu(mSub{2},'Text',x),cellsTheory,'un',false);
 
             mSubTheory{1}.MenuSelectedFcn = @SelectedHCAtheory;
+            mSubTheory{2}.MenuSelectedFcn = @SelectedConcatenateTheories;
 
             cellsAlignment = {'Run Alignment','Shrink sorter','Duplicates sorter','Save Alignment Result','Load session'};
             mSubALignment  = cellfun(@(x) uimenu(mSub{3},'Text',x),cellsAlignment,'un',false);
@@ -270,6 +271,36 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
                 [hcatheory.sets,hcatheory.names] = Core.Default.read_default_sets('hcasets.txt');
                 [hcatheory] = get_files_function(tsTheorySettings,hcatheory, @run_theory);
             end
+    end
+
+    function SelectedConcatenateTheories(~,~)
+        disp('Running Concatenate theories')
+        [FILENAME] = uipickfiles;
+        data1 = cell(1,length(FILENAME));
+        for i=1:length(FILENAME)
+            data1{i} = load(FILENAME{i});
+        end
+
+        conc = 0;
+
+        theoryGen = data1{1}.theoryGen;
+        for i=2:length(FILENAME)
+            if isequal(data1{1}.theoryGen.sets,data1{i}.theoryGen.sets)
+                theoryGen.theoryBarcodes = [theoryGen.theoryBarcodes data1{i}.theoryGen.theoryBarcodes];
+                theoryGen.theoryBitmasks = [theoryGen.theoryBitmasks data1{i}.theoryGen.theoryBitmasks];
+                theoryGen.theoryNames = [theoryGen.theoryNames data1{i}.theoryGen.theoryNames];
+                theoryGen.theoryIdx = [theoryGen.theoryIdx data1{i}.theoryGen.theoryIdx];
+                theoryGen.bpNm = [theoryGen.bpNm data1{i}.theoryGen.bpNm];               
+                conc = 1;       
+            else
+                disp(['Settings are not the same in the two files, cant merge ', num2str(i), ' dataset']);
+            end
+        end
+        if conc
+        [fileN,fileL] = uiputfile(strrep(FILENAME{1},'.mat','_concatenated.mat'));
+        save(fullfile(fileL,fileN),'theoryGen');
+        disp(['Concatenated to ', fullfile(fileL,fileN)]);
+        end
     end
 
 %% run functions
