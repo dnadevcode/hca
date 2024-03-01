@@ -32,6 +32,7 @@ Separate project folder for the HCA (Human Chromosome Analysis) and Bacterial ch
    - Under the HCA menu, you'll find options related to theory generation and manipulation.
 
    a. **Generate Theory**:
+
       - Click on the "Theory" submenu.
       - Choose "Generate theory" to initiate the theory generation process.
       - Provide necessary inputs such as file paths or settings.
@@ -39,6 +40,7 @@ Separate project folder for the HCA (Human Chromosome Analysis) and Bacterial ch
       - Monitor progress and review the results.
 
    b. **Concatenate Theories**:
+
         - **Click the "Run Concatenate Theories" Button**: Locate and click on the "Run Concatenate Theories" button in your MATLAB user interface.
 
         - **Select Files**: After clicking the button, a dialog box will appear prompting you to select one or more files. These files should contain theory data that you want to merge together.
@@ -56,30 +58,36 @@ Separate project folder for the HCA (Human Chromosome Analysis) and Bacterial ch
    - Explore alignment-related options and functionalities.
 
    a. **Run Alignment**:
+
       - Access the "Alignment" submenu.
       - Choose "Run Alignment" to initiate alignment.
       - Provide required inputs and follow on-screen prompts.
       - Monitor progress and review the alignment results.
 
    b. **Shrink filter**:
+
       - Under "Alignment", select "Shrink filter" to begin shrinking filtering process.
       - Follow instructions and provide necessary inputs.
       - Monitor progress and review the results.
 
    c. **Duplicates Sorter**:
+
       - Choose "Duplicates sorter" to start duplicates sorting.
       - Provide inputs as needed and follow on-screen instructions.
       - Review the sorting results once completed.
 
    d. **Save Alignment Result**:
+
       - Select "Save Alignment Result" to save the alignment session.
       - Specify a location and filename to store the session data.
 
    e. **Load Session**:
+
       - Use "Load session" to open a saved alignment session.
       - Navigate to the saved session file and load it for further analysis.
 
 ### Note:
+
 - Follow the provided instructions within the GUI interface for each button to ensure correct usage.
 - Make sure you have the required permissions and access to the necessary data files.
 - Consult the tool's documentation or seek assistance for any issues or questions regarding specific functionalities.
