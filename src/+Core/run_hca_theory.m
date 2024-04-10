@@ -82,7 +82,10 @@ function [] = run_hca_theory(hcaSets)
     matFilename = strcat(['theoryGen_', num2str(meanBpExt_nm) '_' num2str(pixelWidth_nm) '_' num2str(psfSigmaWidth_nm) '_' num2str(linear) '_' sprintf('%s_%s', timestamp) 'session.mat']);
     matFilepath = fullfile(hcaSets.resultsDir, matFilename);
     
-    save(matFilepath, 'theoryGen');
+    assignin('base','theoryGen', theoryGen)
+    disp(['Assigned theoryGen to workspace']);
+
+    save(matFilepath, 'theoryGen','-v7.3');
     fprintf('Saved theory mat filename ''%s'' to ''%s''\n', matFilename, matFilepath);
 
 end
