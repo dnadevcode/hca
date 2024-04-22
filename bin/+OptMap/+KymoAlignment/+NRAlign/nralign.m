@@ -159,6 +159,8 @@ function [alignedKymo, stretchFactorsMat, shiftAlignedKymo, alignedMask, shiftAl
             import OptMap.KymoAlignment.apply_horizontal_stretching;
             alignedKymo = apply_horizontal_stretching(alignedKymo, stretchFactorsMat);
             alignedMask = round(apply_horizontal_stretching(double(alignedMask), stretchFactorsMat)) > 0;
+        else
+            pathsColIdxs = [];
         end
     end
     

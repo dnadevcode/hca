@@ -15,7 +15,7 @@ function [maxcoef, pos, or, secondPos, lenM, dist] = unmasked_MASS_PCC(longVec, 
     shortVecCut = shortVec(logical(shortVecBit));
 
     if length(shortVecCut) > length(longVec)
-        maxcoef = nan; pos = nan;or = nan; secondPos = nan; lenM = nan; dist = nan;
+        maxcoef = nan(1,3); pos = nan(1,3);or = nan(1,3); secondPos = nan; lenM = nan; dist = nan;
         return;
     end
 
