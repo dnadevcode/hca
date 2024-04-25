@@ -1,4 +1,4 @@
-function [ rezMaxM,cc ] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numPixelsAroundBestTheoryMask)
+function [ rezMax] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numPixelsAroundBestTheoryMask)
     % on_compare_theory_to_exp
     % Compares experiments to single theory
     %     Args:
@@ -45,4 +45,6 @@ function [ rezMaxM,cc ] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,n
         end
     end
 
+    rezMax{1} = rezMaxM; % make single cell
+    rezMax{2} = cc;
 end
