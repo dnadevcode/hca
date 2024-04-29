@@ -1,4 +1,4 @@
-function [maxcoef, pos, or, secondPos, lenM, dist] = unmasked_MASS_PCC(longVec, shortVec, shortVecBit,longVecBit,k,isLinearTF,numPixelsAroundBestTheoryMask)
+function [maxcoef, pos, or, secondPos, lenM, dist] = unmasked_MASS_PCC(longVec, shortVec, shortVecBit,longVecBit,k,isLinearTF,numPixelsAroundBestTheoryMask, numBestCoef)
     % masked MASS_PCC where short vector can have bitmask
     %
     %   Args:
@@ -7,10 +7,15 @@ function [maxcoef, pos, or, secondPos, lenM, dist] = unmasked_MASS_PCC(longVec, 
     %       isLinearTF - whether is linear
     %       numPixelsAroundBestTheoryMask - pixeks around best match to
     %       ignore
+    %       numBestCoef-  number of best coefficients ( not close to each
+    %       other) default=3
     %   Returns:
     %
     %       dist
     
+    if nargin < 8
+        numBestCoef = 3;
+    end
     
     shortVecCut = shortVec(logical(shortVecBit));
 
@@ -31,7 +36,7 @@ function [maxcoef, pos, or, secondPos, lenM, dist] = unmasked_MASS_PCC(longVec, 
     dist(isinf(dist)) = nan; % inf should be undefined.
     
     import CBT.Hca.UI.Helper.get_best_parameters;
-    [maxcoef, pos, or] = get_best_parameters(dist, 3,length(shortVecCut),isLinearTF,numPixelsAroundBestTheoryMask,longVecBit);
+    [maxcoef, pos, or] = get_best_parameters(dist, numBestCoef,length(shortVecCut),isLinearTF,numPixelsAroundBestTheoryMask,longVecBit);
     
     %
     secondPos = find(shortVecBit,1,'first');

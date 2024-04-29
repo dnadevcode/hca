@@ -32,31 +32,33 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
     import CBT.Core.convert_bpRes_to_pxRes;
 
     if sets.theory.theoryDontSaveTxts % new in 4.7.0
+        % all theories SHOULD have the same meanBpExt_nm, so move these
+        % outside of loop
+        pxSize = theoryStruct(1).meanBpExt_nm/newNmBp;
+        sigma1 = (1/pxSize)*theoryStruct(1).psfSigmaWidth_nm/theoryStruct(1).pixelWidth_nm;
+        sigma =  theoryStruct(1).psfSigmaWidth_nm/theoryStruct(1).pixelWidth_nm;
+        % size of final sigma
+        sigmaDif = sqrt(sigma^2-sigma1^2);
+       
+        %
         parfor i=1:length(theoryStruct)
             if theoryStruct(i).length ~= 0
                 % first convert to the correct length
-                pxSize = theoryStruct(i).meanBpExt_nm/newNmBp;
                 seq = convert_bpRes_to_pxRes(theoryStruct(i).rawBarcode, 1/pxSize);
-                         sigma1 = (1/pxSize)*theoryStruct(i).psfSigmaWidth_nm/theoryStruct(i).pixelWidth_nm;
-                sigma =  theoryStruct(i).psfSigmaWidth_nm/theoryStruct(i).pixelWidth_nm;
-                % size of final sigma
-                sigmaDif = sqrt(sigma^2-sigma1^2);
-    
+        
                 % length of kernel
                 hsize = size(seq,2);
-           
+                
                 % kernel
                 ker = circshift(images.internal.createGaussianKernel(sigmaDif, hsize),round(hsize/2));   
                 
                 % conjugate of kernel in phase space
                 multF=conj(fft(ker'));
-        
                 % convolved with sequence ->
                 theoryStruct(i).rawBarcode = ifft(fft(seq).*multF); 
                 
-                try
+                if isfield(theoryStruct(i),'rawBitmask')&&~isempty(theoryStruct(i).rawBitmask)
                     theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
-                catch
                 end
                 theoryStruct(i).meanBpExt_nm = newNmBp;
                 theoryStruct(i).length = hsize;
