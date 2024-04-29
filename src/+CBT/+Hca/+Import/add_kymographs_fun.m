@@ -21,10 +21,10 @@ function [kymoStructs] = add_kymographs_fun(sets,filefold,filename)
         sets.kymosets.filenames = filename;
     end
 %     
-    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+    % timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
-    matKymopathShort = fullfile(fileparts(sets.kymosets.filenames{1}), strcat(['kymos_' sprintf('%s_%s', timestamp) '.txt']));
-    fd = fopen(matKymopathShort,'w');    fclose(fd);
+    % matKymopathShort = fullfile(fileparts(sets.kymosets.filenames{1}), strcat(['kymos_' sprintf('%s_%s', timestamp) '.txt']));
+    % fd = fopen(matKymopathShort,'w');    fclose(fd);
         
         
 
@@ -58,9 +58,9 @@ function [kymoStructs] = add_kymographs_fun(sets,filefold,filename)
             else % onnly kymo
                 kymoStructs{i}.unalignedKymo = imread(fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name));
             end
-            fd = fopen(matKymopathShort,'a'); fprintf(fd, '%s \n',fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name)); fclose(fd);
+            % fd = fopen(matKymopathShort,'a'); fprintf(fd, '%s \n',fullfile(sets.kymosets.kymofilefold{keep(i)},kymoStructs{i}.name)); fclose(fd);
         end
     end
-    delete(matKymopathShort);
+    % delete(matKymopathShort);
 end
 
