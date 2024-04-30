@@ -40,13 +40,22 @@ function [ rezMaxM] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numPi
     rezMaxM{4} = int16(zeros(length(barGen),length(barGen{1}.rescaled)));
     rezMaxM{5} = int16(zeros(length(barGen),length(barGen{1}.rescaled)));
 
+    ltheory = numel(theorBit);
 %     cc = zeros(length(barGen{1}.rescaled),length(barGen));
     % for all the barcodes run
     % parfor
     for idx=1:length(barGen)
         for idy=1:length(barGen{idx}.rescaled) % loop over stretch factors
-            [rezMaxM{1}(idx,idy),rezMaxM{2}(idx,idy),rezMaxM{3}(idx,idy),rezMaxM{4}(idx,idy),rezMaxM{5}(idx,idy),~] =...
-                comparisonFun(barGen{idx}.rescaled{idy}.rawBarcode, theorBar, barGen{idx}.rescaled{idy}.rawBitmask,theorBit,w);
+            if (isequal(comparisonMethod,'mpnan') && ((sum(barGen{idx}.rescaled{idy}.rawBitmask) < w)) || ltheory < w)% in case barcode stretch outside, or theory smaller
+                rezMaxM{1}(idx,idy) = nan;
+                rezMaxM{2}(idx,idy) = 1;
+                rezMaxM{3}(idx,idy) = 1;
+                rezMaxM{4}(idx,idy) = 1;
+                rezMaxM{5}(idx,idy) = 1;
+            else
+                [rezMaxM{1}(idx,idy),rezMaxM{2}(idx,idy),rezMaxM{3}(idx,idy),rezMaxM{4}(idx,idy),rezMaxM{5}(idx,idy),~] =...
+                    comparisonFun(barGen{idx}.rescaled{idy}.rawBarcode, theorBar, barGen{idx}.rescaled{idy}.rawBitmask,theorBit,w);
+            end
 %             cc(idy,idx) = rezMaxM(idx,idy).maxcoef(1);
 
 %             [rezMaxM{idx}{idy}.maxcoef,rezMaxM{idx}{idy}.pos,rezMaxM{idx}{idy}.or,rezMaxM{idx}{idy}.secondPos,rezMaxM{idx}{idy}.lengthMatch,~] =...
