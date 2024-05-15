@@ -39,6 +39,7 @@ function [ rezMaxM] = on_compare_sf(barGen,theoryStruct,comparisonMethod,w,numPi
     rezMaxM{3} = int8(zeros(length(barGen),length(barGen{1}.rescaled)));
     rezMaxM{4} = int16(zeros(length(barGen),length(barGen{1}.rescaled)));
     rezMaxM{5} = int16(zeros(length(barGen),length(barGen{1}.rescaled)));
+    rezMaxM{6}.info = {'1)PCC, 2) Pos, 3) Or, 4) SecondPos 5) Len '};
 
     ltheory = numel(theorBit);
 %     cc = zeros(length(barGen{1}.rescaled),length(barGen));
