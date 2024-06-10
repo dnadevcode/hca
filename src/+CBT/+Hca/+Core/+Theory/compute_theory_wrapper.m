@@ -22,6 +22,8 @@ function [x] = compute_theory_wrapper(ts, sets)
             x = run_simple_theory(ts);
         case "literature"
              x = run_literature_theory(ts',sets);
+        case "custom" % same as literature here
+             x = run_literature_theory(ts',sets);
         case "GC"
             x = gc_rate(ts',4);
         case "gcweighted"

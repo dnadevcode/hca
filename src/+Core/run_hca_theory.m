@@ -1,7 +1,14 @@
-function [] = run_hca_theory(hcaSets)
+function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst)
     %   run_hca_theory - calculates HCA theory
 
     %   Args: hcaSets
+    %           yoyoConst - in case user want to vary the YOYO-1 binding constant
+    %           netropsinConst - in case one wants to 
+    if nargin <2
+        yoyoConst = 26;
+        netropsinConst = 0.4;
+    end
+
 
     % make sets compatible with prev structure
     hcaSets.theoryGen.method = hcaSets.method;
@@ -24,7 +31,7 @@ function [] = run_hca_theory(hcaSets)
 
 
     import CBT.Hca.Core.Theory.choose_cb_model;
-    [hcaSets.model ] = choose_cb_model(hcaSets.theoryGen.method,hcaSets.pattern);
+    [hcaSets.model ] = choose_cb_model(hcaSets.theoryGen.method,hcaSets.pattern, yoyoConst, netropsinConst);
 
     % theories names
     theories = hcaSets.folder;
@@ -82,11 +89,15 @@ function [] = run_hca_theory(hcaSets)
     matFilename = strcat(['theoryGen_', num2str(meanBpExt_nm) '_' num2str(pixelWidth_nm) '_' num2str(psfSigmaWidth_nm) '_' num2str(linear) '_' sprintf('%s_%s', timestamp) 'session.mat']);
     matFilepath = fullfile(hcaSets.resultsDir, matFilename);
     
-    assignin('base','theoryGen', theoryGen)
-    disp(['Assigned theoryGen to workspace']);
-
-    save(matFilepath, 'theoryGen','-v7.3');
-    fprintf('Saved theory mat filename ''%s'' to ''%s''\n', matFilename, matFilepath);
+    disp('Finished calculating theories')
+    if nargout < 1
+        assignin('base','theoryGen', theoryGen)
+        disp('Assigned theoryGen to workspace');
+        
+        
+        save(matFilepath, 'theoryGen','-v7.3');
+        fprintf('Saved theory mat filename ''%s'' to ''%s''\n', matFilename, matFilepath);
+    end
 
 end
 
