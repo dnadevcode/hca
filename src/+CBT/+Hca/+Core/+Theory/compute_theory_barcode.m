@@ -11,15 +11,27 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     % the settings instead of hardcoding them later in the code.
     if nargin < 2
         sets.theoryGen.psfSigmaWidth_nm = 300;   % psf width in nm
+        sets.theoryGen.pixelWidth_nm = 110;
         sets.theoryGen.meanBpExt_nm = 0.3;       % mean base-pair extension
         sets.theoryGen.k = 200000;                         %length of the small fragment to do fft on
         sets.theoryGen.m = 26000;                          % number of base-pairs to leave at the edges
-        sets.theoryGen.isLinearTF;               % is theory circular
+        sets.theoryGen.isLinearTF = 1;               % is theory circular
+        sets.theoryGen.addpsf = 1;               % is theory circular
     end
 
-    % create an easier accessible file
-    import CBT.Hca.Core.Theory.create_memory_struct;
-    [chr1,header] = create_memory_struct(name);
+    if ~isfield(name,'Data')
+    
+        % create an easier accessible file
+        import CBT.Hca.Core.Theory.create_memory_struct;
+        [chr1,header] = create_memory_struct(name);
+    else
+        chr1 = name;
+        header = 'test';
+    end
+
+    if ~isfield(sets.theoryGen.addpsf,'addpsf')
+        sets.theoryGen.addpsf = 1;
+    end
     
     % if to calculate only for specific subsequence of theory
 %     if isfield(sets,'subtheory')
@@ -151,15 +163,19 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
         waitbar(j/(n-k+1), f, sprintf('Progress: %d %%', floor(j/(n-k+1)*100)));
         x = compute_theory_wrapper(ts(j:j+k-1), sets);
         
-        %The main trick of getting dot products in O(n log n) time
-        % compute fft of x
-        X = fft(x);
-        
-        % product
-        Z = X.*Y;
-        
-        % inverser fourier
-        z = ifft(Z);
+        if  sets.theoryGen.addpsf 
+            %The main trick of getting dot products in O(n log n) time
+            % compute fft of x
+            X = fft(x);
+            
+            % product
+            Z = X.*Y;
+            
+            % inverser fourier
+            z = ifft(Z);
+        else % no psf
+            z = x;
+        end
         
         % now z(m:k) contains the theory elements j:j+k-m
         % but we don't want to save these
