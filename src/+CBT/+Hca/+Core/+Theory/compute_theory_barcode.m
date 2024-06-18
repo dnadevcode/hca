@@ -29,7 +29,7 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
         header = 'test';
     end
 
-    if ~isfield(sets.theoryGen.addpsf,'addpsf')
+    if ~isfield(sets.theoryGen,'addpsf')
         sets.theoryGen.addpsf = 1;
     end
     
