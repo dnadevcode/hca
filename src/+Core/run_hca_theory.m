@@ -1,4 +1,4 @@
-function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst)
+function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customModel)
     %   run_hca_theory - calculates HCA theory
 
     %   Args: hcaSets
@@ -32,6 +32,10 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst)
 
     import CBT.Hca.Core.Theory.choose_cb_model;
     [hcaSets.model ] = choose_cb_model(hcaSets.theoryGen.method,hcaSets.pattern, yoyoConst, netropsinConst);
+
+    if nargin >=4
+        hcaSets.model.netropsinBindingConstant = customModel;
+    end
 
     % theories names
     theories = hcaSets.folder;
