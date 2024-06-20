@@ -3,7 +3,9 @@ function [t,theoryGen] = run_theory_generate_twostate(fold,nmbp)
 % Inline theory generation without passing through hca_barcode_alignment for the simple twostate model,
 % One can use this function with batch command
 %  c = parcluster;
-% batch(c,@run_theory_generate,1,{folderName},'Pool',2);
+% batch(c,@run_theory_generate_twostate,1,{folderName,nmbp},'Pool',29);
+
+addpath(genpath('/home/avesta/albertas/reps/hca'));
 
 timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
@@ -50,11 +52,15 @@ theoryBitmasks = cell(1,length(folds));
 theoryNames = cell(1,length(folds));
 theoryIdx = cell(1,length(folds));
 
+
 %todo: add a progressbar
 import CBT.SimpleTwoState.gen_simple_theory_px;
 parfor idx=1:length(folds)
+    idx
+%     tic
     fasta = fastaread(folds{idx});
     ntSeq = nt2int(fasta.Sequence);
+
     % cummulative sum of AT's. 
     numWsCumSum = cumsum((ntSeq == 1)  | (ntSeq == 4) );
     [theorySeq] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY);
@@ -65,8 +71,10 @@ parfor idx=1:length(folds)
     
     theoryNames{idx} = fasta.Header;
     theoryIdx{idx} = idx;
+%     toc
 end
-    disp('Finished calculating theories')
+   
+disp('Finished calculating theories')
 
 
     
@@ -90,20 +98,20 @@ end
     matFilepath = fullfile(resultsDir, matFilename);
     
 
-    if nargout < 1
+%     if nargout < 1
 %         assignin('base','theoryGen', theoryGen)
 %         disp('Assigned theoryGen to workspace');
         
         
         save(matFilepath, 'theoryGen','-v7.3');
         fprintf('Saved theory mat filename ''%s'' to ''%s''\n', matFilename, matFilepath);
-    end
+% %     end
 
 
 % import Core.run_hca_theory;
 % run_hca_theory(hcatheorySets);
 
-t = toc-t0;
+t = toc(t0);
 
 end
 
