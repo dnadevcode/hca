@@ -49,9 +49,16 @@ function [bars, bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinear
         end 
     end
 
-    meanbpnm = setsB.meanBpExt_nm;
-    pixelWidth_nm = setsB.pixelWidth_nm;
-    psfSigmaWidth_nm = setsB.psfSigmaWidth_nm;
+    if isfield(setsB,'meanBpExtNm')
+        meanbpnm = setsB.meanBpExtNm;
+        
+        pixelWidth_nm = setsB.pixelWidthNm;
+        psfSigmaWidth_nm = setsB.psfSigmaWidthNm;
+    else
+        meanbpnm = setsB.meanBpExt_nm;
+        pixelWidth_nm = setsB.pixelWidth_nm;
+        psfSigmaWidth_nm = setsB.psfSigmaWidth_nm;
+    end
     try  % try to see if setting of linear theory function is included
        isLinearTF  =  setsB.isLinearTF;
     catch

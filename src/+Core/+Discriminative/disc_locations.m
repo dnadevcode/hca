@@ -25,7 +25,12 @@ function [refNums, allNums, bestCoefs,refNumBad,bestCoefsBad] = disc_locations(r
     bestCoefsBad =  zeros(1,numTheories);
 
     for barIx = 1:length(rezMax{1})
-        allCCs = cellfun(@(x) x{barIx}.maxcoef(1),rezMax);
+        if isfield(rezMax{1},'maxcoef')
+            allCCs = cellfun(@(x) x{barIx}.maxcoef(1),rezMax);
+        else
+            allCCs = rezMax{1}{barIx};
+        end
+
    
         [a,sortedid] = sort(allCCs,'desc','MissingPlacement','last');
 
