@@ -59,6 +59,8 @@ function [sets] = non_default_settings(sets)
                 sets.edgeDetectionSettings.method = spaceList{answer}; 
             else
                  sets.edgeDetectionSettings.method = 'Otsu';
+                import OptMap.MoleculeDetection.EdgeDetection.get_default_edge_detection_settings;
+                sets.edgeDetectionSettings = get_default_edge_detection_settings(sets.skipDoubleTanhAdjustment);
                 % user canceled or closed dialog
             end
 % 
@@ -94,8 +96,7 @@ function [sets] = non_default_settings(sets)
 %             sets.skipDoubleTanhAdjustment = str2double(answer{1});
 
             % would like to adjust these based on the experimental conditions!
-            import OptMap.MoleculeDetection.EdgeDetection.get_default_edge_detection_settings;
-            sets.edgeDetectionSettings = get_default_edge_detection_settings(sets.skipDoubleTanhAdjustment);
+
         end
 
         if sets.random.generate
