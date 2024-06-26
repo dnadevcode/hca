@@ -25,7 +25,7 @@ function [refNums, allNums, bestCoefs,refNumBad,bestCoefsBad] = disc_locations(r
     bestCoefsBad =  zeros(1,numTheories);
 
     for barIx = 1:length(rezMax{1})
-        if isfield(rezMax{1},'maxcoef')
+        if isfield(rezMax{1}{1},'maxcoef')
             allCCs = cellfun(@(x) x{barIx}.maxcoef(1),rezMax);
         else
             allCCs = rezMax{1}{barIx};
