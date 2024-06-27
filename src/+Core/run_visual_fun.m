@@ -76,15 +76,18 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 %             tic
                 max2 = nan(size(maxcoef));      max2(i,1) = maxcoef(i,1);
                 fig1 = figure('Visible', 'off');
+                ax1 = subplot(fig1,1,1,1);
+
+
 %                 fig1 = figure('Visible', 'on');
 
                 if isequal(hcaSets.comparisonMethod,'mp') || isequal(hcaSets.comparisonMethod,'mpnan')  || isequal(hcaSets.comparisonMethod,'mpAll') || isequal(hcaSets.comparisonMethod,'hmm')
-                    ax1 = subplot(fig1,1,1,1);
                     if max2~=0
                         plot_best_bar_mp(ax1,barcodeGenC,[],comparisonStruct, theoryStruct, max2,1,hcaSets);
                     end
                 else
-                    plot_best_bar(fig1,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, max2);
+                    hold on
+                    plot_best_bar(ax1,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, max2);
                 end
 
                 saveas(fig1,fullfile(hcaSets.output.matDirpath,'all_molecules',[hcaSets.timestamp,'Plots'],strcat([num2str(i) '_plot.jpg'])));
