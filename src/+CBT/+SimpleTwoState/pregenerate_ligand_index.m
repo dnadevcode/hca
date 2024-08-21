@@ -6,8 +6,8 @@ folderName = arrayfun(@(x) fullfile(a(x).folder,a(x).name),1:length(a),'un',fals
 
 
 
-for idx=982:length(folderName)
-    idx
+parfor idx=1:length(folderName)
+    % idx
 
     % slow part: reading sequence and indexing. Could be pre-calculated
     
