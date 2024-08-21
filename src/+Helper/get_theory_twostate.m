@@ -1,4 +1,4 @@
-function [theorySeq, theoryStr] = get_theory_twostate(fastaName,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY);
+function [theorySeq, theoryStr] = get_theory_twostate(fastaName,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength)
 
     fasta = fastaread(fastaName);
     ntSeq = nt2int(fasta.Sequence);
@@ -7,7 +7,7 @@ function [theorySeq, theoryStr] = get_theory_twostate(fastaName,gcSF,pxSize,nmpx
     numWsCumSum = cumsum((ntSeq == 1)  | (ntSeq == 4) );
 
     import CBT.SimpleTwoState.gen_simple_theory_px;
-    [theorySeq] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY);
+    [theorySeq] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength);
 
     if nargout >=2
         theoryStr{1}.rawBarcode = theorySeq;

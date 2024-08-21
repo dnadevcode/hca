@@ -1,4 +1,4 @@
-function [pxCutLeft,pxCutRight,px] = px_cut_pos(numWsCumSum,gcSF,pxSize)
+function [pxCutLeft,pxCutRight,px] = px_cut_pos(numWsCumSum, gcSF, pxSize)
 
 % Find px positions, start at 1
 px= 1;

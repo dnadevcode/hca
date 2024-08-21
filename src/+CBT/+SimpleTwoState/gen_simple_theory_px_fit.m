@@ -1,4 +1,4 @@
-function [barLong] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma,kN,nm,cY,cN,kY,ligandLength)
+function [barLong] = gen_simple_theory_px_fit(ntSeq,gcSF,pxSize,nmpx,isC,sigma,kN,nm,cY,cN,kY,ligandLength,yoyoBindingProb,idsElt)
     % create a simple theory with Gaussian convolution at the px level
     % gen_simple_theory_bp will create at the bp level
 
@@ -19,7 +19,7 @@ function [barLong] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma
     
     % left right cut positions
     import CBT.SimpleTwoState.px_cut_pos;
-    [pxCutLeft, pxCutRight, px] = px_cut_pos(numWsCumSum,gcSF,pxSize);
+    [pxCutLeft, pxCutRight, px] = px_cut_pos( cumsum((ntSeq == 1)  | (ntSeq == 4) ),gcSF,pxSize);
     
     k=1;
     
@@ -27,27 +27,28 @@ function [barLong] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma
     % k=1;
     % constFun = arrayfun(@(x) netrConst*exp(-x/sigma(k)),ones(1,length(sortedSubseq)).*(4-sortv));
 
-
 %     numGCs = zeros(1,px-1);
-    numATs  = zeros(px-1,ligandLength+1);
+    numGCsScaled  = zeros(1,px-1);
     % create px based map
     for i=1:px-1
+        probsIndividual = yoyoBindingProb(idsElt(pxCutLeft(i):pxCutRight(i)-ligandLength));
+        numGCsScaled(i) = sum(probsIndividual/length(probsIndividual));
 %         if i==1
 %            numGCs(i) =  pxCutRight(i)-pxCutLeft(i)+1 - numWsCumSum(pxCutRight(i));
 %         else
 %            numGCs(i) = pxCutRight(i)-pxCutLeft(i)+1 -( numWsCumSum(pxCutRight(i))-numWsCumSum(pxCutLeft(i)-1));    
 %         end
-       all4mers = numWsCumSum(pxCutLeft(i)+ligandLength:pxCutRight(i))-numWsCumSum(pxCutLeft(i):pxCutRight(i)-ligandLength);
-       numATs(i,:) = arrayfun(@(x) sum(all4mers==x)/length(all4mers),ligandLength:-1:0);
+%        all4mers = numWsCumSum(pxCutLeft(i)+ligandLength:pxCutRight(i))-numWsCumSum(pxCutLeft(i):pxCutRight(i)-ligandLength);
+%        numATs(i,:) = arrayfun(@(x) sum(all4mers==x)/length(all4mers),ligandLength:-1:0);
     
     end
 
-    constFun = arrayfun(@(x) kN*exp(-x/sigma(k)),(0:ligandLength));
+%     constFun = arrayfun(@(x) kN*exp(-x/sigma(k)),(0:ligandLength));
 
-    probYoyoBasedAT = cY*kY./(1+cY*kY+cN.*constFun);
+%     probYoyoBasedAT = cY*kY./(1+cY*kY+cN.*constFun);
 
 
-    numGCsScaled = [numATs*probYoyoBasedAT']';
+%     numGCsScaled = [numATs*probYoyoBasedAT']';
 % numGCsScaled = arrayfun(@(x) numATs(x,:)*netrConst*exp(-(0:4)'/sigma(k)),1:px-1);
 
 
