@@ -1,19 +1,24 @@
-function [t,theoryGen] = run_theory_generate_fit(fold,nmbp,yoyoBindingProb)
+function [t,theoryGen] = run_theory_generate_fit(fold,nmbp,yoyoBindingProb,precalc)
 
 % Inline theory generation without passing through hca_barcode_alignment for the fitted YOYO-1 binding probability model,
 % One can use this function with batch command
 %  c = parcluster;
-% batch(c,@run_theory_generate_fit,1,{folderName,nmbp},'Pool',29);
+% batch(c,@run_theory_generate_fit,1,{folderName,nmbp,0},'Pool',29);
 
-addpath(genpath('/home/avesta/albertas/reps/hca'));
+t0 = tic;
+
+% addpath(genpath('/home/avesta/albertas/reps/hca'));
 
 timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
 
+if precalc==1
+    a=dir(fullfile(fold,'*.mat'));
+    folderName = arrayfun(@(x) fullfile(a(x).folder,['seq', num2str(x),'.mat']),1:length(a),'un',false);
+else
+    a=dir(fullfile(fold,'*.fasta'));
+    folderName = arrayfun(@(x) fullfile(a(x).folder,a(x).name),1:length(a),'un',false);
+end
 
-a=dir(fullfile(fold,'*.fasta'));
-folderName = arrayfun(@(x) fullfile(a(x).folder,a(x).name),1:length(a),'un',false);
-
-t0 = tic;
 
 [hcatheory.sets,hcatheory.names] = Core.Default.read_default_sets('hcasets.txt');
 
@@ -61,24 +66,34 @@ theoryIdx = cell(1,length(folds));
 %todo: add a progressbar
 import CBT.SimpleTwoState.gen_simple_theory_px_fit;
 
-parfor idx=1:length(folds)
-    idx
 
+
+% N = length(folds);
+% parfor_progress(N); % Initialize 
+
+parfor idx=1%:length(folds)
+%     idx
+    data = struct("atsum",[],'name',[],'idsElt',[]);
+
+    if precalc
+       data = load(folds{idx});
+    else
     % slow part: reading sequence and indexing. Could be pre-calculated
-    fasta = fastaread(folds{idx});
-    ntSeq = nt2int(fasta.Sequence,'Unknown',4);
-    ntSeq(ntSeq>4) = 4; % simplify by converting all special letters to thymidine. Works fine if very few NN
-
-    sz = ones(1,ligandLength)*4;
-    I = arrayfun(@(x) ntSeq(x+(1:length(ntSeq)-ligandLength+1)),0:ligandLength-1,'un',false);
-    idsElt = sub2ind(sz, I{:} );
-
-    atsum = cumsum((ntSeq == 1)  | (ntSeq == 4) );
-
+        fasta = fastaread(folds{idx});
+        data.ntSeq = nt2int(fasta.Sequence,'Unknown',4);
+        data.ntSeq(data.ntSeq>4) = 4; % simplify by converting all special letters to thymidine. Works fine if very few NN
+    
+        sz = ones(1,ligandLength)*4;
+        I = arrayfun(@(x) data.ntSeq(x+(1:length(data.ntSeq)-ligandLength+1)),0:ligandLength-1,'un',false);
+        data.idsElt = sub2ind(sz, I{:} );
+    
+        data.atsum = cumsum((data.ntSeq == 1)  | (data.ntSeq == 4) );
+        data.name = fasta.Header;
+    end
     %
 
     % fast part
-    [theorySeq] = gen_simple_theory_px_fit(ntSeq,gcSF,pxSize,nmpx,isC,[],[],psf,[], [],[],ligandLength,yoyoBindingProb,idsElt);
+    [theorySeq] = gen_simple_theory_px_fit(data.atsum,gcSF,pxSize,nmpx,isC,[],[],psf,[], [],[],ligandLength,yoyoBindingProb,data.idsElt);
 
 
 %     [theorySeq] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY);
@@ -87,11 +102,15 @@ parfor idx=1:length(folds)
     theoryBarcodes{idx} = theorySeq;
     theoryBitmasks{idx} = [];
     
-    theoryNames{idx} = fasta.Header;
+    theoryNames{idx} = data.name;
     theoryIdx{idx} = idx;
+%     if mod(idx,200) == 0
+%         parfor_progress; % Count 
+%     end
 %     toc
 end
-   
+%    parfor_progress(0); % Clean up
+
 disp('Finished calculating theories')
 
 

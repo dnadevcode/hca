@@ -19,7 +19,9 @@ function [barLong] = gen_simple_theory_px_fit(ntSeq,gcSF,pxSize,nmpx,isC,sigma,k
     
     % left right cut positions
     import CBT.SimpleTwoState.px_cut_pos;
-    [pxCutLeft, pxCutRight, px] = px_cut_pos( cumsum((ntSeq == 1)  | (ntSeq == 4) ),gcSF,pxSize);
+    [pxCutLeft, pxCutRight, px] = px_cut_pos( ntSeq, gcSF, pxSize);
+
+%     [pxCutLeft, pxCutRight, px] = px_cut_pos( cumsum((ntSeq == 1)  | (ntSeq == 4) ),gcSF,pxSize);
     
     k=1;
     
