@@ -1,4 +1,4 @@
-function [t] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles)
+function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles)
 
 % run_pipeline_scores - optimized function to run experiment vs theory
 % comparisons
@@ -177,6 +177,8 @@ sets.comparisonMethod = 'mpnan';
 import CBT.Hca.Core.Comparison.hca_compare_distance;
 import Core.export_coefs_local;
 
+outputLocs = cell(1,length(windowWidths));
+
 for wIdx = 1:length(windowWidths)
     sets.w = windowWidths(wIdx);
     display(['Running w = ',num2str(sets.w)]);
@@ -211,7 +213,7 @@ for wIdx = 1:length(windowWidths)
     allCoefs = cellfun(@(x) x{1}, rezMaxMP,'un',false);
     matAllCoefs =  cat(3, allCoefs{:});
     save([sets.dirName, num2str(sets.w),'_', num2str(min(sF)),'sf_allcoefs.mat'],'matAllCoefs','passingThreshBars','sets','-v7.3');
-
+    outputLocs{wIdx}{1} = [sets.dirName, num2str(sets.w),'_', num2str(min(sF)),'sf_allcoefs.mat'];
     tic
     maxCoef = cell(1,size(matAllCoefs,1));
     maxOr = cell(1,size(matAllCoefs,1));
@@ -233,9 +235,10 @@ for wIdx = 1:length(windowWidths)
     end
     toc
   
-    export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames(passingThreshBars),[sets.dirName, '_MP_w=',num2str(sets.w),'_']);
+    matFilepath = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames(passingThreshBars),[sets.dirName, '_MP_w=',num2str(sets.w),'_']);
 %     export_coefs(theoryStruct(1:100),rezMax,bestBarStretchMP,barGen(passingThreshBars),[sets.dirName, '_MP_w=',num2str(sets.w),'_']);
-
+    outputLocs{wIdx}{2} = matFilepath;
+    outputLocs{wIdx}{3} = sets.thryFile;
 
 
 

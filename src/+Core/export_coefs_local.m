@@ -1,4 +1,4 @@
-function [] = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames,matDirpath)
+function [matFilepath] = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames,matDirpath)
 
 % export_coefs_local
 
@@ -13,7 +13,7 @@ for i=1:length(barcodeNames)
     T = [T T2];
 end
 disp('Saving ccvals table');
-exptxt(T, matDirpath);
+matFilepath = exptxt(T, matDirpath);
 
     function [matFilepath,timestamp] = exptxt(T, matDirpath, timestamp, writemode)
         % Exports table as txt
