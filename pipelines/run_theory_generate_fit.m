@@ -71,7 +71,7 @@ import CBT.SimpleTwoState.gen_simple_theory_px_fit;
 % N = length(folds);
 % parfor_progress(N); % Initialize 
 
-parfor idx=1%:length(folds)
+parfor idx=1:length(folds)
 %     idx
     data = struct("atsum",[],'name',[],'idsElt',[]);
 
