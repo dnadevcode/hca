@@ -1,14 +1,17 @@
-function [theorySeq, theoryStr,yoyoBindingProb,netropsinBindingConst] = get_theory_twostate_fit(fastaName,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength,yoyoBindingProb)
+function [theorySeq, theoryStr,yoyoBindingProb,netropsinBindingConst] = get_theory_twostate_fit(dataName,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength,yoyoBindingProb)
 
+    if ~isstruct(dataName) % speed things up by making it a structure
     % todo: load this to speed things up
-    [~,mid,~] = fileparts(fastaName);
+    [~,mid,~] = fileparts(dataName);
 
-    saveforspeed = 0;
+    saveforspeed = 1;
 
     try
+%         tic
         data = load(['seq_example',mid,'_',num2str(ligandLength) ,'.mat']);
+%         toc
     catch
-        fasta = fastaread(fastaName);
+        fasta = fastaread(dataName);
         ntSeq = nt2int(fasta.Sequence);
 
         sz = ones(1,ligandLength)*4;
@@ -24,10 +27,18 @@ function [theorySeq, theoryStr,yoyoBindingProb,netropsinBindingConst] = get_theo
 %             idsElt(i) = sub2ind(sz, cellInd{:} );
 %         end
 
+        
+        % left right cut positions
+        import CBT.SimpleTwoState.px_cut_pos;
+        [data.pxcut.pxCutLeft, data.pxcut.pxCutRight, data.pxcut.px] = px_cut_pos( data.atsum, gcSF, pxSize);
+        
         if saveforspeed == 1;
             save(['seq_example',mid,'_',num2str(ligandLength) ,'.mat'],"-fromstruct",data);
         end
 
+    end
+    else
+        data = dataName;
     end
 
     if nargin < 13 || isempty(yoyoBindingProb)
@@ -43,7 +54,7 @@ function [theorySeq, theoryStr,yoyoBindingProb,netropsinBindingConst] = get_theo
 %     numWsCumSum = cumsum((ntSeq == 1)  | (ntSeq == 4) );
 
     import CBT.SimpleTwoState.gen_simple_theory_px_fit;
-    [theorySeq] = gen_simple_theory_px_fit(data.atsum,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength,yoyoBindingProb,data.idsElt);
+    [theorySeq] = gen_simple_theory_px_fit(data.pxcut,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength,yoyoBindingProb,data.idsElt);
 
     if nargout >=2
         theoryStr{1}.rawBarcode = theorySeq;

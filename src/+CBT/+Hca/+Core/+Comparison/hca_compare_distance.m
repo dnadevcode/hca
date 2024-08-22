@@ -1,4 +1,4 @@
-function [rezMax, allCoefs] = hca_compare_distance(barcodeGen,theoryStruct, sets )
+function [rezMax, allCoefs,timePassed] = hca_compare_distance(barcodeGen,theoryStruct, sets )
     % hca_compare_distance
     % Compares experiments to theory. Helping function with the parfor
     %     Args:
@@ -9,8 +9,12 @@ function [rezMax, allCoefs] = hca_compare_distance(barcodeGen,theoryStruct, sets
     %     Returns:
     %         comparisonStruct: comparison structure
         
-    disp('Starting comparing exp to theory...')
-    tic
+    if ~isfield(sets,'displayoff')
+
+        disp('Starting comparing exp to theory...')
+        tic
+
+    end
     
     comparisonMethod = sets.comparisonMethod;
     w = sets.w;
@@ -50,23 +54,35 @@ function [rezMax, allCoefs] = hca_compare_distance(barcodeGen,theoryStruct, sets
 
     % Computing distances for each theory against all experiments. This
 %     % loop can be parallelized (parfor)
-tic
-   parfor barNr = 1:length(theoryStruct)
-%         barNr
+if length(theoryStruct) > 30 % only use par when significant number of theories
+
+    parfor barNr = 1:length(theoryStruct)
+        %         barNr
         try
             [rezMax{barNr} ] = ...
                 on_compare_sf(barcodeGen,theoryStruct(barNr),comparisonMethod,w,numPixelsAroundBestTheoryMask);
-%             rezMax{barNr} = out;
-%             allCoefs(:,:,barNr)  = out{2};
-
         catch
             disp(['error with ',num2str(barNr)]);
         end
 
 
     end
-toc
-    timePassed = toc;
-    disp(strcat(['Experiments were compared to theory in ' num2str(timePassed) ' seconds']));
+else
+    for barNr = 1:length(theoryStruct)
+        %         barNr
+        try
+            [rezMax{barNr} ] = ...
+                on_compare_sf(barcodeGen,theoryStruct(barNr),comparisonMethod,w,numPixelsAroundBestTheoryMask);
+        catch
+            disp(['error with ',num2str(barNr)]);
+        end
+
+
+    end
+
+    if ~isfield(sets,'displayoff')
+        timePassed = toc;
+        disp(strcat(['Experiments were compared to theory in ' num2str(timePassed) ' seconds']));
+    end
 end
 

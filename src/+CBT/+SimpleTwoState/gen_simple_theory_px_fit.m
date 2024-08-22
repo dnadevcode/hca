@@ -1,4 +1,4 @@
-function [barLong] = gen_simple_theory_px_fit(ntSeq,gcSF,pxSize,nmpx,isC,sigma,kN,nm,cY,cN,kY,ligandLength,yoyoBindingProb,idsElt)
+function [barLong] = gen_simple_theory_px_fit(pxStruct,gcSF,pxSize,nmpx,isC,sigma,kN,nm,cY,cN,kY,ligandLength,yoyoBindingProb,idsElt)
     % create a simple theory with Gaussian convolution at the px level
     % gen_simple_theory_bp will create at the bp level
 
@@ -18,10 +18,12 @@ function [barLong] = gen_simple_theory_px_fit(ntSeq,gcSF,pxSize,nmpx,isC,sigma,k
     pxPsf = nm/nmpx;
     
     % left right cut positions
-    import CBT.SimpleTwoState.px_cut_pos;
-    [pxCutLeft, pxCutRight, px] = px_cut_pos( ntSeq, gcSF, pxSize);
+%     import CBT.SimpleTwoState.px_cut_pos;
+%     [pxCutLeft, pxCutRight, px] = px_cut_pos( ntSeq, gcSF, pxSize);
+    pxCutLeft = pxStruct.pxCutLeft;
+    pxCutRight = pxStruct.pxCutRight;
+    px = pxStruct.px;
 
-%     [pxCutLeft, pxCutRight, px] = px_cut_pos( cumsum((ntSeq == 1)  | (ntSeq == 4) ),gcSF,pxSize);
     
     k=1;
     
@@ -31,10 +33,12 @@ function [barLong] = gen_simple_theory_px_fit(ntSeq,gcSF,pxSize,nmpx,isC,sigma,k
 
 %     numGCs = zeros(1,px-1);
     numGCsScaled  = zeros(1,px-1);
+    ll = pxCutRight(1)-pxCutLeft(1)-ligandLength+1;
+%     numGCsScaled = arrayfun(@(x) sum(yoyoBindingProb(idsElt(pxCutLeft(x):pxCutRight(x)-ligandLength))/(pxCutRight(1)-pxCutLeft(1)-ligandLength+1)),1:px-1);
     % create px based map
     for i=1:px-1
         probsIndividual = yoyoBindingProb(idsElt(pxCutLeft(i):pxCutRight(i)-ligandLength));
-        numGCsScaled(i) = sum(probsIndividual/length(probsIndividual));
+        numGCsScaled(i) = sum(probsIndividual/ll);
 %         if i==1
 %            numGCs(i) =  pxCutRight(i)-pxCutLeft(i)+1 - numWsCumSum(pxCutRight(i));
 %         else
