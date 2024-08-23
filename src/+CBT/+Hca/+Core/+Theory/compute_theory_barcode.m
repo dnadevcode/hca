@@ -149,18 +149,19 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     Y = fft(y);
         
     % Only save the pixelated theory values in vector "theory"
-    f = waitbar(0, 'Starting');
+%     f = waitbar(0, 'Starting');
     
     leftOverTheory = [];
     
     % wrapper for different possible theories
     import CBT.Hca.Core.Theory.compute_theory_wrapper;
+    
 
     % main loop to compute the theories in batches of length k.
     for j = 1:k-m:n-k+1 % this is k-m+1 when computing the correlation. Maybe want to keep the same notation, and have k-m+1 here too?
         % compute theory for a fragment, which is 
         % take k elements and
-        waitbar(j/(n-k+1), f, sprintf('Progress: %d %%', floor(j/(n-k+1)*100)));
+%         waitbar(j/(n-k+1), f, sprintf('Progress: %d %%', floor(j/(n-k+1)*100)));
         x = compute_theory_wrapper(ts(j:j+k-1), sets);
         
         if  sets.theoryGen.addpsf 
@@ -249,6 +250,6 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
         
 %             leftOverTheory = tempTheory(cutPointsR(vals(idd))-j+1:end);   
         end
-       close(f); 
+%        close(f); 
 end
 
