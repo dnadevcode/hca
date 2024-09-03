@@ -40,9 +40,10 @@ function test_run_pipeline_scores_1Case(testCase)
     nmpx = 110;
     isC = 1;
     pxSize = nmpx/0.3;
+    ligandLength = 4;
 
     import Helper.get_theory_twostate;
-    [theorySeq,theoryStruct] = get_theory_twostate(fastaName,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY);
+    [theorySeq,theoryStruct] = get_theory_twostate(fastaName,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY,ligandLength);
 
     theoryGen = [];
     theoryGen.theoryBarcodes = {theoryStruct{1}.rawBarcode};
@@ -62,7 +63,7 @@ function test_run_pipeline_scores_1Case(testCase)
 %     thryFiles 
     thryFiles = dir(fullfile(tempFold1,'*.mat'));
     
-    [t] = run_pipeline_scores(tempFold1, twoList(1,:), 1, [0], sF, timeFramesNr, thryFiles)
+    [t] = run_pipeline_scores(tempFold1, twoList(1,:), 1, [0], sF, timeFramesNr, thryFiles);
 
 
     [~,~] =  rmdir(tempFold1,'s'); % remove temporary folder

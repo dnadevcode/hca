@@ -252,7 +252,7 @@ for wIdx = 1:length(windowWidths)
 end
 
 clear theoryStruct;
-delete(gcp);
+delete(gcp('nocreate'));
     %
 
 

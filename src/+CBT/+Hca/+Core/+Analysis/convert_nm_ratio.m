@@ -41,36 +41,64 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
         sigmaDif = sqrt(sigma^2-sigma1^2);
        
         %
-        for i=1:length(theoryStruct)
-            if theoryStruct(i).length ~= 0
-                % first convert to the correct length
-                seq = convert_bpRes_to_pxRes(theoryStruct(i).rawBarcode, 1/pxSize);
-        
-                % length of kernel
-                hsize = size(seq,2);
-                
-                % kernel
-                ker = circshift(images.internal.createGaussianKernel(sigmaDif, hsize),round(hsize/2));   
-                
-                % conjugate of kernel in phase space
-                multF=conj(fft(ker'));
-                % convolved with sequence ->
-                theoryStruct(i).rawBarcode = ifft(fft(seq).*multF); 
-                
-                if isfield(theoryStruct(i),'rawBitmask')&&~isempty(theoryStruct(i).rawBitmask)
-                    theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
+        if length(theoryStruct) > 30
+            parfor i=1:length(theoryStruct)
+                if theoryStruct(i).length ~= 0
+                    % first convert to the correct length
+                    seq = convert_bpRes_to_pxRes(theoryStruct(i).rawBarcode, 1/pxSize);
+            
+                    % length of kernel
+                    hsize = size(seq,2);
+                    
+                    % kernel
+                    ker = circshift(images.internal.createGaussianKernel(sigmaDif, hsize),round(hsize/2));   
+                    
+                    % conjugate of kernel in phase space
+                    multF=conj(fft(ker'));
+                    % convolved with sequence ->
+                    theoryStruct(i).rawBarcode = ifft(fft(seq).*multF); 
+                    
+                    if isfield(theoryStruct(i),'rawBitmask')&&~isempty(theoryStruct(i).rawBitmask)
+                        theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
+                    end
+                    theoryStruct(i).meanBpExt_nm = newNmBp;
+                    theoryStruct(i).length = hsize;
+                 
+    
                 end
-                theoryStruct(i).meanBpExt_nm = newNmBp;
-                theoryStruct(i).length = hsize;
-             
+            end
+        else % do not run parfor for small datasets
+            for i=1:length(theoryStruct)
+                if theoryStruct(i).length ~= 0
+                    % first convert to the correct length
+                    seq = convert_bpRes_to_pxRes(theoryStruct(i).rawBarcode, 1/pxSize);
 
+                    % length of kernel
+                    hsize = size(seq,2);
+
+                    % kernel
+                    ker = circshift(images.internal.createGaussianKernel(sigmaDif, hsize),round(hsize/2));
+
+                    % conjugate of kernel in phase space
+                    multF=conj(fft(ker'));
+                    % convolved with sequence ->
+                    theoryStruct(i).rawBarcode = ifft(fft(seq).*multF);
+
+                    if isfield(theoryStruct(i),'rawBitmask')&&~isempty(theoryStruct(i).rawBitmask)
+                        theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
+                    end
+                    theoryStruct(i).meanBpExt_nm = newNmBp;
+                    theoryStruct(i).length = hsize;
+
+
+                end
             end
         end
     else % old, if need to save to individual txts (for running with tools outside hca)
         precision = sets.theory.precision;
         matDirpath = sets.output.matDirpath;
         [~,~] =mkdir(fullfile(matDirpath,'theories'));
-        for i=1:length(theoryStruct)
+        parfor i=1:length(theoryStruct)
             if theoryStruct{i}.length ~= 0
         
                 % first change nm to bp ratio
