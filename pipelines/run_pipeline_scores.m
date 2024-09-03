@@ -1,4 +1,4 @@
-function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles)
+function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles,savedir)
 
 % run_pipeline_scores - optimized function to run experiment vs theory
 % comparisons
@@ -57,6 +57,10 @@ end
 % iy = 1; % most likely single run
 sets.dirName = fullfile(subDir(iy).folder,subDir(iy).name);
 
+if nargin < 8
+    savedir = sets.dirName;
+end
+
 % smart extract nmPerbp from folder name
 [sets.nmbp, nmpx] = Input.extract_extension_params(sets.dirName);
 
@@ -90,7 +94,7 @@ sets.genConsensus  = 0;
 %  following "Strain-level bacterial typing directly from patient
 % samples using optical DNA mapping"
 
-if nargin < 8
+if nargin < 6
     sets.timeFramesNr = 20;
 else
     sets.timeFramesNr = timeFramesNr;
@@ -177,6 +181,8 @@ sets.comparisonMethod = 'mpnan';
 import CBT.Hca.Core.Comparison.hca_compare_distance;
 import Core.export_coefs_local;
 
+dateVec =  datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+
 outputLocs = cell(1,length(windowWidths));
 
 for wIdx = 1:length(windowWidths)
@@ -212,8 +218,8 @@ for wIdx = 1:length(windowWidths)
     % Get info for all the coefficients. Save this as a separate matrix
     allCoefs = cellfun(@(x) x{1}, rezMaxMP,'un',false);
     matAllCoefs =  cat(3, allCoefs{:});
-    save([sets.dirName, num2str(sets.w),'_', num2str(min(sF)),'sf_allcoefs.mat'],'matAllCoefs','passingThreshBars','sets','-v7.3');
-    outputLocs{wIdx}{1} = [sets.dirName, num2str(sets.w),'_', num2str(min(sF)),'sf_allcoefs.mat'];
+    save([savedir,'_', num2str(sets.w),'_', num2str(min(sF)),'sf_allcoefs',dateVec,'.mat'],'matAllCoefs','passingThreshBars','sets','-v7.3');
+    outputLocs{wIdx}{1} = [savedir, '_',num2str(sets.w),'_', num2str(min(sF)),'sf_allcoefs',dateVec,'.mat'];
     tic
     maxCoef = cell(1,size(matAllCoefs,1));
     maxOr = cell(1,size(matAllCoefs,1));
@@ -235,7 +241,7 @@ for wIdx = 1:length(windowWidths)
     end
     toc
   
-    matFilepath = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames(passingThreshBars),[sets.dirName, '_MP_w=',num2str(sets.w),'_']);
+    matFilepath = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames(passingThreshBars),[savedir, '_MP_w=',num2str(sets.w),'_'],dateVec);
 %     export_coefs(theoryStruct(1:100),rezMax,bestBarStretchMP,barGen(passingThreshBars),[sets.dirName, '_MP_w=',num2str(sets.w),'_']);
     outputLocs{wIdx}{2} = matFilepath;
     outputLocs{wIdx}{3} = sets.thryFile;

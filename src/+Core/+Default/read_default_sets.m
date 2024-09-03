@@ -17,10 +17,14 @@ function [myStruct, myNames] = read_default_sets(setstxt)
         for i=1:depth
             [mFilePath, ~] = fileparts(mFilePath);
         end
-        setstxt  = fullfile(mFilePath,'files',setstxt);
+        setstxtFull  = fullfile(mFilePath,'files',setstxt);
     end
 
-    setsTable  = readtable(setstxt,'Format','%s%s%s','VariableNamingRule','preserve');
+    try
+        setsTable  = readtable(setstxtFull,'Format','%s%s%s','VariableNamingRule','preserve');
+    catch
+        setsTable  = readtable(setstxt,'Format','%s%s%s','VariableNamingRule','preserve');
+    end
     
     cellNames = {};
     myNames = cell(1,size(setsTable,1));

@@ -1,4 +1,4 @@
-function [barN, twoList] = get_all_folders(dirName)
+function [barN, twoList,foldname] = get_all_folders(dirName)
 
 
 if nargin < 1
@@ -21,6 +21,7 @@ for i=1:numDirs
     subdirs(i) = numel(dr2);
     for j=1:numel(dr2)
         barN{i}(j) = numel(dir(fullfile(dr2(j).folder,dr2(j).name,'kymos','*.tif')));
+        foldname{i}{j} = dr2(j).name;
     end
 end
 

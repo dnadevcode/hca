@@ -1,6 +1,13 @@
-function [matFilepath] = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames,matDirpath)
+function [matFilepath] = export_coefs_local(thryNames,maxCoef,maxOr,maxPos,maxlen, bestSF, barcodeNames,matDirpath,timestamp)
 
 % export_coefs_local
+if nargin < 9
+    timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
+end
+
+if nargin < 10
+    writemode = 'overwrite';
+end
 
 T = table(thryNames');
 
@@ -13,7 +20,7 @@ for i=1:length(barcodeNames)
     T = [T T2];
 end
 disp('Saving ccvals table');
-matFilepath = exptxt(T, matDirpath);
+matFilepath = exptxt(T, matDirpath,timestamp, writemode);
 
     function [matFilepath,timestamp] = exptxt(T, matDirpath, timestamp, writemode)
         % Exports table as txt

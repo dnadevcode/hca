@@ -41,7 +41,7 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
         sigmaDif = sqrt(sigma^2-sigma1^2);
        
         %
-        parfor i=1:length(theoryStruct)
+        for i=1:length(theoryStruct)
             if theoryStruct(i).length ~= 0
                 % first convert to the correct length
                 seq = convert_bpRes_to_pxRes(theoryStruct(i).rawBarcode, 1/pxSize);
@@ -70,7 +70,7 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
         precision = sets.theory.precision;
         matDirpath = sets.output.matDirpath;
         [~,~] =mkdir(fullfile(matDirpath,'theories'));
-        parfor i=1:length(theoryStruct)
+        for i=1:length(theoryStruct)
             if theoryStruct{i}.length ~= 0
         
                 % first change nm to bp ratio

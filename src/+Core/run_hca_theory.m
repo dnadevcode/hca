@@ -40,11 +40,15 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     % theories names
     theories = hcaSets.folder;
 
-    hcaSets.resultsDir = fullfile(fileparts(theories{1}),'theoryOutput'); % we always save theories output in the same folder as provided data
+    try
+        hcaSets.resultsDir = fullfile(fileparts(theories{1}),'theoryOutput'); % we always save theories output in the same folder as provided data
+        % make theoryData folder
+        [~,~] = mkdir(hcaSets.resultsDir);
+
+    catch
+        hcaSets.resultsDir ='';
+    end
     
-    
-    % make theoryData folder
-    [~,~] = mkdir(hcaSets.resultsDir);
 
     % compute free concentrations
     import CBT.Hca.Core.Theory.compute_free_conc;
@@ -67,11 +71,17 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
 
     import CBT.Hca.Core.Theory.compute_theory_barcode;
 
+    if length(theories) > 1
+
     % loop over theory file folder
     parfor idx = 1:length(theories)
-    
-        addpath(genpath(fileparts(theories{idx})))
-        disp(strcat(['loaded theory sequence ' theories{idx}] ));
+        try
+            addpath(genpath(fileparts(theories{idx})));
+            disp(strcat(['loaded theory sequence ' theories{idx}] ));
+        catch
+            addpath(genpath(fileparts(theories{idx}.Filename))); % if preloaded
+
+        end
     
         % new way to generate theory, check theory_test.m to check how it works
         [theorySeq, header,bitmask] = compute_theory_barcode(theories{idx},hcaSets);
@@ -83,7 +93,28 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
         theoryIdx{idx} = idx;
         bpNm{idx} = meanBpExt_nm/psfSigmaWidth_nm;         
     end
+    else
+    % loop over theory file folder
+    for idx = 1:length(theories)
+        try
+            addpath(genpath(fileparts(theories{idx})));
+            disp(strcat(['loaded theory sequence ' theories{idx}] ));
+        catch
+            addpath(genpath(fileparts(theories{idx}.Filename))); % if preloaded
+        end
     
+        % new way to generate theory, check theory_test.m to check how it works
+        [theorySeq, header,bitmask] = compute_theory_barcode(theories{idx},hcaSets);
+    
+	    theoryBarcodes{idx} = theorySeq;
+        theoryBitmasks{idx} = bitmask;
+    
+        theoryNames{idx} = header;
+        theoryIdx{idx} = idx;
+        bpNm{idx} = meanBpExt_nm/psfSigmaWidth_nm;         
+    end
+
+    end
     theoryGen.theoryBarcodes = theoryBarcodes;
     theoryGen.theoryBitmasks = theoryBitmasks;
     theoryGen.theoryNames = theoryNames;

@@ -19,14 +19,15 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
         sets.theoryGen.addpsf = 1;               % is theory circular
     end
 
-    if ~isfield(name,'Data')
-    
+    try
+        pregen = 1; % whether data has been pregenerated
         % create an easier accessible file
         import CBT.Hca.Core.Theory.create_memory_struct;
         [chr1,header] = create_memory_struct(name);
-    else
+    catch
         chr1 = name;
         header = 'test';
+        pregen = 0;
     end
 
     if ~isfield(sets.theoryGen,'addpsf')
@@ -104,7 +105,9 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     nSeq = length(chr1.Data); % theory + extra things on the left and right
 
     % clear chr1
-    delete(chr1.Filename);
+    if pregen~=1
+    delete(chr1.Filename); % affects parpool if same sequence called twice
+    end
     clear chr1;
     
     % number of pixels. This comes from the size of original sequence

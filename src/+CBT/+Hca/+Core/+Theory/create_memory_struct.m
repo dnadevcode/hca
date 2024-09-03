@@ -1,4 +1,4 @@
-function [chr1,header] = create_memory_struct(file)
+function [chr1,header] = create_memory_struct(file,nmbp)
     %   create_memory_struct - memory structure to fix the issues when a
     %   very large theory is loaded to matlab
     %   https://se.mathworks.com/help/bioinfo/examples/working-with-whole-genome-data.html
@@ -9,6 +9,10 @@ function [chr1,header] = create_memory_struct(file)
     %   Returns:
     %       chr1,header: memory mapped sequence and header
     
+    if nargin < 2
+        nmbp = '';
+    end
+
     % open the file
     fidIn = fopen(file,'r');
     header = fgetl(fidIn);
@@ -17,7 +21,7 @@ function [chr1,header] = create_memory_struct(file)
     [fullPath, filename, extension] = fileparts(file);
     
     % save it temporarily in the working directory
-    mmFilename = [filename '.mm'];
+    mmFilename = [filename,'_', num2str(nmbp) , '.mm'];
     fidOut = fopen(mmFilename,'w');
     newLine = sprintf('\n');
 

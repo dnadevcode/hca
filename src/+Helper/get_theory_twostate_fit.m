@@ -8,7 +8,7 @@ function [theorySeq, theoryStr,yoyoBindingProb,netropsinBindingConst] = get_theo
 
     try
 %         tic
-        data = load(['seq_example',mid,'_',num2str(ligandLength) ,'.mat']);
+        data = load(['seq_example',mid,'_',num2str(ligandLength),'_',num2str(pxSize) ,'.mat']); % add nmpx att the end
 %         toc
     catch
         fasta = fastaread(dataName);
@@ -33,7 +33,7 @@ function [theorySeq, theoryStr,yoyoBindingProb,netropsinBindingConst] = get_theo
         [data.pxcut.pxCutLeft, data.pxcut.pxCutRight, data.pxcut.px] = px_cut_pos( data.atsum, gcSF, pxSize);
         
         if saveforspeed == 1;
-            save(['seq_example',mid,'_',num2str(ligandLength) ,'.mat'],"-fromstruct",data);
+            save(['seq_example',mid,'_',num2str(ligandLength),'_',num2str(pxSize) ,'.mat'],"-fromstruct",data);
         end
 
     end
