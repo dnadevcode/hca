@@ -1,4 +1,4 @@
-function [kymoStructs,barGen,nmpx,nmbp] = load_kymo_data(dirName,depth,ix,iy,sF)
+function [kymoStructs,barGen,nmpx,nmbp] = load_kymo_data(dirName,depth,ix,iy,sF,timeFramesNr)
 
 dirStruct = dir(dirName);
 dirStruct(~[dirStruct.isdir]) = [];  %remove non-directories
@@ -46,9 +46,15 @@ sets.bitmasking.untrustedPx = 6;
 sets.minLen = 150;
 sets.genConsensus  = 0;
 
+
+if nargin < 6
 %  following "Strain-level bacterial typing directly from patient
 % samples using optical DNA mapping"
 sets.timeFramesNr = 20;
+else
+sets.timeFramesNr = timeFramesNr;
+end
+
 if nargin < 5
     sets.theory.stretchFactors = 0.8:0.025:1; %as per 
 else

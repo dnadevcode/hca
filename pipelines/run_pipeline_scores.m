@@ -1,4 +1,4 @@
-function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles, savedir, thryIdx)
+function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles, savedir, thryIdx,preloadedTheory,preloaded_barGen)
 
 % run_pipeline_scores - optimized function to run experiment vs theory
 % comparisons
@@ -111,12 +111,16 @@ sets.edgeDetectionSettings.method = 'Otsu';
 
 %% START CALCULATION
 % load kymograph data
-import Core.load_kymo_data;
-[kymoStructs,barGen] = load_kymo_data(sets);
-
-% rescale
-import Core.rescale_barcode_data;
-[barGen] = rescale_barcode_data(barGen,sets.theory.stretchFactors);
+if nargin >=11
+    barGen = preloaded_barGen;
+else
+    import Core.load_kymo_data;
+    [kymoStructs,barGen] = load_kymo_data(sets);
+    
+    % rescale
+    import Core.rescale_barcode_data;
+    [barGen] = rescale_barcode_data(barGen,sets.theory.stretchFactors);
+end
 
 % save(['bars.mat'],'barGen','kymoStructs','sets');
 
@@ -135,11 +139,19 @@ sets.theoryFile{1} = sets.thryFile;
 sets.theoryFileFold{1} = '';
 sets.theory.precision = 5;
 sets.theory.theoryDontSaveTxts = 1;
-import CBT.Hca.UI.Helper.load_theory;
-theoryStruct = load_theory(sets);
+if nargin >=10 && ~isempty(preloadedTheory)
+    theoryStruct = preloadedTheory;
+else
+    import CBT.Hca.UI.Helper.load_theory;
+    theoryStruct = load_theory(sets);
+end
 
 % extract from name
 sets.theory.nmbp = sets.nmbp*mean(sets.theory.stretchFactors);
+
+if nargin>=9
+    theoryStruct = theoryStruct(thryIdx);
+end
 
 % 
 % tic
@@ -148,9 +160,7 @@ sets.theory.nmbp = sets.nmbp*mean(sets.theory.stretchFactors);
 import CBT.Hca.Core.Analysis.convert_nm_ratio;
 theoryStruct = convert_nm_ratio(sets.theory.nmbp, theoryStruct, sets );
 
-if nargin==9
-    theoryStruct = theoryStruct(thryIdx);
-end
+
 
 
 thryNames = {theoryStruct.name};
@@ -257,7 +267,7 @@ for wIdx = 1:length(windowWidths)
 end
 
 clear theoryStruct;
-delete(gcp('nocreate'));
+% delete(gcp('nocreate'));
     %
 
 

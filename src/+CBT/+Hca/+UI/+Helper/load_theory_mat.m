@@ -43,6 +43,7 @@ function [bars, bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinear
                 setsB = barcodeData.theoryGen.sets;        
             catch
                 bars = barcodeData.theoryBarcodes;
+                bits = barcodeData.theoryBitmasks;
                 names = barcodeData.theoryNames;
                 setsB = barcodeData.sets; 
             end
