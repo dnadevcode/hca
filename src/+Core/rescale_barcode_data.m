@@ -1,4 +1,4 @@
-function [barGen] = rescale_barcode_data(barGen,stretchFactors,initialStretch)
+function [barGen] = rescale_barcode_data(barGen,stretchFactors,initialStretch, maxRescaleFactor)
 
 %   Args:
 %       barGen - barcode cell structure
@@ -11,6 +11,10 @@ function [barGen] = rescale_barcode_data(barGen,stretchFactors,initialStretch)
 if nargin < 3
     initialStretch = ones(1,length(barGen));
 end
+
+% if nargin < 4
+%     maxRescaleFactor = 0;
+% end
 
 for i=1:length(barGen)
     lenBarTested = length(barGen{i}.rawBarcode);

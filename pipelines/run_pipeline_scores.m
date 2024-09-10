@@ -1,4 +1,4 @@
-function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles,savedir)
+function [t,outputLocs] = run_pipeline_scores(dirName, selIdxs, depth, windowWidths, sF, timeFramesNr, thryFiles, savedir, thryIdx)
 
 % run_pipeline_scores - optimized function to run experiment vs theory
 % comparisons
@@ -147,6 +147,11 @@ sets.theory.nmbp = sets.nmbp*mean(sets.theory.stretchFactors);
 
 import CBT.Hca.Core.Analysis.convert_nm_ratio;
 theoryStruct = convert_nm_ratio(sets.theory.nmbp, theoryStruct, sets );
+
+if nargin==9
+    theoryStruct = theoryStruct(thryIdx);
+end
+
 
 thryNames = {theoryStruct.name};
 barcodeNames = cellfun(@(x) x.name,barGen,'un',false);
