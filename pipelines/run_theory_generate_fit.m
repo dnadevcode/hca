@@ -42,8 +42,8 @@ theoryGen.sets = hcatheorySets;
 gcSF  = 1;
 % kY = 10; % binding constants, hard-coded for now
 % kN = 30;
-psf = 370; % seemed to give best results
-ligandLength = 4;
+psf = hcatheorySets.psf; % seemed to give best results
+ligandLength = hcatheorySets.ligandLength;
 % cN = hcatheorySets.concN;
 % cY = hcatheorySets.concY;
 nmpx = hcatheorySets.pixelWidthNm;
@@ -65,6 +65,7 @@ theoryIdx = cell(1,length(folds));
 
 %todo: add a progressbar
 import CBT.SimpleTwoState.gen_simple_theory_px_fit;
+        import CBT.SimpleTwoState.px_cut_pos;
 
 
 
@@ -89,6 +90,9 @@ parfor idx=1:length(folds)
     
         data.atsum = cumsum((data.ntSeq == 1)  | (data.ntSeq == 4) );
         data.name = fasta.Header;
+
+        [data.pxcut.pxCutLeft, data.pxcut.pxCutRight, data.pxcut.px] = px_cut_pos( data.atsum, gcSF, pxSize);
+ 
     end
     %
 

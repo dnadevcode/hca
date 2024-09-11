@@ -17,5 +17,7 @@ sequence.fasta | lambda name                                                    
 1               | Compute bitmask                                                       | default.computeBitmask
 sequence.fasta  |                                                                       | testName
 *.fasta         |   file extension                                                      | fileext
+4               | ligand length                                                         | default.ligandLength
+495             | non-default psf  for quick theory                                   | default.psf
 [15:17]         |   Checklist items                                                     | clIdx 
 

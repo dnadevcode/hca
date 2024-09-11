@@ -1,8 +1,10 @@
-function [] = pregenerate_ligand_index(fold,fold2,ligandLength)
+function [] = pregenerate_ligand_index(fold,fold2,ligandLength,gcSF, pxSize)
 % Pre-generates index for ligand for faster theory generation
 
 a = dir(fullfile(fold,'*.fasta'));
 folderName = arrayfun(@(x) fullfile(a(x).folder,a(x).name),1:length(a),'un',false);
+    
+import CBT.SimpleTwoState.px_cut_pos;
 
 
 
@@ -32,9 +34,14 @@ parfor idx=1:length(folderName)
 %     end
 %     toc
 %     isequal(idsElt2,idsElt)
+
+    pxcut = struct("pxCutLeft",[],"pxCutRight",[],"px",[]);
+    [pxcut.pxCutLeft, pxcut.pxCutRight, pxcut.px] = px_cut_pos( atsum, gcSF, pxSize);
+       
+
     name = fasta.Header;
 
-    s = struct("atsum",atsum,'name',name,'idsElt',idsElt);
+    s = struct("atsum",atsum,'name',name,'idsElt',idsElt,'pxcut', pxcut);
 %     save(sprintf("output_%d.mat",idx),"-fromstruct",s);
 
     save(fullfile(fold2,['seq', num2str(idx),'.mat']),"-fromstruct",s);
