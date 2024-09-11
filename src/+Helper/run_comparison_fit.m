@@ -13,7 +13,7 @@ pars = [parlistcell(1:parchangeId-1) par(k) parlistcell(parchangeId+1:end)];
 
 
 % generate initial yoyoBindingProb vector:
-[~, theoryStr, yoyoBindingProb,netropsinBindingConst] = get_theory_twostate_fit(fastaFile,pars{:});
+% [~, theoryStr, yoyoBindingProb,netropsinBindingConst] = get_theory_twostate_fit(fastaFile,pars{:});
 
 
 % [~,theoryStr] = get_theory_twostate_fit(fastaFile,parlistcell{:},yoyoBindingProb);
@@ -57,7 +57,7 @@ for k=1:length(par)
 %     k
     pars = [parlistcell(1:parchangeId-1) par(k) parlistcell(parchangeId+1:end)]; 
 %     pars = parlistcell;
-    [~,theoryStr{k}] = get_theory_twostate_fit(fastaFile,pars{:});
+    [~,theoryStr{k}, yoyoBindingProb, netropsinBindingConst] = get_theory_twostate_fit(fastaFile,pars{:});
 
     
     [rezMax] = hca_compare_distance(barGen, theoryStr{k}{1}, sets );

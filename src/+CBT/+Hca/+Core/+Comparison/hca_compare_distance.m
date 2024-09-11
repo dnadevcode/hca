@@ -1,4 +1,4 @@
-function [rezMax, allCoefs,timePassed] = hca_compare_distance(barcodeGen,theoryStruct, sets )
+function [rezMax, allCoefs, timePassed] = hca_compare_distance(barcodeGen,theoryStruct, sets )
     % hca_compare_distance
     % Compares experiments to theory. Helping function with the parfor
     %     Args:
