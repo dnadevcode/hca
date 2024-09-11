@@ -74,7 +74,7 @@ import CBT.SimpleTwoState.gen_simple_theory_px_fit;
 
 parfor idx=1:length(folds)
 %     idx
-    data = struct("atsum",[],'name',[],'idsElt',[]);
+    data = struct("atsum",[],'name',[],'idsElt',[],'pxcut',[]);
 
     if precalc
        data = load(folds{idx});
@@ -97,7 +97,7 @@ parfor idx=1:length(folds)
     %
 
     % fast part
-    [theorySeq] = gen_simple_theory_px_fit(data.atsum,gcSF,pxSize,nmpx,isC,[],[],psf,[], [],[],ligandLength,yoyoBindingProb,data.idsElt);
+    [theorySeq] = gen_simple_theory_px_fit(data.pxcut,gcSF,pxSize,nmpx,isC,[],[],psf,[], [],[],ligandLength,yoyoBindingProb,data.idsElt);
 
 
 %     [theorySeq] = gen_simple_theory_px(numWsCumSum,gcSF,pxSize,nmpx,isC,sigma,kN,psf,cY, cN,kY);
