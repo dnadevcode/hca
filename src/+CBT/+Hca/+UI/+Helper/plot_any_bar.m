@@ -17,6 +17,7 @@ function [] = plot_any_bar(idx,bars,rezMax,theoryStruct,thryIdx, f)
 % curBar = imresize(bars{idx}.rawBarcode(bars{idx}.rawBitmask),'Scale' ,[1 comparisonStruct{idx}.bestBarStretch]) ;
 % curBit = ones(1,length(curBar));
 
+try
 try % also define stdbar
     stdbar = nanstd(bars{idx}.alignedKymo);
     stdbar = stdbar(bars{idx}.lE:bars{idx}.rE);
@@ -27,6 +28,9 @@ catch
     stdbar = stdbar(bars{idx}.data.lE:bars{idx}.data.rE);
     stdbar = interp1(stdbar, linspace(1,lenBarTested,lenBarTested*rezMax{thryIdx}{idx}.bestBarStretch));
     stdbar = stdbar(curBit);
+end
+catch
+    stdbar = 0;
 end
 
 if rezMax{thryIdx}{idx}.or(1)~=1

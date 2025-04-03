@@ -25,12 +25,16 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
     w = sets.w;
     
     % load theory file
+    try
     fileID = fopen(theoryStruct{comparisonStruct{ii}.idx}.filename,'r');
     formatSpec = '%f';
     theorBar = fscanf(fileID,formatSpec);
     fclose(fileID);
-    
-    
+    catch
+    theorBar=theoryStruct(comparisonStruct{ii}.idx).rawBarcode;
+    end
+
+
     %%
 % %        %% PLOT EXPERIMENTAL BARCODE VS THEORY BARCODE/ SIMPLE REDO - options - linear/circular
 % %     % two ways:
@@ -83,20 +87,30 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 % %      abs(params.secondPos(1)-params.pos(1))+1
 % %     
      %% now normal
-    
+    try
     niceName = theoryStruct{comparisonStruct{ii}.idx}.name;
+    catch
+    niceName = theoryStruct(comparisonStruct{ii}.idx).name;
+    end
     pl = [strfind(niceName,'NC') strfind(niceName,'NZ')];
     niceName = niceName(pl:end);
     pl = [strfind(niceName,'|') strfind(niceName,' ')];
     niceName = strrep(niceName(1:(min(pl)-1)),'_','\_');
     if isempty(niceName)
+        try
         niceName = strrep(theoryStruct{comparisonStruct{ii}.idx}.name,'_','\_');
+        catch
+        niceName = strrep(theoryStruct(comparisonStruct{ii}.idx).name,'_','\_');
+        end
     end
         
     
     % theory length
+    try
     thrLen = theoryStruct{comparisonStruct{ii}.idx}.length;
-    
+    catch
+    thrLen = theoryStruct(comparisonStruct{ii}.idx).length;
+    end
     % bitmask. In case of linear barcode, would like to modify this
     theorBit = ones(1,thrLen);
     
@@ -115,13 +129,13 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
         
     end
 
-    expLen = length(expBar);
-
-    % interpolate to the length which gave best CC value
-    expBar = interp1(expBar, linspace(1,expLen,expLen*comparisonStruct{ii}.bestBarStretch));
-    expBit = expBit(round(linspace(1,expLen,expLen*comparisonStruct{ii}.bestBarStretch)));
-    expBar(~expBit)= nan;
-    
+%     expLen = length(expBar);
+% 
+%     % interpolate to the length which gave best CC value
+%     expBar = interp1(expBar, linspace(1,expLen,expLen*comparisonStruct{ii}.bestBarStretch));
+%     expBit = expBit(round(linspace(1,expLen,expLen*comparisonStruct{ii}.bestBarStretch)));
+%     expBar(~expBit)= nan;
+%     
     
     
 
@@ -183,23 +197,30 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 
         barfragq{1} = [nan(nansLeft,1); barfragq{1}];
         barfragr{1} = [nan(1,nansLeft) barfragr{1}];
-        
-        plot( matchTableO(1):matchTableO(2), (barfragq{1}-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'color','red')
-        hold on 
-        plot( matchTableO(1):matchTableO(2), (barfragr{1}-nanmean( barfragr{1}))/nanstd(barfragr{1},1),'black')
+% Luis: Sorry, I commented this out, doesnt work    
+%         plot( matchTableO(1):matchTableO(2), (barfragq{1}-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'color','red')
+%         hold on 
+%         plot( matchTableO(1):matchTableO(2), (barfragr{1}-nanmean( barfragr{1}))/nanstd(barfragr{1},1),'black')
            
+        try
         bpPerPx = theoryStruct{1}.pixelWidth_nm/params.bestBarStretch;
+        catch
+        bpPerPx = theoryStruct(1).pixelWidth_nm/params.bestBarStretch;
+        end
+% Luis: Sorry, I commented this out, doesnt work    
+%        labelstr = 'Position (px)';
 
-        labelstr = 'Position (px)';
 %                 labelstr = 'Position (kbps)';
 %         str2 = 'kbps';
 %         ticks = 1:50:2*length(bar2);
 %         ticksx = floor(ticks*bpPerPx/1000);
 %         ax.XTick = [ticks];
 %         ax.XTickLabel = [ticksx];   
-        xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')
-    
-       title(strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
+% Luis: Sorry, I commented this out, doesnt work    
+% xlabel( ax,labelstr,'FontSize', 10,'Interpreter','latex')   
+%       title(strcat(['Experimental barcode vs theoretical ']),'Interpreter','latex');
+
+
 %     %
         % here we actually took position based on all the scores, but it
         % should already be known from the data?
@@ -209,21 +230,27 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 %             tmpPar = tmpPar+length(expBar);
 %         end
 %         pq = tmpPar+1;
-        pq = abs(params.secondPos(1)-params.pos(1))+1;
-        b1 = expBar(pq:pq+params.lengthMatch-1);
-        if params.or(1)==1
-            pd =  params.secondPos(1)-(w-length(expBar));
-        else
-            pd = params.secondPos(1);
-        end
-        b2 = theorBar(pd:pd+params.lengthMatch-1);
-        plot(pd:pd+params.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+% Luis: Sorry, I commented this out, doesnt work    
+% pq = abs(params.secondPos(1)-params.pos(1))+1;
+%         b1 = expBar(pq:pq+params.lengthMatch-1);
+%         if params.or(1)==1
+%             pd =  params.secondPos(1)-(w-length(expBar));
+%         else
+%             pd = params.secondPos(1);
+%         end
+%         b2 = theorBar(pd:pd+params.lengthMatch-1);
+%         figure
+%         plot(pd:pd+params.lengthMatch-1,(b2-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'green')
+% 
+%         if params.or(1)==1
+%             pccV =  pcc(fliplr(b1),b2);
+%         else
+%             pccV =  pcc(b1,b2);
+%         end
 
-        if params.or(1)==1
-            pccV =  pcc(fliplr(b1),b2);
-        else
-            pccV =  pcc(b1,b2);
-        end
+
+
+
 %         isequal(params.maxcoef(1), pccV)
 %         
 %         % we should also plot best position..
@@ -252,7 +279,87 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 %         end
     
      
-     
+% Luis: THING THAT WORKS 
+
+
+
+
+% Good plot
+
+theorBar=normalize(theorBar);
+       pA = comparisonStruct{1,1}.secondPos(1);
+        pB = comparisonStruct{1,1}.pos(1);
+        h = comparisonStruct{1,1}.lengthMatch;
+        orr = comparisonStruct{1,1}.or(1);
+        bS = comparisonStruct{1,1}.bestBarStretch;
+        score = comparisonStruct{1,1}.maxcoef(1);
+        fullscore = nan; % using matlab's version, we don't calculate this within function
+
+        lenBarTested = length(expBar);
+        bBar = interp1(expBar, linspace(1,lenBarTested,lenBarTested*bS));
+        bBit = expBit(round(linspace(1,lenBarTested,lenBarTested*bS)));
+        bBar(~bBit) = nan;
+
+
+        aBar = theorBar;
+
+    %f=figure;nexttile([1,2])
+    hold on
+
+    if orr~=1
+        bBar = fliplr(bBar);
+    end
+    
+
+    plot(-pA+1:-pA+length(bBar),(bBar-mean(bBar,'omitnan' ))./std(bBar,1,'omitnan' )+10,'red')
+    plot(-pB+1:-pB+length(aBar),zscore(aBar)+10,'blue')
+    zsc=zscore(aBar);
+    %plot(-pA+1:-pA+length(bBar),(bBar-mean(bBar,'omitnan' ))./std(bBar,1,'omitnan' )+15,'red')
+    %plot(-pB+373:-pB+length(aBar),zsc(373:length(aBar))+15,'blue')
+    %plot(-pB+1-373+110:-pB+110,zsc(1:373)+15,'blue')
+    
+    %     pos1 = -pA+1:-pA+length(bBar);
+    %     pos2 = -pB+1:-pB+length(aBar);
+    %     bar2 = b2;
+    
+    %     fP1 = find(pos1==1,1,'first');
+    %     fP2 = find(pos2==1,1,'first');
+    plot(zscore(bBar(pA:pA+h-1),1),'red')
+    plot(zscore(aBar(pB:pB+h-1),1),'blue')
+    
+    pccV = zscore(aBar(pB:pB+h-1),1)*zscore(bBar(pA:pA+h-1),1)'/h;
+    %     pcc = 1/h * zscore(bar1(fP1:fP1+h-1),1)*zscore(bar2(fP2:fP2+h-1),1)';
+    
+    
+    % do full overlap
+    lpA = length(bBar); lpB = length(aBar);
+
+    st = min(pA,pB); % which barcode is more to the left
+    stop = min(lpA-pA+1,lpB-pB+1);
+    
+    aFul = aBar(pB-st+1:pB+stop-1);
+    bFul = bBar(pA-st+1:pA+stop-1);
+    
+    plot(-st+1:stop-1,(bFul-mean(bFul,'omitnan'))./(std(bFul,1,'omitnan'  ))-7,'red')
+    plot(-st+1:stop-1, zscore(  aBar(pB-st+1:pB+stop-1),1)-7,'blue')
+    
+%     zscore(bBar(pA-st+1:pA+stop-1),1)*zscore(aBar(pB-st+1:pB+stop-1),1)'/length( bBar(pA-st+1:pA+stop-1))
+    aFul = aFul(~isnan(bFul));
+
+    bFul = bFul(~isnan(bFul));
+    fullscore = zscore(bFul,1)*zscore(aFul,1)'./length(bFul);
+
+    text(0,5,strcat('local alignment C= ', num2str(score)))
+    text(0,-3,strcat('full overlap C= ',num2str(fullscore)))
+
+% [rescaleFactor, orSign]
+
+    legend({strcat(['$$bar_{' num2str(ii)  '}$$ sF='  num2str(bS) ' or= '  num2str(orr) ]),num2str(niceName)},'location','southeastoutside','Interpreter','latex')
+
+
+hold off 
+
+
      
         import CBT.Hca.Core.Comparison.pcc;
         

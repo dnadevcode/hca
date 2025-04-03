@@ -46,7 +46,7 @@ function [rezMax,bestBarStretch,bestLength,rezMaxAll] = compare_distance(barcode
     % Computing distances for each theory against all experiments. This
     % loop can be parallelized (parfor)
    	parfor barNr = 1:length(theoryStruct)
-%         disp(strcat(['comparing to theory barcode ' num2str(barNr) '_' theoryStruct{barNr}.filename] ));
+        disp(strcat(['comparing to theory number ' num2str(barNr) ' out of ' num2str(length(theoryStruct)) ] ));
         
         if isequal(comparisonMethod,'mpAll')
             [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);

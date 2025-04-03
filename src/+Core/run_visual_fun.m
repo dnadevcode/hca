@@ -42,7 +42,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 %     maxcoef(:,1) 
     if isequal(hcaSets.comparisonMethod,'mp') || isequal(hcaSets.comparisonMethod,'mpnan') || isequal(hcaSets.comparisonMethod,'mpAll') || isequal(hcaSets.comparisonMethod,'hmm')
         import CBT.Hca.UI.Helper.plot_best_bar_mp;
-        resultStruct=plot_best_bar_mp(ax,barcodeGen,consensusStruct,comparisonStruct, theoryStruct, maxcoef,1,hcaSets);
+        resultStruct=plot_best_bar_mp(ax,barcodeGenC,consensusStruct,comparisonStruct, theoryStruct, maxcoef,1,hcaSets);
 %         [resultStruct] = plot_bar(ax, comparisonStruct, theoryStruct{1}.filename, barcodeGen, 1, 1, w, hcaSets)
     else
         %todo: improve this plot with more information
@@ -76,8 +76,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
 %             tic
                 max2 = nan(size(maxcoef));      max2(i,1) = maxcoef(i,1);
                 fig1 = figure('Visible', 'off');
-                ax1 = subplot(fig1,1,1,1);
-
+                ax1 = subplot(1,1,1, 'Parent', fig1);
 
 %                 fig1 = figure('Visible', 'on');
 

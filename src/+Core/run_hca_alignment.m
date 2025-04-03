@@ -138,6 +138,11 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
     hcaSets.theoryFile=[];
     hcaSets.theoryFileFold = [];
     
+    % Luis: Im adding this here so w is an option
+    if ismember(hcaSets.comparisonMethod, {'mpnan', 'mp', 'mpAll'})
+    hcaSets.w = inputdlg('Overlap comparison in pixels', 'Input', 1, {num2str(200)});
+    hcaSets.w = str2double(hcaSets.w); % Convert input to numeric
+    end
     % compare theory to experiment
     import CBT.Hca.Core.Comparison.compare_distance;
     [rezMax,bestBarStretch,bestLength] = compare_distance(barcodeGenC,theoryStruct, hcaSets, consensusStruct );
