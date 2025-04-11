@@ -192,11 +192,12 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
             end
         end
     
-
-        [tempTable,barfragq,barfragr] = create_full_table( resultStruct.matchTable,[theorBar; theorBar],expBar,1);
-
-        barfragq{1} = [nan(nansLeft,1); barfragq{1}];
-        barfragr{1} = [nan(1,nansLeft) barfragr{1}];
+% 
+%         [tempTable,barfragq,barfragr] = create_full_table( resultStruct.matchTable,[theorBar; theorBar],expBar,1);
+% 
+%         barfragq{1} = [nan(nansLeft,1); barfragq{1}];
+%         barfragr{1} = [nan(1,nansLeft) barfragr{1}];
+%         
 % Luis: Sorry, I commented this out, doesnt work    
 %         plot( matchTableO(1):matchTableO(2), (barfragq{1}-nanmean( barfragq{1}))/nanstd(barfragq{1},1),'color','red')
 %         hold on 
