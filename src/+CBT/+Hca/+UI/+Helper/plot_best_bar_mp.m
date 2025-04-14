@@ -288,12 +288,12 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 % Good plot
 
 theorBar=normalize(theorBar);
-       pA = comparisonStruct{1,1}.secondPos(1);
-        pB = comparisonStruct{1,1}.pos(1);
-        h = comparisonStruct{1,1}.lengthMatch;
-        orr = comparisonStruct{1,1}.or(1);
-        bS = comparisonStruct{1,1}.bestBarStretch;
-        score = comparisonStruct{1,1}.maxcoef(1);
+       pA = comparisonStruct{ii}.secondPos(1);
+        pB = comparisonStruct{ii}.pos(1);
+        h = comparisonStruct{ii}.lengthMatch;
+        orr = comparisonStruct{ii}.or(1);
+        bS = comparisonStruct{ii}.bestBarStretch;
+        score = comparisonStruct{ii}.maxcoef(1);
         fullscore = nan; % using matlab's version, we don't calculate this within function
 
         lenBarTested = length(expBar);
