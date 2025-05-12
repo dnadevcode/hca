@@ -33,7 +33,11 @@ function [T, timestamp] = export_cc_vals_table( theoryStruct,comparisonStructAll
         end
         maxcc = maxccoef;
         
+        try
         [d,name,ext] = fileparts(barcodeGen{i}.name);
+        catch
+        name = ['barcode_', num2str(i)];
+        end
 
         N = matlab.lang.makeValidName(name);
         
