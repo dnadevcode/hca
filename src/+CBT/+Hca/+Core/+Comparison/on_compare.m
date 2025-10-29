@@ -31,7 +31,8 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
 
 %             parameterfun = @(x)
         case 'mass_dot'
-            comparisonFun = @(x,y,z,w,u) unmasked_MASS_DOT_CC(y,x,z,w,2^(4+nextpow2(length(x))),theoryStruct.isLinearTF,numPixelsAroundBestTheoryMask);            
+            comparisonFun = @(x,y,z,w,u) unmasked_MASS_DOT_CC(y,x,z,w,2^(4+nextpow2(length(x))),theoryStruct.isLinearTF,numPixelsAroundBestTheoryMask);
+
        case 'masked_pcc'
             % choose k just higher than the length of small sequence for
             % best precision. (larger k though could increase speed)
@@ -144,7 +145,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     % for all the barcodes run
     % parfor
     for idx=1:length(barcodeGen)
-%         idx
+        %idx
         % xcorrMax stores the  maximum coefficients
         xcorrMax = zeros(1,length(stretchFactors));
         

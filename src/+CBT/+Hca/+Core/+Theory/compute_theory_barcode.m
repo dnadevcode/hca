@@ -95,7 +95,14 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     % This is moved to outer structure avoid repetitive (periodic) things in the theory barcode.
     s = rng;
     rng(0,'twister');
-    ts(ts > 4) = randi(4,1,sum(ts > 4));
+    %ts(ts > 4) = randi(4,1,sum(ts > 4)); % This thing treats N's (or any degenerate bases) as a random nucleotide
+    
+    % TODO: make it check whether there are >1000 consecutive Ns
+    % If so, make a gap and save it in the bitmask
+    % if low amount of N's then random is ok?
+    % Also count N's and print back N% and if gaps where genned or no
+
+    ts(ts > 4) = 1; % adding a bunch of A's instead to create a "gap" % Luis
     rng(s);
     
     
