@@ -287,6 +287,7 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 
 % Good plot
 
+theorBar=[theorBar theorBar];
 theorBar=normalize(theorBar);
        pA = comparisonStruct{ii}.secondPos(1);
         pB = comparisonStruct{ii}.pos(1);
@@ -333,7 +334,8 @@ theorBar=normalize(theorBar);
     
     
     % do full overlap
-    lpA = length(bBar); lpB = length(aBar);
+    lpA = length(bBar); 
+    lpB = length(aBar);
 
     st = min(pA,pB); % which barcode is more to the left
     stop = min(lpA-pA+1,lpB-pB+1);

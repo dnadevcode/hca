@@ -126,6 +126,11 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             theorBit = ones(1,length(theorBar));
         end
     end
+    %Luis: I'm putting this here to enable circular stuff, hope it makes sense:
+    if isequal('mpnan',comparisonMethod) && theoryStruct.isLinearTF==0
+        theorBar = [theorBar theorBar];
+        theorBit = ones(1,length(theorBar));
+    end
         
     % if we want to take a subtheory
     if nargin >=7
@@ -209,6 +214,8 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
             bestBarStretch(idx) = nan;
             bestLength(idx) = nan;   
         end
+
+        % Here we can add fullscore
     end 
 end
 % % 

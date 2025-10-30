@@ -1,15 +1,28 @@
 function [] = plot_any_bar(idx,bars,rezMax,theoryStruct,thryIdx, f)
 %   plots any barcode against thry
 
-% if nargin < 6
-%     f = figure;
-% end
+if nargin <6 || isempty(f)
+    f = figure;
+end
 
-
-    lenBarTested = length(bars{idx}.rawBarcode);
-    curBar = interp1(bars{idx}.rawBarcode, linspace(1,lenBarTested,lenBarTested*rezMax{thryIdx}{idx}.bestBarStretch));
+lenBarTested = length(bars{idx}.rawBarcode);
+if length(rezMax{1}{1}.maxcoef)>1
+        curBar = interp1(bars{idx}.rawBarcode, linspace(1,lenBarTested,lenBarTested*rezMax{thryIdx}{idx}.bestBarStretch));
     curBit = bars{idx}.rawBitmask(round(linspace(1,lenBarTested,lenBarTested*rezMax{thryIdx}{idx}.bestBarStretch)));
     curBar = curBar(curBit);
+    pos = find(curBit==1,1,'first');
+else
+
+pA = rezMax{thryIdx}{idx}.secondPos(1);
+pB = rezMax{thryIdx}{idx}.pos(1);
+w = rezMax{thryIdx}{idx}.lengthMatch;
+bS=rezMax{thryIdx}{idx}.bestBarStretch;
+curBar = interp1(bars{idx}.rawBarcode, linspace(1,lenBarTested,lenBarTested*bS));
+curBit = bars{idx}.rawBitmask(round(linspace(1,lenBarTested,lenBarTested*bS)));
+curBar=curBar(logical(curBit));
+pA=pA-find(curBit,1,'first')+1;  
+
+end
 
 % curBar = imresize(bars{idx}.rawBarcode,'Scale' ,[1 comparisonStruct{idx}.bestBarStretch]);
 % curBit = imresize(bars{idx}.rawBitmask,'Scale' ,[1 comparisonStruct{idx}.bestBarStretch]);
@@ -62,7 +75,7 @@ end
 % rawBg = barcodeGen{idx}.rawBg; %mode(cellfun(@(x) x.rawBg,barcodeGenLambda));
 % meanlambda = mean(cellfun(@(x) mean(x.rawBarcode(x.rawBitmask)),barcodeGenLambda));
 % meanbar = mean(cellfun(@(x) mean(x.rawBarcode(x.rawBitmask)),barcodeGen));
-pos = find(curBit==1,1,'first');
+
 % figure,plot(pos+[comparisonStruct{idx}.pos:comparisonStruct{idx}.pos+length(curBar)-1],zscore(curBar))
 % hold on
 % plot(comparisonStruct{idx}.pos:comparisonStruct{idx}.pos+length(curBar)-1,zscore(thr(comparisonStruct{idx}.pos:comparisonStruct{idx}.pos+length(curBar)-1)))
@@ -70,9 +83,7 @@ pos = find(curBit==1,1,'first');
 % 
 % pccScore = zscore(curBar,1)*zscore(thr(comparisonStruct{idx}.pos:comparisonStruct{idx}.pos+length(curBar)-1),1)'/length(curBar)
 % title(['pcc = ' ,num2str(pccScore)])
-if nargin <6 || isempty(f)
-    f = figure;
-end
+if length(rezMax{1}{1}.maxcoef)>1
 x = pos+[rezMax{thryIdx}{idx}.pos(1):rezMax{thryIdx}{idx}.pos(1)+length(curBar)-1];
 
 xconf = [x x(end:-1:1)] ;  
@@ -99,7 +110,31 @@ hold off
 % legend({'B(x) 95% CI','B(x)','T(x)'},'location','southoutside')
 [~,st,~] =fileparts(bars{idx}.name)
 legend({'B(x) +-3sigma',['B(x) ',strrep(st,'_','\_')] ,['T(x)',strrep(theoryStruct(thryIdx).name,'_','\_')]},'FontSize',7,'location','southoutside')
+else
+   
+% 
+hold on
+plot(-pA+1:-pA+length(curBar),(curBar-mean(curBar,'omitnan' ))./std(curBar,1,'omitnan' ),'red')
+plot(-pB+1:-pB+length(thr),zscore(thr))
+ % do full overlap
+    lpA = length(curBar); 
+    lpB = length(thr);
 
+    st = min(pA,pB); % which barcode is more to the left
+    stop = min(lpA-pA+1,lpB-pB+1);
+    
+    aFul = thr(pB-st+1:pB+stop-1);
+    bFul = curBar(pA-st+1:pA+stop-1);
+    aFul = aFul(~isnan(bFul));
+    bFul = bFul(~isnan(bFul));
+    fullscore = zscore(bFul,1)*zscore(aFul,1)'./length(bFul);
+title(['pcc = ' ,num2str(fullscore)])
+xlabel('location x (pixels)')
+hold off
+% legend({'B(x) 95% CI','B(x)','T(x)'},'location','southoutside')
+[~,st,~] =fileparts(bars{idx}.name)
+legend({['B(x) ',strrep(st,'_','\_')] ,['T(x)',strrep(theoryStruct(thryIdx).name,'_','\_')]},'FontSize',7,'location','southoutside')
+end
 
 end
 

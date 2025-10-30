@@ -1,17 +1,13 @@
-%     bTS = rand(1000,1);
-%     aTS = rand(100,1);
-%     r = 50;
-%     kk =128;
-% [mp,mpI] = mp_profile(aTS, bTS,r,kk);
-
 function [maxcoef, pB, or, pA, r, mp, mpI] = mp_profile_stomp_nan_dna(aTS, bTS, bitA, maskB, r, kk,numPixelsAroundBestTheoryMask)
+
 
     if nargin < 7
         numPixelsAroundBestTheoryMask = 50;
     end
+    
     % mp profile stomp for DNA comparison (forward and reverse strand)
     % bitmasks should already included in aTS and bTS as NANs
-    mpLength = length(aTS);%-r+1;
+   
     
 %     mp2 = zeros(mpLength,1); % instead of making twice the size, report a 
 %     mpI2 = zeros(mpLength,1); % a negative number in mpI? Then all procedure simplifies.
@@ -19,6 +15,9 @@ function [maxcoef, pB, or, pA, r, mp, mpI] = mp_profile_stomp_nan_dna(aTS, bTS, 
     % mask both aTS and bTS (bTS is masked if it includes at least 50
     % undefined base-pairs
 %     nanValues = movmean(maskB,length(aTS),'Endpoints','discard');
+
+    mpLength = length(aTS);%-r+1;
+
     bTS(maskB > 50) = nan;        % 50 is estimate.., mean approx 50 bp  (1/10th) in a pixel were nan's
     aTS(~bitA) = nan;
     
