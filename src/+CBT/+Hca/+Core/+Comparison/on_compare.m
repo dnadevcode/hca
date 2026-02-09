@@ -149,7 +149,7 @@ function [ rezMaxM,bestBarStretch,bestLength ] = on_compare(barcodeGen,theoryStr
     bestLength = zeros(1,length(barcodeGen));
     % for all the barcodes run
     % parfor
-    for idx=1:length(barcodeGen)
+    parfor idx=1:length(barcodeGen)
         %idx
         % xcorrMax stores the  maximum coefficients
         xcorrMax = zeros(1,length(stretchFactors));

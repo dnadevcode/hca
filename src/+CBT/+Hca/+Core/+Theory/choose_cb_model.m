@@ -29,7 +29,7 @@ function [ model ] = choose_cb_model(name,pattern, yoyoConst, netrConst)
     end
     
     switch name
-        case 'literature'
+        case 'literature' 
             % import the binding constant rules based on the model name
             import CBT.Hca.Import.import_binding_constant_rules;
             [bindingConstantNames,bindingConstantVals] = import_binding_constant_rules(name);
@@ -93,6 +93,36 @@ function [ model ] = choose_cb_model(name,pattern, yoyoConst, netrConst)
             model.netropsinBindingConstant = netrConst*bindingConstantsMat./1E6;
             model.yoyoBindingConstant = yoyoConst;
 %             model.pattern = nt2int('CB');
+        case 'ATblasfemy' 
+            % import the binding constant rules based on the model name
+            import CBT.Hca.Import.import_binding_constant_rules;
+            [bindingConstantNames,bindingConstantVals] = import_binding_constant_rules(name);
+
+            % lengths of small sequences
+            seqSpecLen = length(bindingConstantNames(1,:));
+
+            % binding constant matrix, used in CB generation
+            bindingConstantsMatSize = repmat(4, [1, seqSpecLen]);
+            bindingConstantsMat = NaN(bindingConstantsMatSize);
+
+            % number of binding constant rules
+            numRules = size(bindingConstantVals, 1);
+
+            % convert vector to int
+            bitsmartTranslationArr = uint8(pow2(seqSpecLen-1:-1:0));
+
+            for ruleNum=1:numRules
+                vect_uint8 = bitsmartTranslationArr(nt2int(bindingConstantNames(ruleNum,:)));
+                mat_logical = logical(rem(floor(double(vect_uint8(:))*pow2(1 - seqSpecLen:0)),2));
+                idxs = mat2cell(mat_logical, ones([1, size(mat_logical, 1)]), 4);
+                bindingConstantsMat(idxs{:}) = bindingConstantVals(ruleNum);
+            end
+
+            % multiply the constants by parameters from th epaper
+            model.netropsinBindingConstant = 0.4*bindingConstantsMat./1E6;
+            model.yoyoBindingConstant = 26;
+            model.pattern = nt2int('CB');
+
         otherwise
             model.pattern = '';
     end

@@ -86,7 +86,9 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
        
     extraL = m/2+round(pxSize)+1; % this +1 comes from convert_bpres_to_pxres, but there's no real argument why to use it
     extraR = m/2+round(2*pxSize); 
-    ts = [ones(extraL,1); chr1.Data; ones(extraR,1)];
+
+    ts = [zeros(extraL,1); chr1.Data; zeros(extraR,1)];
+  
     if circular % so if circular, we add the theory data instead of simple ones
         ts(1:extraL) = chr1.Data(end-extraL+1:end);
         ts(end-extraR+1:end) =  chr1.Data(1:extraR);
@@ -97,12 +99,17 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     rng(0,'twister');
     %ts(ts > 4) = randi(4,1,sum(ts > 4)); % This thing treats N's (or any degenerate bases) as a random nucleotide
     
-    % TODO: make it check whether there are >1000 consecutive Ns
+    % TODO LUIS: make it check whether there are >1000 consecutive Ns
     % If so, make a gap and save it in the bitmask
     % if low amount of N's then random is ok?
     % Also count N's and print back N% and if gaps where genned or no
-
+    if startsWith(sets.theoryGen.method , 'AT', 'IgnoreCase', true)
+    ts(ts > 4) = 2; % adding a bunch of A's instead to create a "gap" % Luis
+    ts(ts == 0) = 2; % adding a bunch of A's instead to create a "gap" % Luis
+    else
     ts(ts > 4) = 1; % adding a bunch of A's instead to create a "gap" % Luis
+    ts(ts == 0) = 1; % adding a bunch of A's instead to create a "gap" % Luis
+    end
     rng(s);
     
     

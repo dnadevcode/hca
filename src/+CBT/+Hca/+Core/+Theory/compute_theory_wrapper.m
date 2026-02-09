@@ -7,6 +7,7 @@ function [x] = compute_theory_wrapper(ts, sets)
     %    sets : settings structure
         
     import CBT.Hca.Core.Theory.run_simple_theory;
+    import CBT.Hca.Core.Theory.run_simple_at;
     import CBT.Hca.Core.Theory.run_literature_theory;
     
 %     if sum(ts > 4) > 0 % if there are nan's, don't compute the theory
@@ -28,9 +29,17 @@ function [x] = compute_theory_wrapper(ts, sets)
             x = gc_rate(ts',4);
         case "gcweighted"
             import CBT.Hca.Core.Theory.gcweighted;
-
             x = gcweighted(ts',4,sets.theoryGen.atPreference);
 %              x = run_literature_theory(ts',sets);
+        case "AT"
+             x = run_simple_at(ts);
+        case "atweighted"
+            import CBT.Hca.Core.Theory.atweighted;         
+            x = atweighted(ts',4);
+%              x = run_literature_theory(ts',sets);
+        case "ATblasfemy"
+            import CBT.Hca.Core.Theory.AG_TC_mirror;
+            x = AG_TC_mirror(ts',sets);
         case "enzyme"
              x = zeros(length(ts),1);
              dots = strfind(ts',sets.model.pattern);

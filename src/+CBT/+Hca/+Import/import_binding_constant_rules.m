@@ -17,6 +17,14 @@ function [bindingConstantNames,bindingConstantVals] = import_binding_constant_ru
             bindingConstantNames = value{1};
             
             bindingConstantVals = value{2};
+        case 'ATblasfemy'
+             % A => 1 , C => 2, G => 3,  T(U) => 4
+            fid = fopen(filename); 
+            value = textscan(fid,'%4c %f','delimiter','\n'); fclose(fid);     
+            
+            bindingConstantNames = value{1};
+            
+            bindingConstantVals = value{2};           
         case 'custom'
             % A => 1 , C => 2, G => 3,  T(U) => 4
             values = importdata(filename);
