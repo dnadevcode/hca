@@ -29,7 +29,7 @@ function [x] = compute_theory_wrapper(ts, sets)
             x = gc_rate(ts',4);
         case "gcweighted"
             import CBT.Hca.Core.Theory.gcweighted;
-            x = gcweighted(ts',4,sets.theoryGen.atPreference);
+            x = gcweighted(ts',4);
 %              x = run_literature_theory(ts',sets);
         case "AT"
              x = run_simple_at(ts);
