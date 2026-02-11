@@ -162,6 +162,8 @@ function [alignedKymo, stretchFactorsMat, shiftAlignedKymo, alignedMask, shiftAl
         else
             pathsColIdxs = [];
         end
+    else
+        pathsColIdxs = [];
     end
     
     % % For debugging reasons, the paths can be drawn in the (unaligned)

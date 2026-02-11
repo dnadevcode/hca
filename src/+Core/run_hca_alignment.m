@@ -64,7 +64,15 @@ function [barcodeGenC, consensusStruct, comparisonStruct, theoryStruct, hcaSets]
                         barcodeGen{i}.rawBitmask = ones(1,length( barcodeGen{i}.rawBarcode));
                     end
                 else
-                barcodeGen = bgSessionData.barcodeGen;
+                    try
+                        barcodeGen = bgSessionData.barcodeGen;
+                    catch
+                        barcodeGen{1}=bgSessionData.clusterConsensusData;
+                        barcodeGen{1}.rawBarcode=barcodeGen{1}.barcode;
+                        barcodeGen{1}.rawBitmask=barcodeGen{1}.bitmask;
+                        barcodeGen{1}.name= strcat('Consensus');
+                    end
+
                 end
             end
             if ~isfield(barcodeGen{1}, 'name')
