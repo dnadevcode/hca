@@ -20,8 +20,17 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     try
         theorBar = theoryStruct(comparisonStruct{ii}.idx).rawBarcode;
         niceName = theoryStruct(comparisonStruct{ii}.idx).name;
-        if size(theorBar,2) > size(theorBar,1);
+        if isfield(theoryStruct,'rawMarks')
+        marks=theoryStruct(comparisonStruct{ii}.idx).rawMarks;
+        [~,markspks]=findpeaks(marks);
+      marks(setdiff(1:numel(marks), markspks)) = 0;
+        end
+
+        if size(theorBar,2) > size(theorBar,1)
             theorBar = theorBar';
+         if isfield(theoryStruct,'rawMarks')
+         marks=marks';
+         end
         end
     catch
 
@@ -92,14 +101,23 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
         theoryEnd = theoryEnd + abs(theoryStart)+1;
         theoryStart = 1;
         thrLen = thrLen+abs(theoryStart)+1;
+        if isfield(theoryStruct,'rawMarks')
+        marks = [ repmat(nan,abs(theoryStart)+1,1); marks];
+        end
     end
     
 
     if theoryEnd > thrLen % now split this into linear and nonlinear case..
         if theoryEnd-thrLen > thrLen % check this..
             theorBar = [ theorBar; theorBar;theorBar(1:theoryEnd-2*thrLen)]; %
+          if isfield(theoryStruct,'rawMarks')
+          marks = [ marks; marks; marks(1:theoryEnd-2*thrLen)];
+          end
         else
             theorBar = [ theorBar; theorBar(1:theoryEnd-thrLen)];
+           if isfield(theoryStruct,'rawMarks')
+           marks = [ marks; marks(1:theoryEnd-thrLen)];
+           end
         end
     end
     
@@ -116,16 +134,24 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
     end
     
     import CBT.Hca.UI.Helper.create_full_table;
+    try
+    [temp_table,barfragq, barfragr,barfragrmarks] = create_full_table(barStruct.matchTable, barStruct.bar1,barStruct.bar2,1,marks);
+     catch
     [temp_table,barfragq, barfragr] = create_full_table(barStruct.matchTable, barStruct.bar1,barStruct.bar2,1);
+    end
 
     barfragq{1}(~isnan(barfragq{1})) = zscore(barfragq{1}(~isnan(barfragq{1})));
     barfragr{1}(~isnan(barfragr{1})) = zscore(barfragr{1}(~isnan(barfragr{1})));
-
+    plotrange=min(temp_table(3:4)):max(temp_table(3:4));
 %     figure,
-    plot(fig1,min(temp_table(3:4)):max(temp_table(3:4)),barfragq{1})
+    plot(fig1,plotrange,barfragq{1})
 %     hold on
-    plot(fig1,min(temp_table(3:4)):max(temp_table(3:4)),barfragr{1})
+    plot(fig1,plotrange,barfragr{1})
+% plot marks if they exist
+if isfield(theoryStruct,'rawMarks')
     
+scatter(fig1,plotrange(barfragrmarks{1}~=0),barfragr{1}(barfragrmarks{1}~=0),'SizeData',500,'Marker',".")
+end
   
 
     xlabel(fig1,'Position along the sequence cushion (px)','Interpreter','latex')

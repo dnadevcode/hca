@@ -125,8 +125,8 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
         positionsBox = cell(1,length(itemListIdx));
 
         for i=1:length(itemListIdx) % these will be in two columns
-            positionsText{i} =   [0.2-0.2*mod(i,2) .83-0.1*ceil(i/2) 0.2 0.03];
-            positionsBox{i} =   [0.2-0.2*mod(i,2) .78-0.1*ceil(i/2) 0.15 0.05];
+            positionsText{i} =   [0.2-0.2*mod(i,2) .82-0.07*ceil(i/2) 0.2 0.03];
+            positionsBox{i} =   [0.2-0.2*mod(i,2) .79-0.07*ceil(i/2) 0.15 0.04];
         end
 
         tL = cell(1,length(itemListIdx));
@@ -362,7 +362,7 @@ function [] = hca_barcode_alignment(useGUI, hcaSets)
             end           
     end
 
-        function run_theory(~,~)
+    function run_theory(~,~)
             
             display(['Started analysis hca_theory v',versionHCA{1}])
 

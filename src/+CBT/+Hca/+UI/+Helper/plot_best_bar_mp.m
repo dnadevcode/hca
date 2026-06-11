@@ -32,6 +32,12 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
     fclose(fileID);
     catch
     theorBar=theoryStruct(comparisonStruct{ii}.idx).rawBarcode;
+        if isfield(theoryStruct,'rawMarks')
+            marks=theoryStruct(comparisonStruct{ii}.idx).rawMarks;
+            [~,markspks]=findpeaks(marks);
+          marks(setdiff(1:numel(marks), markspks)) = 0;
+        end
+
     end
 
 
@@ -288,6 +294,7 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 % Good plot
 
 theorBar=[theorBar theorBar];
+marks=[marks marks];
 theorBar=normalize(theorBar);
        pA = comparisonStruct{ii}.secondPos(1);
         pB = comparisonStruct{ii}.pos(1);
@@ -311,11 +318,10 @@ theorBar=normalize(theorBar);
     if orr~=1
         bBar = fliplr(bBar);
     end
-    
-
+zsc=zscore(aBar);    
+rangetheory=-pB+1:-pB+length(aBar);
     plot(-pA+1:-pA+length(bBar),(bBar-mean(bBar,'omitnan' ))./std(bBar,1,'omitnan' )+10,'red')
-    plot(-pB+1:-pB+length(aBar),zscore(aBar)+10,'blue')
-    zsc=zscore(aBar);
+    plot(rangetheory,zsc+10,'blue')
     %plot(-pA+1:-pA+length(bBar),(bBar-mean(bBar,'omitnan' ))./std(bBar,1,'omitnan' )+15,'red')
     %plot(-pB+373:-pB+length(aBar),zsc(373:length(aBar))+15,'blue')
     %plot(-pB+1-373+110:-pB+110,zsc(1:373)+15,'blue')
@@ -327,7 +333,12 @@ theorBar=normalize(theorBar);
     %     fP1 = find(pos1==1,1,'first');
     %     fP2 = find(pos2==1,1,'first');
     plot(zscore(bBar(pA:pA+h-1),1),'red')
-    plot(zscore(aBar(pB:pB+h-1),1),'blue')
+    plottheory2=zscore(aBar(pB:pB+h-1),1);
+    rangetheory2=1:length(zscore(aBar(pB:pB+h-1),1));
+    marks2=marks(pB:pB+h-1);
+    plot(plottheory2,'blue')
+    
+
     
     pccV = zscore(aBar(pB:pB+h-1),1)*zscore(bBar(pA:pA+h-1),1)'/h;
     %     pcc = 1/h * zscore(bar1(fP1:fP1+h-1),1)*zscore(bar2(fP2:fP2+h-1),1)';
@@ -342,10 +353,19 @@ theorBar=normalize(theorBar);
     
     aFul = aBar(pB-st+1:pB+stop-1);
     bFul = bBar(pA-st+1:pA+stop-1);
-    
+    fullrange=-st+1:stop-1;
+    theoryplotful=zscore(  aBar(pB-st+1:pB+stop-1),1);
+    marks3=marks(pB-st+1:pB+stop-1);
     plot(-st+1:stop-1,(bFul-mean(bFul,'omitnan'))./(std(bFul,1,'omitnan'  ))-7,'red')
     plot(-st+1:stop-1, zscore(  aBar(pB-st+1:pB+stop-1),1)-7,'blue')
-    
+
+    if isfield(theoryStruct,'rawMarks')
+    scatter(rangetheory(marks~=0),zsc(marks~=0)+10,'SizeData',500,'Marker',".") 
+    scatter(rangetheory2(marks2~=0),plottheory2(marks2~=0),'SizeData',500,'Marker',".")
+    scatter(fullrange(marks3~=0),theoryplotful(marks3~=0)-7,'SizeData',500,'Marker',".")
+    end
+  
+     
 %     zscore(bBar(pA-st+1:pA+stop-1),1)*zscore(aBar(pB-st+1:pB+stop-1),1)'/length( bBar(pA-st+1:pA+stop-1))
     aFul = aFul(~isnan(bFul));
 

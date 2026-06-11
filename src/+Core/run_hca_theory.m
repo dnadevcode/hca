@@ -26,9 +26,16 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     hcaSets.theoryGen.k =  max(2.^15,2.^(hcaSets.k));
     hcaSets.theoryGen.m  = min(2.^15,2.^(hcaSets.m));
     hcaSets.theoryGen.computeBitmask = hcaSets.computeBitmask;
+    hcaSets.theoryGen.seqmark=hcaSets.seqmark;
     % timestamp to add to theories name
     timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS');
-
+    
+    if hcaSets.theoryGen.seqmark==1
+    MarkSets=hcaSets;
+    MarkSets.theoryGen.method='enzyme';
+    MarkSets.theoryGen.addpsf=0;
+    MarkSets.model.pattern= nt2int(hcaSets.pattern);
+    end
 
     import CBT.Hca.Core.Theory.choose_cb_model;
     [hcaSets.model ] = choose_cb_model(hcaSets.theoryGen.method,hcaSets.pattern, yoyoConst, netropsinConst);
@@ -53,7 +60,7 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     % compute free concentrations
     import CBT.Hca.Core.Theory.compute_free_conc;
     hcaSets = compute_free_conc(hcaSets);
-    
+
     theoryGen = struct();
 
     % save sets
@@ -64,6 +71,7 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     linear = hcaSets.isLinearTF;
 
     theoryBarcodes = cell(1,length(theories));
+    theoryMarks=cell(1,length(theories));
     theoryBitmasks = cell(1,length(theories));
     theoryNames = cell(1,length(theories));
     theoryIdx = cell(1,length(theories));
@@ -74,7 +82,7 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     if length(theories) > 1
 
     % loop over theory file folder
-    parfor idx = 1:length(theories)
+    for idx = 1:length(theories)
         try
             addpath(genpath(fileparts(theories{idx})));
             disp(strcat(['loaded theory sequence ' theories{idx}] ));
@@ -88,7 +96,10 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     
 	    theoryBarcodes{idx} = theorySeq;
         theoryBitmasks{idx} = bitmask;
-    
+        if hcaSets.theoryGen.seqmark==1
+         [theorySeq] = compute_theory_barcode(theories{idx},MarkSets);
+         theoryMarks{idx} =theorySeq;
+        end
         theoryNames{idx} = header;
         theoryIdx{idx} = idx;
         bpNm{idx} = meanBpExt_nm/psfSigmaWidth_nm;         
@@ -111,10 +122,18 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
     
         theoryNames{idx} = header;
         theoryIdx{idx} = idx;
-        bpNm{idx} = meanBpExt_nm/psfSigmaWidth_nm;         
+        bpNm{idx} = meanBpExt_nm/psfSigmaWidth_nm;
+        if hcaSets.theoryGen.seqmark==1
+         [theorySeq] = compute_theory_barcode(theories{idx},MarkSets);
+         theoryMarks{idx} =theorySeq;
+        end
+
     end
 
     end
+     if hcaSets.theoryGen.seqmark==1
+       theoryGen.theoryMarks =theoryMarks;
+     end
     theoryGen.theoryBarcodes = theoryBarcodes;
     theoryGen.theoryBitmasks = theoryBitmasks;
     theoryGen.theoryNames = theoryNames;

@@ -1,4 +1,4 @@
-function [bars, bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinearTF] = ...
+function [bars, bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinearTF,marks] = ...
     load_theory_mat(sets,idx)
     %   Args:
     %       - sets -settings containg theory file locations
@@ -26,6 +26,10 @@ function [bars, bits, names, meanbpnm, pixelWidth_nm, psfSigmaWidth_nm, isLinear
      end
         
     bits = [];
+    try
+       marks=barcodeData.theoryGen.theoryMarks;
+    catch
+    end
     try % there can be different kind of input data, so use the appropriate one
         bars = barcodeData.hcaSessionStruct.theoryGen.theoryBarcodes;
         names = barcodeData.hcaSessionStruct.theoryGen.theoryNames;

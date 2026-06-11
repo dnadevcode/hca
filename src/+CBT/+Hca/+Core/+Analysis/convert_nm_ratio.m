@@ -61,6 +61,9 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
                     if isfield(theoryStruct(i),'rawBitmask')&&~isempty(theoryStruct(i).rawBitmask)
                         theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
                     end
+                    if isfield(theoryStruct(i),'rawMarks')
+                        theoryStruct(i).rawMarks = convert_bpRes_to_pxRes(theoryStruct(i).rawMarks, 1/pxSize);
+                    end
                     theoryStruct(i).meanBpExt_nm = newNmBp;
                     theoryStruct(i).length = hsize;
                  
@@ -87,6 +90,10 @@ function [ theoryStruct ] = convert_nm_ratio( newNmBp, theoryStruct,sets)
                     if isfield(theoryStruct(i),'rawBitmask')&&~isempty(theoryStruct(i).rawBitmask)
                         theoryStruct(i).rawBitmask = convert_bpRes_to_pxRes(theoryStruct(i).rawBitmask, 1/pxSize);
                     end
+                    if isfield(theoryStruct(i),'rawMarks')
+                        theoryStruct(i).rawMarks = convert_bpRes_to_pxRes(theoryStruct(i).rawMarks, 1/pxSize);
+                    end
+
                     theoryStruct(i).meanBpExt_nm = newNmBp;
                     theoryStruct(i).length = hsize;
 

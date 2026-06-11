@@ -1,4 +1,4 @@
-function [fullTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2,calc)
+function [fullTable,barfragq,barfragr,barfragrmarks] = create_full_table(res_table,bar1,bar2,calc,marks)
     % create full table where are no "loop overs"
     % so that its easier to calculate true positives, false negatives
     
@@ -16,6 +16,7 @@ function [fullTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2,c
     
     barfragq = cell(1,size(res_table, 1));
     barfragr =  cell(1,size(res_table, 1));
+    barfragrmarks= cell(1,size(res_table,1));
     % [res_table, ~] = parse_vtrace(vitResults);
     % problem: both bar1 and bar2 can be circularly shifted..
     for i = 1:size(res_table, 1)
@@ -129,7 +130,45 @@ function [fullTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2,c
 
         
         fullTable = [ fullTable;  tempTable];
+       try
         if calc == 1
+            barfragq{i}= [];
+            barfragr{i} = [];
+            barfragrmarks{i} = [];
+            for j=1:size(tempTable,1)
+                % here check if we're not taking too few..
+                %
+                %
+                 barfragq{i} = [ barfragq{i} bar1(tempTable(j,1):tempTable(j,2))];
+                 if tempTable(j,5) == 1
+                      barfragr{i} =[ barfragr{i} bar2(tempTable(j,3):tempTable(j,4))];
+                      barfragrmarks{i}=[ barfragrmarks{i} marks(tempTable(j,3):tempTable(j,4))];
+                 else
+                     barfragr{i} =[ barfragr{i} bar2(tempTable(j,3):-1:tempTable(j,4))];
+                     barfragrmarks{i}=[ barfragrmarks{i} marks(tempTable(j,3):-1:tempTable(j,4))];
+                 end
+                 lenDiff  = length(barfragr{i}) -length(barfragq{i});
+                  if abs(lenDiff) > 0
+                     if lenDiff > 0
+                         if tempTable(j,2)+lenDiff > length(bar1)
+                            barfragq{i} = [  barfragq{i} bar1(tempTable(j,2)+1:end)  bar1(1:lenDiff-length(bar1)+tempTable(j,2))];
+                         else
+                             barfragq{i} = [  barfragq{i} bar1(tempTable(j,2)+1:tempTable(j,2)+lenDiff)];
+                         end
+                     else
+                        if tempTable(j,4)+abs(lenDiff) > length(bar2)
+                            barfragr{i} = [  barfragr{i} bar2(tempTable(j,4)+1:end)  bar2(1:abs(lenDiff)-length(bar2)+tempTable(j,4))];
+                            barfragrmarks{i}=[barfragrmarks{i} marks(tempTable(j,4)+1:end)  marks(1:abs(lenDiff)-length(bar2)+tempTable(j,4))];
+                         else
+                             barfragr{i} = [  barfragr{i} bar2(tempTable(j,4)+1:tempTable(j,4)+abs(lenDiff))]; % this line was barfragq, i think its wrong.... was it?
+                             barfragrmarks{i}=[barfragrmarks{i} marks(tempTable(j,4)+1:tempTable(j,4)+abs(lenDiff))];
+                         end 
+                     end
+                  end  
+            end
+        end
+       catch
+         if calc == 1
             barfragq{i}= [];
             barfragr{i} = [];
             for j=1:size(tempTable,1)
@@ -154,13 +193,13 @@ function [fullTable,barfragq,barfragr] = create_full_table(res_table,bar1,bar2,c
                         if tempTable(j,4)+abs(lenDiff) > length(bar2)
                             barfragr{i} = [  barfragr{i} bar2(tempTable(j,4)+1:end)  bar2(1:abs(lenDiff)-length(bar2)+tempTable(j,4))];
                          else
-                             barfragq{i} = [  barfragr{i} bar2(tempTable(j,4)+1:tempTable(j,4)+abs(lenDiff))];
+                             barfragr{i} = [  barfragr{i} bar2(tempTable(j,4)+1:tempTable(j,4)+abs(lenDiff))]; % this line was barfragq, i think its wrong.... was it?
                          end 
                      end
                   end  
             end
         end
-
+       end
 %                    fullTable = [ fullTable;  tempTable];
 %         if plot == 1
 %         end

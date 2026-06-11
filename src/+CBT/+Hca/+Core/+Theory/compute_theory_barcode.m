@@ -104,8 +104,8 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     % if low amount of N's then random is ok?
     % Also count N's and print back N% and if gaps where genned or no
     if startsWith(sets.theoryGen.method , 'AT', 'IgnoreCase', true)
-    ts(ts > 4) = 2; % adding a bunch of A's instead to create a "gap" % Luis
-    ts(ts == 0) = 2; % adding a bunch of A's instead to create a "gap" % Luis
+    ts(ts > 4) = 2; % adding a bunch of C's instead to create a "gap" % Luis
+    ts(ts == 0) = 2; % adding a bunch of C's instead to create a "gap" % Luis
     else
     ts(ts > 4) = 1; % adding a bunch of A's instead to create a "gap" % Luis
     ts(ts == 0) = 1; % adding a bunch of A's instead to create a "gap" % Luis

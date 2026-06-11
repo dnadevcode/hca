@@ -50,13 +50,24 @@ if rezMax{thryIdx}{idx}.or(1)~=1
     curBar = fliplr(curBar);
     try
        stdbar = fliplr(stdbar);
+    catch
     end
 end
 
 if ~iscell(theoryStruct) % enable possibility
     thr = theoryStruct(thryIdx).rawBarcode;
+    if isfield(theoryStruct,'rawMarks')
+    marks = theoryStruct(thryIdx).rawMarks;
+    [~,markspks]=findpeaks(marks);
+    marks(setdiff(1:numel(marks), markspks)) = 0;
+    end    
 else
     thr = importdata(theoryStruct{thryIdx}.filename);
+    if isfield(theoryStruct,'rawMarks')
+    marks = theoryStruct{thryIdx}.rawMarks;
+            [~,markspks]=findpeaks(marks);
+   marks(setdiff(1:numel(marks), markspks)) = 0;
+    end  
 end
 
 if ~iscell(theoryStruct) 
@@ -67,8 +78,14 @@ end
 
 if ~isLinearTF
     thr = [thr thr];
+    if isfield(theoryStruct,'rawMarks')
+    marks = [marks marks];
+    end  
 else
     thr = [thr nan(1,length(thr))];
+    if isfield(theoryStruct,'rawMarks')
+    marks = [marks nan(1,length(marks))];
+    end  
 end
 % thrLambda = importdata(theoryStruct2{1}.filename);
 
@@ -83,7 +100,7 @@ end
 % 
 % pccScore = zscore(curBar,1)*zscore(thr(comparisonStruct{idx}.pos:comparisonStruct{idx}.pos+length(curBar)-1),1)'/length(curBar)
 % title(['pcc = ' ,num2str(pccScore)])
-if length(rezMax{1}{1}.maxcoef)>1
+if length(rezMax{1}{1}.maxcoef)>1 %this was my super naive way of determining if this was global or local aligment /Luis try checking for isfield pos or secondPos or w not being there
 x = pos+[rezMax{thryIdx}{idx}.pos(1):rezMax{thryIdx}{idx}.pos(1)+length(curBar)-1];
 
 xconf = [x x(end:-1:1)] ;  
@@ -101,8 +118,12 @@ p.EdgeColor = 'none';
 hold on
 plot(x,y,'r-')
 % hold off
-plot(rezMax{thryIdx}{idx}.pos(1):rezMax{thryIdx}{idx}.pos(1)+length(curBar)-1,zscore(thr(rezMax{thryIdx}{idx}.pos(1):rezMax{thryIdx}{idx}.pos(1)+length(curBar)-1)))
-
+plotrange=rezMax{thryIdx}{idx}.pos(1):rezMax{thryIdx}{idx}.pos(1)+length(curBar)-1;
+zthr=zscore(thr);
+thrtoplot=zthr(plotrange);plot(plotrange,zthr(plotrange))
+if isfield(theoryStruct,'rawMarks')
+  scatter(plotrange(marks~=0),thrtoplot(marks~=0),'SizeData',500,'Marker',".")
+end
 pccScore = zscore(curBar,1)*zscore(thr(pos+rezMax{thryIdx}{idx}.pos(1)-1:pos+rezMax{thryIdx}{idx}.pos(1)+length(curBar)-1-1),1)'/length(curBar);
 title(['pcc = ' ,num2str(pccScore)])
 xlabel('location x (pixels)')
@@ -115,7 +136,12 @@ else
 % 
 hold on
 plot(-pA+1:-pA+length(curBar),(curBar-mean(curBar,'omitnan' ))./std(curBar,1,'omitnan' ),'red')
-plot(-pB+1:-pB+length(thr),zscore(thr))
+plotrange=-pB+1:-pB+length(thr);
+zthr=zscore(thr);
+plot(plotrange,zthr)
+if isfield(theoryStruct,'rawMarks')
+  scatter(plotrange(marks~=0),zthr(marks~=0),'SizeData',500,'Marker',".")
+end
  % do full overlap
     lpA = length(curBar); 
     lpB = length(thr);
