@@ -56,11 +56,11 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
         hcaSets.resultsDir ='';
     end
     
-
+    if hcaSets.theoryGen.method~="AT"
     % compute free concentrations
     import CBT.Hca.Core.Theory.compute_free_conc;
     hcaSets = compute_free_conc(hcaSets);
-
+    end
     theoryGen = struct();
 
     % save sets
