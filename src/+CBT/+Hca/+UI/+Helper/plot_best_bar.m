@@ -150,7 +150,7 @@ function [] = plot_best_bar(fig1, barcodeGen, consensusStruct, comparisonStruct,
 % plot marks if they exist
 if isfield(theoryStruct,'rawMarks')
     
-scatter(fig1,plotrange(barfragrmarks{1}~=0),barfragr{1}(barfragrmarks{1}~=0),'SizeData',500,'Marker',".")
+scatter(fig1,plotrange(barfragrmarks{1}~=0),barfragr{1}(barfragrmarks{1}~=0),'SizeData',500,'Marker',".","MarkerFaceColor",[0.929 0.694 0.125],'MarkerEdgeColor',[0.929 0.694 0.125])
 end
   
 

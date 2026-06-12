@@ -74,6 +74,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
     
         for i=idxToPlot
 %             tic
+                if ~isnan(comparisonStruct{i}.bestBarStretch)
                 max2 = nan(size(maxcoef));      max2(i,1) = maxcoef(i,1);
                 fig1 = figure('Visible', 'off');
                 ax1 = subplot(1,1,1, 'Parent', fig1);
@@ -92,7 +93,7 @@ function [tsAlignmentVisual] = run_visual_fun(barcodeGenC,consensusStruct, compa
                 saveas(fig1,fullfile(hcaSets.output.matDirpath,'all_molecules',[hcaSets.timestamp,'Plots'],strcat([num2str(i) '_plot.jpg'])));
                 close(fig1);
 %                 saveas(fig1,fullfile(hcaSets.output.matDirpath,hcaSets.timestamp,'Plots',strcat([hcaSets.timestamp '_' num2str(i) '_plot.eps'])),'epsc');
-        
+                end
         end
         timePassed = toc;
         disp(strcat(['Experiments vs theory plots were saved in ' num2str(timePassed) ' seconds']));

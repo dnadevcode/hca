@@ -294,7 +294,9 @@ function [resultStruct] = plot_best_bar_mp(ax, barcodeGen, consensusStruct, comp
 % Good plot
 
 theorBar=[theorBar theorBar];
-marks=[marks marks];
+if isfield(theoryStruct,'rawMarks')
+    marks=[marks marks];
+end
 theorBar=normalize(theorBar);
        pA = comparisonStruct{ii}.secondPos(1);
         pB = comparisonStruct{ii}.pos(1);
@@ -335,7 +337,9 @@ rangetheory=-pB+1:-pB+length(aBar);
     plot(zscore(bBar(pA:pA+h-1),1),'red')
     plottheory2=zscore(aBar(pB:pB+h-1),1);
     rangetheory2=1:length(zscore(aBar(pB:pB+h-1),1));
+    if isfield(theoryStruct,'rawMarks')
     marks2=marks(pB:pB+h-1);
+    end
     plot(plottheory2,'blue')
     
 
@@ -355,14 +359,16 @@ rangetheory=-pB+1:-pB+length(aBar);
     bFul = bBar(pA-st+1:pA+stop-1);
     fullrange=-st+1:stop-1;
     theoryplotful=zscore(  aBar(pB-st+1:pB+stop-1),1);
+    if isfield(theoryStruct,'rawMarks')
     marks3=marks(pB-st+1:pB+stop-1);
+    end
     plot(-st+1:stop-1,(bFul-mean(bFul,'omitnan'))./(std(bFul,1,'omitnan'  ))-7,'red')
     plot(-st+1:stop-1, zscore(  aBar(pB-st+1:pB+stop-1),1)-7,'blue')
 
     if isfield(theoryStruct,'rawMarks')
-    scatter(rangetheory(marks~=0),zsc(marks~=0)+10,'SizeData',500,'Marker',".") 
-    scatter(rangetheory2(marks2~=0),plottheory2(marks2~=0),'SizeData',500,'Marker',".")
-    scatter(fullrange(marks3~=0),theoryplotful(marks3~=0)-7,'SizeData',500,'Marker',".")
+    scatter(rangetheory(marks~=0),zsc(marks~=0)+10,'SizeData',500,'Marker',".","MarkerFaceColor",[0.929 0.694 0.125],'MarkerEdgeColor',[0.929 0.694 0.125]) 
+    scatter(rangetheory2(marks2~=0),plottheory2(marks2~=0),'SizeData',500,'Marker',".","MarkerFaceColor",[0.929 0.694 0.125],'MarkerEdgeColor',[0.929 0.694 0.125])
+    scatter(fullrange(marks3~=0),theoryplotful(marks3~=0)-7,'SizeData',500,'Marker',".","MarkerFaceColor",[0.929 0.694 0.125],'MarkerEdgeColor',[0.929 0.694 0.125])
     end
   
      
