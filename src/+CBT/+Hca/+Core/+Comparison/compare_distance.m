@@ -49,7 +49,13 @@ function [rezMax,bestBarStretch,bestLength,rezMaxAll] = compare_distance(barcode
         disp(strcat(['comparing to theory number ' num2str(barNr) ' out of ' num2str(length(theoryStruct)) ] ));
         
         if isequal(comparisonMethod,'mpAll')
-            [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
+            if isStructure
+                [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct(barNr),comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
+            else
+                [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr},rezMaxAll{barNr}] = on_compare_mp_all(barcodeGen,theoryStruct{barNr},comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask);
+
+            end
+
         else
             if isStructure
                 [rezMax{barNr},bestBarStretch{barNr},bestLength{barNr}] = on_compare(barcodeGen,theoryStruct(barNr),comparisonMethod,stretchFactors,w,numPixelsAroundBestTheoryMask,[],filterSets);

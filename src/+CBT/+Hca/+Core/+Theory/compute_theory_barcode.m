@@ -83,10 +83,20 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
     % Here we
     % deal with circularity by adding m/2 values to the beginning and the
     % end. (extraL+ round(s) and extraR+round(2*s)) 
-       
+    
+
+    %To truly fix the addpsf thing, for linear chromosomes
+    %we should add "m"  on every side, not m/2.... all of this because the 
+    %fft then inverse fft things shift a bit the function so I did that...%Luis
+    % I do not know if this is only a problem for linears, might be for
+    % circulars as well if so delete the ~circular part
+    if  sets.theoryGen.addpsf ==0 && ~circular
+    extraL = m+round(pxSize)+1; %added this /Luis
+    extraR = m+round(2*pxSize); %added this /Luis
+    else
     extraL = m/2+round(pxSize)+1; % this +1 comes from convert_bpres_to_pxres, but there's no real argument why to use it
     extraR = m/2+round(2*pxSize); 
-
+    end
     ts = [zeros(extraL,1); chr1.Data; zeros(extraR,1)];
   
     if circular % so if circular, we add the theory data instead of simple ones
@@ -228,6 +238,7 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
         end
 
     end
+    
         if isempty(j)
             j = 0; % if nothing was computed
             k = n;
@@ -240,7 +251,7 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
         if k >= m % if k < m, there are not enough points on theory to compute more px values
             
             x = compute_theory_wrapper(ts(j+1:n), sets);
-
+           if  sets.theoryGen.addpsf 
             %The main trick of getting dot products in O(n log n) time
             X = fft(x);
 
@@ -250,6 +261,9 @@ function [ theory, header, bitmask] = compute_theory_barcode( name,sets)
 
             Z = X.*Y;
             z = ifft(Z);
+           else
+            z=x;
+           end
             
             tempTheory = [leftOverTheory; z(m:k-1)];
 

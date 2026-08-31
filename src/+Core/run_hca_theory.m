@@ -23,8 +23,8 @@ function [theoryGen] = run_hca_theory(hcaSets,yoyoConst, netropsinConst,customMo
 
     hcaSets.lambda.fold  =  hcaSets.fold ;
     hcaSets.lambda.name  =  hcaSets.name ;
-    hcaSets.theoryGen.k =  max(2.^15,2.^(hcaSets.k));
-    hcaSets.theoryGen.m  = min(2.^15,2.^(hcaSets.m));
+    hcaSets.theoryGen.k =  floor(max(2.^15,2.^(hcaSets.k)));
+    hcaSets.theoryGen.m  = floor(min(2.^15,2.^(hcaSets.m)));
     hcaSets.theoryGen.computeBitmask = hcaSets.computeBitmask;
     hcaSets.theoryGen.seqmark=hcaSets.seqmark;
     % timestamp to add to theories name

@@ -84,10 +84,14 @@ function [ rezMaxM,bestBarStretch,bestLength,rezMaxAll ] = on_compare_mp_all(bar
     
     % load theory barcode txt file. For UCR DTW (c++ code), we only need the name of the
     % file so this can be skipped.
+    try
     fileID = fopen(theoryStruct.filename,'r');
     formatSpec = '%f';
     theorBar = transpose(fscanf(fileID,formatSpec));
     fclose(fileID);
+    catch
+    theorBar = theoryStruct.rawBarcode;
+    end
     theorBit = ones(1,length(theorBar));
     
     % if we want match to be circular
